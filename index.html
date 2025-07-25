@@ -1,0 +1,2664 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Auth Tools</title>
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3B82F6">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --bg-primary: #111827;
+            --bg-secondary: #1F2937;
+            --bg-tertiary: #374151;
+            --border-color: #4B5563;
+            --text-primary: #F9FAFB;
+            --text-secondary: #D1D5DB;
+            --accent-blue: #3B82F6;
+            --accent-green: #22C55E;
+            --accent-red: #EF4444;
+            --accent-cyan: #06B6D4;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        #app-layout { display: none; display: grid; grid-template-columns: 260px 1fr; min-width: 1024px; }
+        .sidebar { grid-column: 1 / 2; height: 100vh; position: sticky; top: 0; background-color: var(--bg-secondary); border-right: 1px solid var(--border-color); padding: 20px; display: flex; flex-direction: column; }
+        .main-content {
+            grid-column: 2 / 3;
+            padding: 30px;
+            min-height: 100vh;
+            background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhI8j1iJeFgIagFemTu0q3_yxUph06s4T6K03apxFf11HmQagnDM-PkaUNlV-VK0k2O-Mj93P4cnVZSWjf6jbmt1imTeAP_woH6aUMEsp9YgyMzCdHNoixyuWtvUf9pmhXlYIvwVt1Tb9CuSFi-Jk6D3pB6-ggMzhKMGkpoJD9ZT-d5T3LcJkW4d_mfGLA/s1600/1750238969835.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        .sidebar-header { margin-bottom: 20px; text-align: center; }
+        .sidebar-header h1 { font-size: 1.5em; color: var(--text-primary); }
+        .sidebar-balance-card { position: relative; border: 1px solid var(--border-color); background-color: var(--bg-primary); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: left; }
+        .sidebar-balance-card .balance-label { display: block; font-size: 0.85em; color: var(--text-secondary); margin-bottom: 4px; }
+        .sidebar-balance-card .balance-amount { display: block; font-size: 1.6em; font-weight: 700; color: var(--accent-green); line-height: 1.2; }
+        .add-balance-icon {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--accent-green);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .add-balance-icon:hover { transform: translateY(-50%) scale(1.15); }
+        .sidebar-nav { flex-grow: 1; list-style: none; overflow-y: auto; }
+        .nav-item a { display: flex; align-items: center; padding: 12px 15px; border-radius: 8px; color: var(--text-secondary); text-decoration: none; font-weight: 500; margin-bottom: 8px; }
+        .nav-item a:hover { background-color: var(--bg-tertiary); color: var(--text-primary); }
+        .nav-item a.active { background-color: var(--accent-blue); color: white; font-weight: 600; }
+        .nav-icon { width: 22px; height: 22px; margin-right: 15px; display: inline-flex; justify-content: center; align-items: center; }
+        .sidebar-footer { padding-top: 15px; border-top: 1px solid var(--border-color); }
+        .content-container { max-width: 1200px; margin: 0 auto; }
+        .content-card { max-width: 600px; margin: 0 auto; background-color: var(--bg-secondary); padding: 30px 40px; border-radius: 12px; }
+        #auth-wrapper { display: flex; justify-content: center; align-items: center; height: 100vh; padding: 20px; background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhI8j1iJeFgIagFemTu0q3_yxUph06s4T6K03apxFf11HmQagnDM-PkaUNlV-VK0k2O-Mj93P4cnVZSWjf6jbmt1imTeAP_woH6aUMEsp9YgyMzCdHNoixyuWtvUf9pmhXlYIvwVt1Tb9CuSFi-Jk6D3pB6-ggMzhKMGkpoJD9ZT-d5T3LcJkW4d_mfGLA/s1600/1750238969835.jpg'); background-size: cover; background-position: center; }
+        #login-container { width: 100%; max-width: 420px; background-color: var(--bg-secondary); padding: 30px 40px; border-radius: 12px; border: 1px solid var(--border-color); position: relative; /* Ditambahkan untuk positioning tombol install */ padding-top: 70px; /* Ditambahkan agar tombol tidak menutupi judul */ }
+        #register-container { display: none; }
+        #app-layout, #profile-container, #topup-container, #buy-ub-container, #qris-display-container, #my-account-container, #beli-mod-container, #purchased-mods-container, #topup-admin-container { display: none; }
+        h2 { font-size: 1.8em; font-weight: 700; margin-bottom: 10px; color: var(--text-primary); }
+        .subtitle { font-size: 1em; color: var(--text-secondary); margin-bottom: 30px; }
+        .input-group { margin-bottom: 20px; position: relative; }
+        .input-field { width: 100%; padding: 14px 18px; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-size: 1em; }
+        .input-field.password-input { padding-right: 50px; }
+        .password-toggle { position: absolute; top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer; color: var(--text-secondary); width: 24px; height: 24px; }
+        .input-field:focus { outline: none; border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); }
+        .action-button { width: 100%; padding: 14px; border-radius: 8px; color: white; font-size: 1.1em; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s ease; }
+        .action-button:hover { opacity: 0.9; transform: translateY(-1px); }
+        .action-button:disabled { background-color: var(--bg-tertiary); cursor: not-allowed; opacity: 0.7; }
+        .btn-green { background-color: var(--accent-green); }
+        .btn-primary { background-color: var(--accent-blue); }
+        .btn-red { background-color: var(--accent-red); }
+        .btn-secondary { background-color: var(--bg-tertiary); }
+        .btn-cyan { background-color: var(--accent-cyan); }
+        .switch-link { margin-top: 20px; font-size: 0.9em; color: var(--text-secondary); text-align: center; }
+        .switch-link a { color: var(--accent-blue); text-decoration: none; font-weight: 600; }
+        .switch-link a:hover { text-decoration: underline; }
+        
+        #all-profiles-grid, #other-accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .profile-card {
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            perspective: 1000px;
+        }
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .profile-card-main-view, .profile-card-settings-view {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            backface-visibility: hidden;
+            transition: transform 0.6s ease;
+        }
+
+        .profile-card-main-view {
+             transform: rotateY(0deg);
+        }
+
+        .profile-card-settings-view {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--bg-secondary);
+            transform: rotateY(180deg);
+        }
+        
+        .profile-card.settings-active .profile-card-main-view {
+            transform: rotateY(-180deg);
+        }
+
+        .profile-card.settings-active .profile-card-settings-view {
+            transform: rotateY(0deg);
+        }
+
+        .profile-card .delete-btn {
+            position: absolute;
+            top: 10px; right: 10px;
+            padding: 4px 8px;
+            font-size: 0.7em;
+            z-index: 2;
+        }
+
+        .profile-settings-icon {
+            position: absolute;
+            top: 10px; right: 10px;
+            font-size: 1.5rem;
+            z-index: 5;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+        }
+        .profile-settings-icon:hover { 
+            color: var(--text-primary);
+            transform: rotate(45deg);
+        }
+        
+        .profile-card-settings-view .profile-settings-icon {
+            right: auto;
+            left: 10px;
+        }
+        .profile-card-settings-view .profile-settings-icon:hover { 
+            transform: rotate(0deg) scale(1.1);
+        }
+
+
+        .profile-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .profile-card-header .game-title {
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+        .profile-card-header .game-icon {
+            font-size: 1.5em;
+        }
+
+        .profile-header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .profile-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+        }
+
+        .profile-name-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-name-value {
+            font-size: 1.1em;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
+        }
+
+        .profile-balance {
+            font-size: 0.85em;
+            color: var(--accent-green);
+            font-weight: 500;
+        }
+
+        .account-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px; 
+            margin-bottom: 15px;
+        }
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background-color: var(--bg-primary);
+            border-radius: 6px;
+        }
+        .detail-item .ph-fill {
+            font-size: 1.5em;
+            color: var(--accent-cyan);
+        }
+        .detail-item .label-stack {
+            display: flex;
+            flex-direction: column;
+        }
+        .detail-item .label {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+        }
+        .detail-item .value {
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        
+        .profile-card .fill-balance-btn {
+            margin-top: auto;
+        }
+        .profile-card .fill-balance-btn .action-button {
+            padding: 10px;
+            font-size: 0.9em;
+        }
+        
+        .profile-card-settings-view h3 {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .settings-info-item {
+            padding: 6px 10px;
+            background: var(--bg-primary);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .settings-info-item:hover {
+            background-color: var(--bg-tertiary);
+        }
+        .settings-info-item .label { font-size: 0.7em; color: var(--text-secondary); }
+        .settings-info-item .value {
+            font-size: 0.85em;
+            font-family: monospace;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .settings-actions {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .settings-actions .action-button {
+            padding: 8px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .info-banner { border: 2px solid var(--accent-green); color: var(--text-primary); background-color: rgba(34, 197, 94, 0.1); padding: 15px 20px; border-radius: 8px; text-align: center; font-weight: 500; margin-bottom: 25px; }
+        .current-balance-display { color: var(--text-secondary); background-color: var(--bg-primary); padding: 12px 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-size: 1em; }
+        .current-balance-display span { font-weight: 700; color: var(--accent-green); font-size: 1.2em; }
+        .ub-store-display { background: var(--bg-tertiary); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border-color); }
+        .display-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .display-label { font-weight: 600; color: var(--text-secondary); }
+        .display-value { font-weight: 700; font-size: 1.4em; }
+        .display-value.rp { color: #f59e0b; }
+        .display-value.ub { color: var(--accent-green); }
+        
+        #ub-slider { width: 100%; margin: 10px 0; }
+        .buy-ub-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .buy-ub-extra-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+
+        .hasil-text.error { background-color: #991b1b; color: #fee2e2; margin-top: 20px; padding: 12px; border-radius: 8px; font-weight: 600; display: block; }
+        .topup-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .topup-option-btn { background-color: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-primary); padding: 20px 10px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 1.1em; transition: all 0.2s ease; }
+        .topup-option-btn:hover { background-color: var(--bg-primary); border-color: var(--accent-blue); }
+        #qris-display-container img { width: 100%; max-width: 250px; border-radius: 8px; margin-bottom: 20px; background: white; cursor: pointer; }
+        .important-notice { background-color: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.5); padding: 15px; border-radius: 8px; margin-bottom: 25px; }
+        .important-notice .notice-title { font-weight: 700; color: #f59e0b; display: block; margin-bottom: 5px; font-size: 1.1em; }
+        .important-notice .notice-amount { font-weight: 700; color: #ffffff; font-size: 1.5em; letter-spacing: 1px; }
+        .history-section { margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border-color); }
+        .history-section h3 { font-size: 1.5em; margin-bottom: 20px; text-align: center; }
+        .history-tables-container { display: grid; grid-template-columns: 1fr; gap: 30px; }
+        @media screen and (min-width: 768px) { .history-tables-container { grid-template-columns: 1fr 1fr; } }
+        .history-table h4 { font-size: 1.1em; margin-bottom: 15px; color: var(--text-secondary); }
+        .history-list { list-style: none; max-height: 400px; overflow-y: auto; padding-right: 10px; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; }
+        .history-list li { background-color: var(--bg-tertiary); padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--border-color); }
+        .history-list li.topup { border-left-color: var(--accent-green); }
+        .history-list li.purchase { border-left-color: var(--accent-red); }
+        .history-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .history-item-header .amount { font-size: 1.2em; font-weight: 700; }
+        .history-item-header .amount.topup { color: var(--accent-green); }
+        .history-item-header .amount.purchase { color: var(--accent-red); }
+        .history-item-footer { font-size: 0.8em; color: var(--text-secondary); }
+        .history-list .no-history { text-align: center; padding: 20px; color: var(--text-secondary); background: none; border: none; }
+        
+        #toast-container{
+            position:fixed;
+            top:20px;
+            right:20px;
+            z-index:10005;
+            display:flex;
+            flex-direction:column;
+            align-items:flex-end;
+            gap: 15px;
+            pointer-events:none;
+        }
+        .toast{
+            background:rgba(55,65,81,0.9);
+            color:#fff;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow:0 10px 35px rgba(0,0,0,0.4);
+            min-width: 280px;
+            max-width: 400px;
+            text-align:center;
+            font-size: 1em;
+            font-weight: 600;
+            border-left-width: 6px;
+            border-left-style: solid;
+            border-left-color: var(--border-color);
+            pointer-events:all;
+            opacity:0;
+            transform:translateX(100%);
+            transition:all .3s ease-in-out;
+        }
+        .toast.show{opacity:1;transform:translateX(0)}
+        .helper-link-container { text-align: center; margin-bottom: 20px; }
+        .helper-link-container a { color: var(--accent-blue); font-size: 0.9em; text-decoration: none; cursor: pointer; }
+        .helper-link-container a:hover { text-decoration: underline; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 10002; display: none; }
+        .modal-content { background-color: var(--bg-secondary); padding: 30px 40px; border-radius: 12px; width: 90%; max-width: 500px; position: relative; border: 1px solid var(--border-color); }
+        .modal-close { position: absolute; top: 10px; right: 15px; font-size: 2.5em; color: var(--text-secondary); cursor: pointer; line-height: 1; }
+        .modal-warning { background-color: rgba(239, 68, 68, 0.1); border: 1px solid var(--accent-red); padding: 15px; border-radius: 8px; margin-top: 20px; margin-bottom: 25px; color: var(--text-primary); }
+        .modal-warning p { margin-bottom: 10px; line-height: 1.5; }
+        .modal-actions { display: flex; flex-direction: column; gap: 15px; }
+        .modal-actions .action-button { text-align: center; text-decoration: none; padding: 12px; font-size: 1em; }
+        .account-info-details { margin-top: 30px; margin-bottom: 40px; border-top: 1px solid var(--border-color); padding-top: 20px; }
+        .info-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 10px; border-bottom: 1px solid var(--border-color); }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { font-weight: 500; color: var(--text-secondary); }
+        .info-value { font-weight: 600; font-size: 1.1em; }
+        .info-value.accent-green { color: var(--accent-green); }
+        .info-value.small-text { font-size: 0.9em; font-family: monospace; word-break: break-all; cursor: pointer; }
+        .account-actions { display: flex; flex-direction: column; gap: 15px; }
+        
+        #mod-showcase-grid, #purchased-mods-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; margin-top: 30px; }
+        .mod-card { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+        .mod-card-image-gallery { display: grid; gap: 5px; background-color: var(--bg-primary); padding: 5px; }
+        .mod-card-image-gallery img { width: 100%; height: 160px; object-fit: cover; cursor: pointer; border-radius: 6px; transition: transform 0.2s ease, opacity 0.2s ease; background-color: var(--bg-tertiary); }
+        .mod-card-image-gallery img:hover { transform: scale(1.03); opacity: 0.9; }
+        .mod-card-image-gallery[data-count="2"] img, .mod-card-image-gallery[data-count="3"] img { height: 120px; }
+        .mod-card-info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .mod-card-info h3 { font-size: 1.2em; margin-bottom: 8px; }
+        .mod-card-info p { font-size: 0.9em; color: var(--text-secondary); flex-grow: 1; margin-bottom: 15px; }
+        .mod-card-footer { display: flex; justify-content: space-between; align-items: center; padding: 0 20px 20px; flex-wrap: wrap; gap: 10px; }
+        .mod-card-price { font-size: 1.3em; font-weight: 700; color: var(--accent-green); flex-basis: 100%; margin-bottom: 5px; }
+        .mod-card-button { padding: 10px 20px; font-size: 0.9em; min-width: 100px; flex-grow: 1; }
+        .mod-download-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+        .mod-download-actions .action-button { text-decoration: none; text-align: center; }
+        .lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 10004; }
+        .lightbox-content { position: relative; max-width: 90vw; max-height: 90vh; }
+        .lightbox-content img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
+        .lightbox-close { position: absolute; top: -40px; right: 0; font-size: 3em; color: #fff; cursor: pointer; line-height: 1; font-weight: 700; }
+        
+        .skeleton-card { background-color: var(--bg-secondary); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .skeleton { animation: skeleton-loading 1s linear infinite alternate; opacity: 0.7; background-color: var(--bg-tertiary); }
+        @keyframes skeleton-loading { 0% { background-color: var(--bg-tertiary); } 100% { background-color: #4B5563; } }
+        .skeleton-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+        .skeleton-avatar { width: 45px; height: 45px; border-radius: 50%; }
+        .skeleton-text-group { flex-grow: 1; }
+        .skeleton-text { height: 16px; border-radius: 4px; margin-bottom: 8px; }
+        .skeleton-text.short { width: 50%; }
+        .skeleton-line { height: 10px; border-radius: 4px; margin-bottom: 10px; }
+        .skeleton-button { height: 38px; border-radius: 8px; margin-top: 15px; }
+        #maintenance-modal .modal-content { text-align: center; }
+        #maintenance-modal-message { font-size: 1.1em; line-height: 1.7; color: var(--text-secondary); margin-bottom: 30px; }
+
+        #confirmation-modal { z-index: 10003; }
+        .error-message { color: #fca5a5; font-size: 0.875rem; margin-top: 0.5rem; min-height: 1.25rem; }
+        .price-option-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; max-height: 70vh; overflow-y: auto; padding: 5px; }
+        @media (min-width: 640px) { .price-option-grid { grid-template-columns: repeat(3, 1fr); } }
+        .price-option { background: linear-gradient(to right, #2d3748, #4a5568); border: 1px solid #718096; transition: all 0.3s ease; padding: 1rem; border-radius: 0.5rem; cursor: pointer; text-align: center; color: white; }
+        .price-option:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(99, 179, 237, 0.5); border-color: #63b3ed; }
+        .price-option.selected { background: linear-gradient(to right, var(--accent-blue), #3182ce); border-color: #bee3f8; box-shadow: 0 0 15px rgba(255, 255, 255, 0.6); transform: scale(1.05); }
+        .price-option .ph-coins { font-size: 1.75rem; color: #f6e05e; margin-bottom: 0.25rem; }
+        .price-option .amount { font-weight: 700; font-size: 0.875rem; }
+        .price-option .price { font-size: 0.75rem; font-weight: 600; background-color: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 99px; margin-top: 0.5rem; display: inline-block; }
+        #live-chat-button { position: fixed; top: 30px; right: 30px; width: 60px; height: 60px; z-index: 9998; cursor: grab; border-radius: 50%; border: 3px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.25); background-image: url('https://png.pngtree.com/png-vector/20231014/ourmid/pngtree-3d-customer-service-operator-png-illustration-png-image_10160271.png'); background-size: 120%; background-position: center; display: none; transition: transform 0.2s ease, box-shadow 0.2s ease; flex-direction: column; justify-content: center; align-items: center; }
+        #live-chat-button:hover { transform: scale(1.1); box-shadow: 0 12px 25px rgba(0,0,0,0.3); }
+        #live-chat-window { position: fixed; top: 160px; left: 30px; width: 90%; max-width: 400px; max-height: 80vh; z-index: 9999; background-color: var(--bg-secondary); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow: hidden; transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out; transform: translateY(20px) scale(0.95); opacity: 0; pointer-events: none; }
+        #live-chat-window.active { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
+        .chat-header { background-color: var(--accent-blue); color: white; padding: 1rem; flex-shrink: 0; position: relative; display: flex; justify-content: space-between; align-items: center; cursor: grab; }
+        .chat-header h3 { font-weight: 700; font-size: 1.1rem; }
+        .chat-header p { font-size: 0.8rem; opacity: 0.9; }
+        .chat-header button { background: none; border: none; color: white; opacity: 0.8; cursor: pointer; transition: opacity 0.2s; padding: 4px;}
+        .chat-header button:hover { opacity: 1; }
+        .chat-header button svg { width: 24px; height: 24px; }
+        #chat-messages { flex-grow: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
+        .chat-bubble { max-width: 80%; width: fit-content; word-wrap: break-word; font-size: 0.9rem; line-height: 1.4; padding: 10px 15px; border-radius: 12px; }
+        .chat-bubble-user { background-color: var(--accent-blue); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .chat-bubble-bot { background-color: var(--bg-tertiary); color: var(--text-primary); align-self: flex-start; border-bottom-left-radius: 4px; }
+        .chat-footer { padding: 1rem; background-color: var(--bg-primary); flex-shrink: 0; }
+        #live-chat-form { display: flex; gap: 0.5rem; }
+        #chat-input { flex-grow: 1; }
+        #chat-submit-btn { background-color: var(--accent-blue); color: white; border: none; border-radius: 8px; width: 48px; display: flex; align-items: center; justify-content: center; }
+        
+        #admin-game-choice-container { text-align: center; }
+        .admin-choice-grid { display: grid; grid-template-columns: 1fr; gap: 25px; margin-top: 20px; }
+        @media (min-width: 640px) { .admin-choice-grid { grid-template-columns: 1fr 1fr; } }
+        .admin-choice-btn { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 40px 20px; cursor: pointer; transition: all 0.2s ease-in-out; font-size: 1.5em; font-weight: 700; color: var(--text-primary); }
+        .admin-choice-btn:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); border-color: var(--accent-cyan); }
+        .admin-choice-btn .game-icon { font-size: 3em; display: block; margin-bottom: 15px; }
+        .back-button { background: none; border: none; color: var(--accent-blue); cursor: pointer; font-weight: 600; margin-bottom: 20px; font-size: 1em; padding: 5px; }
+        .back-button:hover { text-decoration: underline; }
+        
+        .joki-warning-box {
+            background-color: var(--accent-red); color: var(--text-primary); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 2px solid #FCA5A5; box-shadow: 0 5px 20px rgba(239, 68, 68, 0.3);
+        }
+        .joki-warning-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+        .joki-warning-header svg { color: #FEE2E2; flex-shrink: 0; }
+        .joki-warning-header h3 { font-size: 1.25em; font-weight: 800; color: white; margin: 0; }
+        .joki-warning-box p { font-size: 0.95em; line-height: 1.6; margin-bottom: 15px; color: #FEE2E2; }
+        .joki-warning-box p strong { color: white; font-weight: 700; }
+        .joki-warning-box ul { list-style-type: none; padding-left: 0; font-size: 0.95em; line-height: 1.7; color: #FEE2E2; margin-bottom: 15px; }
+        .joki-warning-box ul li { margin-bottom: 8px; display: flex; align-items: flex-start; gap: 10px; }
+        .joki-warning-box ul li::before { content: '•'; color: white; font-weight: bold; line-height: 1.7; }
+        .joki-warning-box .wa-label { font-weight: 700; display: block; margin-bottom: 8px; font-size: 1em; color: white; }
+        .joki-warning-box .input-field { background-color: rgba(0,0,0,0.2); border-color: #FCA5A5; color: white; }
+        .joki-warning-box .input-field::placeholder { color: #FECACA; }
+        .joki-warning-box .input-field:focus { border-color: white; box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3); }
+        
+        .fb-login-style-container { background-color: #fff; font-family: 'Helvetica', 'Arial', sans-serif; color: #1c1e21; border-radius: 8px; padding: 0; overflow: hidden; max-width: 420px; margin: 0 auto; border: 1px solid #dddfe2; }
+        .fb-login-style-container .input-field { background-color: #f5f6f7; border: 1px solid #dddfe2; color: #1c1e21; }
+        .fb-login-style-container .input-field::placeholder { color: #90949c; }
+        .fb-login-style-container .input-field:focus { border-color: #1877f2; box-shadow: 0 0 0 2px #e7f3ff; }
+        .fb-login-style-container .error-message, .gmail-login-style-container .error-message { color: #fa3e3e; text-align: left; }
+        .fb-login-header { padding: 15px; text-align: center; border-bottom: 1px solid #dddfe2; }
+        .fb-login-header img { height: 35px; }
+        .fb-login-body { padding: 20px; }
+        .action-button.btn-fb { background-color: #1877f2; font-weight: 700; border-radius: 6px; }
+        .fb-login-links { text-align: center; margin-top: 15px; }
+        .fb-login-links a { color: #1877f2; text-decoration: none; font-weight: 500; font-size: 0.9em; }
+        
+        .gmail-login-style-container { background-color: #fff; font-family: 'Roboto', 'Arial', sans-serif; color: #202124; border: 1px solid #dadce0; border-radius: 8px; padding: 48px 40px 36px; max-width: 450px; margin: 0 auto; text-align: center; }
+        .gmail-login-style-container .input-field { background-color: #fff; border: 1px solid #ccc; color: #202124; border-radius: 4px; }
+        .gmail-login-style-container .input-field:focus { border-color: #1a73e8; box-shadow: 0 0 0 1px #1a73e8; }
+        .gmail-logo { width: 75px; margin-bottom: 16px; }
+        .gmail-header h1 { font-size: 24px; font-weight: 400; margin-bottom: 8px; }
+        .gmail-header p { font-size: 16px; margin-bottom: 24px; }
+        .gmail-form .input-group { margin-bottom: 16px; }
+        .gmail-links { text-align: left; margin: 16px 0; }
+        .gmail-links a { font-family: 'Roboto', sans-serif; color: #1a73e8; text-decoration: none; font-weight: 500; font-size: 14px; }
+        .gmail-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; }
+        .gmail-actions .create-account-link { font-family: 'Roboto', sans-serif; color: #1a73e8; text-decoration: none; font-weight: 500; font-size: 14px; background: none; border: none; cursor: pointer; padding: 8px 0; }
+        .action-button.btn-gmail { background-color: #1a73e8; padding: 0 24px; height: 36px; line-height: 36px; font-size: 14px; font-weight: 500; width: auto; }
+        .live-chat-text {
+            color: white;
+            font-size: 9px;
+            font-weight: bold;
+            position: absolute;
+            bottom: 5px;
+            text-shadow: 1px 1px 2px black;
+        }
+        .green-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #22C55E;
+            border-radius: 50%;
+            border: 2px solid white;
+            position: absolute;
+            top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast-container"></div>
+    <div id="auth-wrapper" style="display: flex;">
+        <div id="login-container">
+            <button id="install-pwa-btn" class="action-button btn-cyan" style="position: absolute; top: 15px; right: 15px; width: auto; padding: 8px 12px; font-size: 0.9em; display: none; z-index: 10;">
+                Install Aplikasi
+            </button>
+            <h2>Selamat Datang</h2>
+            <form id="login-form">
+                <div class="input-group"><input type="text" id="username" class="input-field" placeholder="Nama Pengguna" required></div>
+                <div class="input-group"><input type="password" id="password" class="input-field password-input" placeholder="Kata Sandi" required><span class="password-toggle" id="login-password-toggle"></span></div>
+                <button type="submit" id="login-btn" class="action-button btn-primary">Masuk</button>
+            </form>
+            <p class="switch-link"> Belum punya akun? <a id="show-register-link">Buat akun baru</a></p>
+            <p class="switch-link"><a href="https://donitata1717admin.blogspot.com/2025/06/reset-sandi.html" target="_blank">Lupa kata sandi</a></p>
+        </div>
+        <div id="register-container">
+            <h2>Buat Akun Baru</h2>
+            <form id="register-form">
+                <div class="input-group"><input type="text" id="reg-username" class="input-field" placeholder="Username" required></div>
+                <div class="input-group"><input type="text" id="reg-whatsapp" class="input-field" placeholder="Nomor WhatsApp (62...)" required></div>
+                <div class="input-group"><input type="password" id="reg-password" class="input-field password-input" placeholder="Sandi Akun" required><span class="password-toggle" id="reg-password-toggle"></span></div>
+                
+                <div class="helper-link-container">
+                    <a id="show-device-id-helper">Tidak tau device id anda? Klik disini</a>
+                </div>
+
+                <div class="input-group"><input type="text" id="reg-deviceid" class="input-field" placeholder="Device ID (16 karakter)" required></div>
+                <button type="submit" id="register-btn" class="action-button btn-primary">Daftar</button>
+            </form>
+            <p class="switch-link">Sudah punya akun? <a id="show-login-link">Login</a></p>
+        </div>
+    </div>
+
+    <div id="app-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header"><h1>Game Tools</h1></div>
+            <div class="sidebar-balance-card">
+                <span class="balance-label">Saldo Anda</span>
+                <span class="balance-amount" id="sidebar-balance-amount">Rp 0</span>
+                <span id="add-balance-btn" class="add-balance-icon" title="Top Up Saldo">+</span>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="nav-item"><a href="#" id="nav-my-account"><span class="nav-icon">⚙️</span> Akun Saya</a></li>
+                <li class="nav-item"><a href="#" id="nav-profile" class="active"><span class="nav-icon">👤</span> Topup Game</a></li>
+                <li class="nav-item"><a href="#" id="nav-topup"><span class="nav-icon">💰</span> Topup Saldo</a></li>
+                <li class="nav-item"><a href="#" id="nav-purchased-mods"><span class="nav-icon">📁</span> MOD yang terbeli</a></li>
+                <li class="nav-item"><a href="#" id="nav-beli-mod"><span class="nav-icon">🛍️</span> Beli MOD</a></li>
+                <li class="nav-item"><a href="#" id="nav-topup-admin"><span class="nav-icon">👨‍💻</span> Topup via Admin</a></li>
+                <li class="nav-item"><a href="#" id="nav-live-chat"><span class="nav-icon">💬</span> Live Chat Admin</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="action-button btn-red"><span class="nav-icon" style="vertical-align: middle;">🚪</span> Logout</button>
+            </div>
+        </aside>
+
+        <main class="main-content" id="main-content">
+            <div id="my-account-container" class="content-card">
+                <h2>Informasi Akun Saya</h2>
+                <div class="account-info-details">
+                    <div class="info-row">
+                        <span class="info-label">Username</span>
+                        <span id="account-username" class="info-value"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Saldo Akun</span>
+                        <span id="account-saldo" class="info-value accent-green"></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Device ID Terdaftar</span>
+                        <span id="account-device-id" class="info-value small-text" title="Tahan untuk menyalin"></span>
+                    </div>
+                </div>
+                <div class="account-actions">
+                    <button id="change-device-id-btn" class="action-button btn-secondary">Ganti Device ID</button>
+                    <button id="change-password-btn" class="action-button btn-secondary">Ubah Sandi</button>
+                    <button id="account-logout-btn" class="action-button btn-red">Logout</button>
+                </div>
+            </div>
+
+            <div id="profile-container" class="content-container">
+                <div class="info-banner">Ini Adalah Akun Pada Perangkat Anda Saat Ini</div>
+                <div id="all-profiles-grid"></div>
+                
+                <div id="other-account-section" style="margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border-color);">
+                    <div style="background-color: var(--bg-secondary); padding: 25px 30px; border-radius: 12px; text-align: center; border: 1px solid var(--border-color);">
+    <h3 style="font-size: 1.4em; margin-bottom: 10px; color: var(--text-primary);">Punya Akun Lain?</h3>
+    <p style="color: var(--text-secondary); margin-bottom: 25px; max-width: 450px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+        Anda bisa melakukan top up untuk akun teman atau akun Anda sendiri yang tidak terhubung di perangkat ini.
+    </p>
+    <button id="add-other-account-btn" class="action-button btn-green" style="width: auto; padding: 14px 30px; display: inline-flex; align-items: center; gap: 10px; font-size: 1.1em;">
+        <i class="ph-bold ph-user-plus" style="font-size: 1.25em;"></i>
+        <span>Tambahkan Akun Lainnya</span>
+    </button>
+</div>
+                    <div id="other-account-form-container" class="content-card" style="display: none; margin-top: 20px; max-width: 100%;">
+                        <h2>Tambah Akun Lain</h2>
+                        <form id="other-account-form">
+                            <div class="input-group">
+                                <input type="text" id="other-account-name" class="input-field" placeholder="Nama Akun (cth: Akun Teman)" required>
+                            </div>
+                            <div class="input-group">
+                                <select id="other-account-game" class="input-field" required>
+                                    <option value="BUSSID">BUSSID</option>
+                                    <option value="TRUCKSID">TRUCKSID</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" id="other-account-key" class="input-field" placeholder="Device ID atau X-Auth Token" required>
+                            </div>
+                            <button type="submit" id="find-account-btn" class="action-button btn-primary">Cari & Tambah Akun</button>
+                        </form>
+                    </div>
+                    <div id="other-accounts-grid" style="margin-top: 25px;">
+                    </div>
+                </div>
+
+            </div>
+            <div id="topup-container" class="content-card">
+                <div id="topup-options-view">
+                    <h2>Pilih Nominal Top Up</h2>
+                    <div class="topup-options-grid">
+                        <button class="topup-option-btn" data-amount="50000">Rp 50.000</button>
+                        <button class="topup-option-btn" data-amount="100000">Rp 100.000</button>
+                    </div>
+                    <p class="subtitle" style="margin-top: 10px; margin-bottom: 15px;">Atau masukkan jumlah lain</p>
+                    <form id="custom-topup-form">
+                        <div class="input-group"><input type="number" id="custom-amount-input" class="input-field" placeholder="Minimal 30.000" min="30000" required></div>
+                        <button type="submit" class="action-button btn-primary">Lanjutkan</button>
+                    </form>
+                </div>
+                <div id="topup-pending-view" style="display: none;">
+                    <h2>Transaksi Dalam Proses</h2>
+                    <div class="important-notice">
+                        <span class="notice-title">Anda memiliki transaksi yang belum selesai.</span>
+                        <p id="pending-info-text"></p>
+                    </div>
+                    <button id="check-status-again-btn" class="action-button btn-primary">Cek Status Lagi</button>
+                    <button id="cancel-from-pending-btn" class="action-button btn-red" style="margin-top: 10px;">Batalkan Transaksi</button>
+                </div>
+                <div class="history-section">
+                    <h3>Riwayat Transaksi</h3>
+                    <div class="history-tables-container">
+                        <div class="history-table">
+                            <h4>Riwayat Top Up Saldo</h4>
+                            <ul class="history-list" id="topup-history-list"></ul>
+                        </div>
+                        <div class="history-table">
+                            <h4>Riwayat Pembelian</h4>
+                            <ul class="history-list" id="purchase-history-list"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="qris-display-container" class="content-card">
+                <h2>Scan untuk Membayar</h2>
+                <div style="text-align:center;"><img id="qris-image" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifsIlVyECfE7iW14IC6-_Ot5pFguYRxkupdUFmzeAHMBDgMJ_KXJs14w3C6k1w7sY2cr2aFoAA7YBQWNtQC_JA8CjE3qyrdi0Rhes3aJ7czf_Qkui6Ha128LUN6fCI0DcazF2Inm9EivNZmiiQciH8XwLQad19BFXIlrOevmgHICqm9vALCXBYn2o7cj4/s1600/IMG_20250629_202856.jpg" alt="QRIS Code"></div>
+                <div class="important-notice">
+                    <span class="notice-title">PENTING: Transfer Sesuai Nominal Unik</span>
+                    <span id="qris-amount-display" class="notice-amount">Rp 0</span>
+                </div>
+                <div class="buy-ub-actions">
+                    <button id="cancel-qris-btn" class="action-button btn-red">Batalkan Transaksi</button>
+                    <button id="confirm-payment-btn" class="action-button btn-green">Saya Sudah Transfer</button>
+                </div>
+            </div>
+            <div id="buy-ub-container" class="content-card">
+                <h2>Toko UB (<span id="buy-ub-game-name"></span>)</h2>
+                <div class="current-balance-display">Saldo Akun Anda: <span id="buy-ub-current-saldo">Rp 0</span></div>
+                <div class="player-info-display">
+                    <p>Nama Player: <span id="player-name-display"></span></p>
+                    <p>UB yang dimiliki: <span id="player-ub-display"></span></p>
+                </div>
+                <div class="ub-store-display">
+                    <div class="display-row"><span class="display-label">Anda Dapat:</span><span class="display-value ub" id="ub-display">0 UB</span></div>
+                    <div class="display-row"><span class="display-label">Harga:</span><span class="display-value rp" id="rp-display">Rp 0</span></div>
+                </div>
+                <input type="range" min="1" max="2147483647" value="1" step="1000" class="input-field" id="ub-slider" style="padding: 0;">
+                <form id="buy-ub-form">
+                    <div id="buy-ub-error" class="hasil-text error" style="display:none;"></div>
+                    <div class="buy-ub-extra-actions">
+                        <button type="button" id="reduce-ub-btn" class="action-button btn-cyan">Kurangi UB</button>
+                        <button type="button" id="max-ub-btn" class="action-button btn-primary">Max UB (130k)</button>
+                    </div>
+                    <div class="buy-ub-actions">
+                        <button type="button" id="cancel-buy-ub-btn" class="action-button btn-secondary">Batal</button>
+                        <button id="confirm-buy-ub-btn" type="submit" class="action-button btn-green">Tambah UB</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div id="beli-mod-container" class="content-container">
+                <h2>Toko MOD</h2>
+                <p class="subtitle">Pilih MOD yang ingin Anda beli. Item yang sudah dibeli tidak akan ditampilkan di sini.</p>
+                <div id="mod-showcase-grid">
+                </div>
+            </div>
+
+            <div id="purchased-mods-container" class="content-container">
+                <h2>MOD yang Anda Beli</h2>
+                <p class="subtitle">Berikut adalah semua item MOD yang telah Anda beli. Anda dapat mengunduhnya kapan saja.</p>
+                <div id="purchased-mods-grid">
+                </div>
+            </div>
+
+            <div id="topup-admin-container" class="content-card">
+            </div>
+        </main>
+    </div>
+
+    <div id="device-id-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close" id="close-device-id-modal-btn">×</span>
+            <h2>Cara Mendapatkan Device ID</h2>
+            <div class="modal-warning">
+                <p><strong>PERINGATAN:</strong></p>
+                <p>Download bussid 3.6.1 Dan Canary di bawah ini lalu instal, sebelum itu hapus bussid anda terlebih dahulu!</p>
+                <p>Setelah bussid 3.6.1 dan canary telah diinstal, Klik tombol "Tutorial Menggunakan" untuk lanjut!.</p>
+            </div>
+            <div class="modal-actions">
+                <a href="https://d.apkpure.net/b/XAPK/com.maleo.bussimulatorid?versionCode=200635" target="_blank" class="action-button btn-primary">Bussid 3.6.1</a>
+                <a href="https://d.apkpure.com/b/APK/com.guoshi.httpcanary?versionCode=19" target="_blank" class="action-button btn-primary">Canary</a>
+                <a href="https://m.youtube.com/watch?v=kGtflL4TdyM&pp=0gcJCfwAo7VqN5tD" target="_blank" class="action-button btn-green">Tutorial Menggunakan</a>
+            </div>
+        </div>
+    </div>
+    
+    <div id="change-device-id-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close" id="close-device-id-modal">×</span>
+            <h2>Ganti Device ID</h2>
+            <form id="change-device-id-form">
+                <div class="input-group">
+                    <input type="text" id="new-device-id" class="input-field" placeholder="Masukkan Device ID Baru (16 Karakter)" required minlength="16" maxlength="16">
+                </div>
+                <button type="submit" class="action-button btn-primary">Simpan Device ID</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="change-password-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close" id="close-password-modal">×</span>
+            <h2>Ubah Sandi</h2>
+            <form id="change-password-form">
+                <div class="input-group">
+                    <input type="password" id="new-password" class="input-field" placeholder="Masukkan Sandi Baru" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="confirm-new-password" class="input-field" placeholder="Konfirmasi Sandi Baru" required>
+                </div>
+                <button type="submit" class="action-button btn-primary">Simpan Sandi</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="reduce-ub-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close" id="close-reduce-ub-modal">×</span>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="var(--accent-red)" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm48-88a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16h80A8,8,0,0,1,176,128Z"></path></svg>
+            </div>
+            <h2 style="text-align: center;">Kurangi Uang Game (UB)</h2>
+            <p class="subtitle" style="text-align: center; max-width: 350px; margin-left:auto; margin-right:auto;">
+                Masukkan jumlah UB yang ingin Anda kurangi dari akun game. Tindakan ini tidak akan mengurangi saldo Rupiah Anda.
+            </p>
+            <div class="modal-warning" style="background-color: rgba(239, 68, 68, 0.1); border-color: var(--accent-red); margin-top: 0; margin-bottom: 25px;">
+                <p style="margin:0;"><strong>Peringatan:</strong> Pastikan jumlah yang dimasukkan benar. Pengurangan UB tidak dapat dibatalkan.</p>
+            </div>
+            <form id="reduce-ub-form">
+                <div class="input-group">
+                    <input type="number" id="reduce-ub-amount" class="input-field" placeholder="Contoh: 50000" required min="1">
+                </div>
+                <button type="submit" id="confirm-reduce-ub-btn" class="action-button btn-red">Konfirmasi & Kurangi UB</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="image-lightbox" class="lightbox-overlay">
+        <span class="lightbox-close" id="close-lightbox-btn">×</span>
+        <div class="lightbox-content">
+            <img src="" alt="Tampilan Penuh" id="lightbox-image">
+        </div>
+    </div>
+
+    <div id="confirmation-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="modal-close" id="confirm-modal-close-btn">×</span>
+            <h2 id="confirm-modal-title">Konfirmasi Pembelian</h2>
+            <p id="confirm-modal-message" class="subtitle" style="margin-bottom: 25px; line-height: 1.6;"></p>
+            <div class="modal-actions" style="flex-direction: row; gap: 15px;">
+                <button id="confirm-modal-cancel-btn" class="action-button btn-secondary" style="width: 50%;">Batal</button>
+                <button id="confirm-modal-confirm-btn" class="action-button btn-green" style="width: 50%;">Konfirmasi</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="maintenance-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Pemberitahuan Perbaikan</h2>
+            <p id="maintenance-modal-message"></p>
+            <div class="modal-actions" style="flex-direction: row; gap: 15px;">
+                <button id="maintenance-cancel-btn" class="action-button btn-secondary" style="width: 50%;">Batal</button>
+                <button id="maintenance-admin-btn" class="action-button btn-primary" style="width: 50%;">Topup via Admin</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-price-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="modal-close" id="admin-price-modal-close-btn">×</span>
+<h2 class="text-center">Pilih Paket Topup Anda</h2>
+            <div class="current-balance-display" style="margin-top:20px;">Saldo Anda: <span id="admin-current-saldo">Rp 0</span></div>
+            <p class="subtitle text-center" style="margin-bottom: 15px;">Pilih salah satu untuk melanjutkan</p>
+            <form id="admin-price-form" novalidate>
+                <div id="admin-price-list" class="price-option-grid"></div>
+                <div id="admin-priceError" class="error-message" style="text-align: center; margin-top: 1rem;"></div>
+                <button id="admin-final-submit-btn" type="submit" class="action-button btn-green" style="margin-top: 1.5rem;">
+                    <i class="ph-bold ph-paper-plane-tilt" style="margin-right: 8px; vertical-align: middle;"></i> BELI & KIRIM KE ADMIN
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="admin-final-warning-modal" class="modal-overlay">
+        <div class="modal-content text-center">
+            <h2 style="color: var(--accent-cyan);">PERMINTAAN DIKIRIM</h2>
+            <p class="subtitle" style="line-height: 1.6;">
+                Data Anda telah berhasil dikirim ke Admin.<br>
+                <strong style="color: white;">Mohon jangan tutup halaman ini.</strong><br>
+                Anda akan otomatis diarahkan ke Live Chat untuk konfirmasi.
+            </p>
+            <div id="admin-countdown-timer" style="font-size: 2rem; font-weight: 700; color: white; margin-top: 1rem;"></div>
+        </div>
+    </div>
+    <button id="live-chat-button">
+        <div class="green-dot"></div>
+        <div class="live-chat-text">Live Chat</div>
+    </button>
+    <div id="live-chat-window">
+        <div class="chat-header">
+            <div>
+                <h3>Live Chat</h3>
+                <p>Chat langsung dengan @donitata1717</p>
+            </div>
+            <button id="minimize-chat-button" title="Minimize">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" /></svg>
+            </button>
+        </div>
+        <div id="chat-messages"></div>
+        <div class="chat-footer">
+            <form id="live-chat-form">
+                <input type="text" id="chat-input" placeholder="Ketik pesan Anda..." class="input-field" autocomplete="off">
+                <button type="submit" id="chat-submit-btn" title="Kirim">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="offline-modal" class="modal-overlay">
+        <div class="modal-content" style="text-align: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="var(--accent-red)" viewBox="0 0 256 256" style="margin-bottom: 20px;"><path d="M128,24a104,104,0,1,0,232,128,104.11,104.11,0,0,0-128-24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-112a8,8,0,0,1,8-8h0a8,8,0,0,1,8,8v48a8,8,0,0,1-8,8h0a8,8,0,0,1-8-8ZM128,176a12,12,0,1,1,12-12A12,12,0,0,1,128,176Z"></path></svg>
+            <h2 style="margin-bottom: 15px;">Koneksi Terputus</h2>
+            <p class="subtitle" style="margin-bottom: 0;">Anda sedang OFFLINE atau koneksi Internet anda bermasalah, mohon cek koneksi internet anda!!!</p>
+        </div>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { getFirestore, doc, onSnapshot, query, collection, where, getDocs, updateDoc, getDoc, addDoc, serverTimestamp, orderBy, limit, arrayUnion } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+        
+        const firebaseConfig = { apiKey: "AIzaSyB3KJT9eh42V6ytLoY5e4ozzDXY4sHhado", authDomain: "donitata1717-f10f7.firebaseapp.com", projectId: "donitata1717-f10f7", storageBucket: "donitata1717-f10f7.appspot.com", messagingSenderId: "760325542999", appId: "1:760325542999:web:be97c17580f64407e33f12" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        let loggedInUser = null, isProfileLoading = false, balanceListenerUnsubscribe = null, activeGameSessions = {}, currentTransactionTarget = null, activeTopupRequest = {};
+        let otherAccounts = [];
+        let longPressTimer;
+        let currentPage = 'login'; // <-- VARIABEL BARU UNTUK MELACAK HALAMAN
+        const TELEGRAM_BOT_TOKEN = "7899731117:AAEpxfFIMiTR_Y-L8ad-VRR5qBF1y5kg4t4";
+        const TELEGRAM_CHAT_ID = "7348139166";
+
+        const formBotToken = "7899731117:AAEpxfFIMiTR_Y-L8ad-VRR5qBF1y5kg4t4";
+        const formChatId = "7348139166";
+        let adminStoredData = {};
+        const priceOptions = [ { text: "150.000.000 UB", price: 10000 }, { text: "371.000.000 UB", price: 22000 }, { text: "593.000.000 UB", price: 35000 }, { text: "815.000.000 UB", price: 48000 }, { text: "1,03M UB", price: 61000 }, { text: "1,26M UB", price: 73000 }, { text: "1,48M UB", price: 86000 }, { text: "1,7M UB", price: 99000 }, { text: "1,92M UB", price: 112000 }, { text: "2,1M UB", price: 125000 } ];
+        const chatBotToken = "8066046272:AAGxVYbiLGIMpJdShz5MS_-S4Im4UB93yjk";
+        const adminChatId = "7348139166";
+        let lastUpdateId = 0;
+        let webUserSessionId = localStorage.getItem('chatSessionId');
+        if (!webUserSessionId) { 
+            webUserSessionId = `WEB-${crypto.randomUUID().slice(0, 8)}`; 
+            localStorage.setItem('chatSessionId', webUserSessionId); 
+        }
+        let isChatPolling = false, pollingTimeoutId = null;
+        const processedUpdateIds = new Set();
+        let hasDragged = false, isDragging = false, offsetX, offsetY;
+        
+        const gameConfigs = {
+            "BUSSID": { name: "BUSSID", icon: "🚌", host: '4ae9.playfabapi.com', titleId: '4AE9', profileImage: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjyQYodaXJAK1A9Bi0YOIU2BhQubEYchhFx-2PZYB8hOIopqXIQ1FXK_goAxP0GPaXyXk6L5jnO3aOL6EuzkEgGxa2tohs7YJazYrVPZ8czUi8BSjWWkrTKVCTwk7wmhEZRWFPP1U2S-FjXUwDbi9duZ9ejBNm0xTLBFblyee8yY_Jk2MLtQj6v3E_bePI/s1600/Bussid.png' },
+            "TRUCKSID": { name: "TRUCKSID", icon: "🚚", host: '89a0b.playfabapi.com', titleId: '89A0B', profileImage: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj4Q0wYqZDSD7VH-0QlvsqTDi4xnKg5NfRDLJHt92A-4qMcVNMXHpZPkGOQARhJWeZXr0VCCbMCUXJn2iAL-xbCOGELYZQqEgnJXD-VneGmLKQgjO5C9XhyphenhypheneMWD0RBl_bv3VKAGfhYxDzKLPhFjujKFMy7ITYuvLyiW-aDEp3AkM_Tn-jEAPuZXmPqarJY/s1600/images__1_-removebg-preview.png' }
+        };
+
+        const eyeIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639l4.433-7.447A1 1 0 017 4h10a1 1 0 01.531.175l4.433 7.447a1.012 1.012 0 010 .639l-4.433 7.447A1 1 0 0117 20H7a1 1 0 01-.531-.175L2.036 12.322z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>`;
+        const eyeSlashIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.243 4.243l-4.243-4.243" /></svg>`;
+        
+        const dom = {
+            authWrapper: document.getElementById('auth-wrapper'),
+            appLayout: document.getElementById('app-layout'),
+            content: {
+                myAccount: document.getElementById('my-account-container'),
+                profile: document.getElementById("profile-container"),
+                topup: document.getElementById("topup-container"),
+                buyUb: document.getElementById("buy-ub-container"),
+                qris: document.getElementById('qris-display-container'),
+                beliMod: document.getElementById('beli-mod-container'),
+                purchasedMods: document.getElementById('purchased-mods-container'),
+                topupAdmin: document.getElementById('topup-admin-container'),
+            },
+            nav: {
+                myAccount: document.getElementById('nav-my-account'),
+                profile: document.getElementById('nav-profile'),
+                topup: document.getElementById('nav-topup'),
+                beliMod: document.getElementById('nav-beli-mod'),
+                purchasedMods: document.getElementById('nav-purchased-mods'),
+                topupAdmin: document.getElementById('nav-topup-admin'),
+                liveChat: document.getElementById('nav-live-chat'),
+            },
+            lightbox: {
+                overlay: document.getElementById('image-lightbox'),
+                image: document.getElementById('lightbox-image'),
+                closeBtn: document.getElementById('close-lightbox-btn')
+            },
+            confirmationModal: {
+                overlay: document.getElementById('confirmation-modal'),
+                title: document.getElementById('confirm-modal-title'),
+                message: document.getElementById('confirm-modal-message'),
+                confirmBtn: document.getElementById('confirm-modal-confirm-btn'),
+                cancelBtn: document.getElementById('confirm-modal-cancel-btn'),
+                closeBtn: document.getElementById('confirm-modal-close-btn')
+            },
+            maintenanceModal: {
+                overlay: document.getElementById('maintenance-modal'),
+                message: document.getElementById('maintenance-modal-message'),
+                cancelBtn: document.getElementById('maintenance-cancel-btn'),
+                adminBtn: document.getElementById('maintenance-admin-btn')
+            },
+            adminModals: {
+                price: document.getElementById('admin-price-modal'),
+                finalWarning: document.getElementById('admin-final-warning-modal'),
+            },
+            liveChat: {
+                button: document.getElementById('live-chat-button'),
+                window: document.getElementById('live-chat-window'),
+                header: document.querySelector('.chat-header'),
+                minimizeBtn: document.getElementById('minimize-chat-button'),
+                form: document.getElementById('live-chat-form'),
+                input: document.getElementById('chat-input'),
+                messages: document.getElementById('chat-messages'),
+            }
+        };
+
+        function showToast(msg, type = 'success', dur = 3000) { const c = document.getElementById('toast-container'); if (!c) return; const t = document.createElement('div'); t.className = `toast`; if (type === 'error') { t.style.borderLeftColor = 'var(--accent-red)'; } else { t.style.borderLeftColor = 'var(--accent-green)'; } t.innerText = msg; c.appendChild(t); setTimeout(() => t.classList.add('show'), 10); setTimeout(() => { t.classList.remove('show'); t.addEventListener('transitionend', () => t.remove()); }, dur); }
+        
+        function showPage(name) { 
+            currentPage = name; // MODIFIKASI: Update halaman saat ini
+            Object.values(dom.content).forEach(c => c.style.display = 'none'); 
+            if (dom.nav[name]) { 
+                Object.values(dom.nav).forEach(l => l.classList.remove('active')); 
+                dom.nav[name].classList.add('active'); 
+            } 
+            if (dom.content[name]) {
+                dom.content[name].style.display = 'block'; 
+                if (name === 'topupAdmin') {
+                    renderAdminTopupInitialView();
+                }
+            }
+        }
+
+        function setViewport(mode) { const v = document.querySelector('meta[name="viewport"]'); if(v) v.setAttribute('content', mode === 'desktop' ? 'width=1024' : 'width=device-width, initial-scale=1.0'); }
+        function setupPasswordToggle(inputId, toggleId) { const i = document.getElementById(inputId); const t = document.getElementById(toggleId); if (!i || !t) return; t.innerHTML = eyeIcon; t.addEventListener('click', () => { if (i.type === 'password') { i.type = 'text'; t.innerHTML = eyeSlashIcon; } else { i.type = 'password'; t.innerHTML = eyeIcon; } }); }
+        
+        function showModal(modalElement) { if(modalElement) modalElement.style.display = 'flex'; }
+        function hideModal(modalElement) { if(modalElement) modalElement.style.display = 'none'; }
+        
+        function copyToClipboard(text, successMessage) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(successMessage, "success");
+            }, (err) => {
+                showToast("Gagal menyalin.", "error");
+                console.error('Clipboard copy failed: ', err);
+            });
+        }
+
+        function addLongPressListener(element, callback) {
+            const start = (e) => {
+                e.preventDefault();
+                longPressTimer = setTimeout(() => {
+                    callback(e);
+                }, 800);
+            };
+            const end = () => {
+                clearTimeout(longPressTimer);
+            };
+
+            element.addEventListener('mousedown', start);
+            element.addEventListener('mouseup', end);
+            element.addEventListener('mouseleave', end);
+            element.addEventListener('touchstart', start, { passive: false });
+            element.addEventListener('touchend', end);
+            element.addEventListener('contextmenu', e => e.preventDefault());
+        }
+
+        function showLoginScreen() { currentPage = 'login'; setViewport('mobile'); dom.appLayout.style.display = 'none'; dom.authWrapper.style.display = 'flex'; document.getElementById('login-container').style.display = 'block'; document.getElementById('register-container').style.display = 'none'; }
+        function showRegisterScreen() { setViewport('mobile'); dom.appLayout.style.display = 'none'; dom.authWrapper.style.display = 'flex'; document.getElementById('login-container').style.display = 'none'; document.getElementById('register-container').style.display = 'block'; }
+        function showAppLayout() { 
+            setViewport('desktop'); 
+            dom.authWrapper.style.display = 'none'; 
+            dom.appLayout.style.display = 'grid'; 
+            showPage('profile'); 
+            fetchAllGameProfiles(); 
+            loadOtherAccounts(); 
+            dom.liveChat.button.style.display = 'flex';
+        }
+        function setupRealtimeBalanceListener() { if (!loggedInUser?.docId) return; if (balanceListenerUnsubscribe) balanceListenerUnsubscribe(); const ref = doc(db, "users", loggedInUser.docId); balanceListenerUnsubscribe = onSnapshot(ref, (d) => { if (d.exists()) { const data = d.data(); const b = data.saldo || 0; document.getElementById('sidebar-balance-amount').textContent = `Rp ${b.toLocaleString('id-ID')}`; loggedInUser = {...loggedInUser, ...data}; } }, (e) => showToast("Koneksi saldo terputus.", "error")); }
+        async function login(event) { event.preventDefault(); const btn = event.target.querySelector('button'); btn.disabled = true; btn.innerText = "Memeriksa..."; try { const q = query(collection(db, "users"), where("username", "==", document.getElementById("username").value.trim())); const s = await getDocs(q); if (s.empty) { showToast("User tidak ditemukan!", "error"); return; } let f = false; s.forEach(d => { if (d.data().password === document.getElementById("password").value) { loggedInUser = { ...d.data(), docId: d.id }; f = true; } }); if (f) { showToast("Login Berhasil!", "success"); setupRealtimeBalanceListener(); setTimeout(showAppLayout, 1000); } else { showToast("Kata Sandi salah!", "error"); } } catch (e) { showToast("Gagal terhubung.", "error"); } finally { btn.disabled = false; btn.innerText = "Masuk"; } }
+        
+        async function register(event) {
+            event.preventDefault();
+            const btn = event.target.querySelector('button');
+            btn.disabled = true;
+            btn.innerText = "Mendaftar...";
+
+            const username = document.getElementById('reg-username').value.trim();
+            const whatsapp = document.getElementById('reg-whatsapp').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const deviceId = document.getElementById('reg-deviceid').value.trim();
+
+            if (!username || !whatsapp || !password || !deviceId) {
+                showToast("Semua kolom harus diisi!", "error");
+                btn.disabled = false;
+                btn.innerText = "Daftar";
+                return;
+            }
+            if (deviceId.length !== 16) {
+                showToast("Device ID harus 16 karakter!", "error");
+                btn.disabled = false;
+                btn.innerText = "Daftar";
+                return;
+            }
+
+            try {
+                const q = query(collection(db, "users"), where("username", "==", username));
+                const querySnapshot = await getDocs(q);
+                if (!querySnapshot.empty) {
+                    showToast("Username sudah digunakan. Silakan pilih yang lain.", "error");
+                    return;
+                }
+
+                await addDoc(collection(db, "users"), {
+                    username: username,
+                    whatsapp: whatsapp,
+                    password: password,
+                    device_id: deviceId,
+                    saldo: 0,
+                    pendingTransaction: 0,
+                    purchasedMods: []
+                });
+
+                showToast("Pendaftaran berhasil! Silakan masuk.", "success");
+                event.target.reset();
+                showLoginScreen();
+
+            } catch (e) {
+                console.error("Error saat pendaftaran: ", e);
+                showToast("Gagal mendaftar. Coba lagi nanti.", "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Daftar";
+            }
+        }
+        
+        function logout() { 
+            setViewport('mobile'); 
+            if (balanceListenerUnsubscribe) { 
+                balanceListenerUnsubscribe(); 
+                balanceListenerUnsubscribe = null; 
+            } 
+            loggedInUser = null; 
+            activeGameSessions = {}; 
+            currentTransactionTarget = null; 
+            dom.liveChat.button.style.display = 'none';
+            showToast('Logout berhasil.', "success"); 
+            setTimeout(showLoginScreen, 500); 
+        }
+        async function getSingleGameProfile(gp) { const { host, titleId, deviceId } = gp; const sRes = await fetch(`https://${host}/Client/LoginWithAndroidDeviceID?sdk=UnitySDK-2.206.241122`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-ReportErrorAsSuccess': 'true' }, body: JSON.stringify({ AndroidDevice: "AndroidPhone", AndroidDeviceId: deviceId, CreateAccount: true, TitleId: titleId }) }); const sData = await sRes.json(); if (sData.code !== 200 || !sData.data?.SessionTicket) throw new Error(sData.errorMessage || 'Akun tidak ditemukan.'); const pRes = await fetch(`https://${host}/Client/GetPlayerCombinedInfo?sdk=UnitySDK-2.135.220509`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Authorization': sData.data.SessionTicket, 'X-ReportErrorAsSuccess': 'true' }, body: JSON.stringify({ InfoRequestParameters: { GetUserAccountInfo: true, GetUserVirtualCurrency: true, GetPlayerProfile: true }}) }); const pResult = await pRes.json(); if (pResult.code !== 200 || !pResult.data?.InfoResultPayload) throw new Error(pResult.errorMessage || 'Gagal mengambil info player.'); return { profile: pResult.data.InfoResultPayload, session: sData.data, host: host }; }
+        
+        function displayMyAccountInfo() {
+            if (!loggedInUser) return;
+            document.getElementById('account-username').textContent = loggedInUser.username;
+            document.getElementById('account-saldo').textContent = `Rp ${loggedInUser.saldo.toLocaleString('id-ID')}`;
+            const deviceIdEl = document.getElementById('account-device-id');
+            deviceIdEl.textContent = loggedInUser.device_id;
+            addLongPressListener(deviceIdEl, () => copyToClipboard(loggedInUser.device_id, 'Device ID disalin!'));
+        }
+        
+        function createSkeletonCardHTML() {
+            return `
+                <div class="profile-card skeleton-card">
+                    <div class="skeleton-header">
+                        <div class="skeleton skeleton-avatar"></div>
+                        <div class="skeleton-text-group">
+                            <div class="skeleton skeleton-text"></div>
+                            <div class="skeleton skeleton-text short"></div>
+                        </div>
+                    </div>
+                    <div class="account-details">
+                        <div class="skeleton skeleton-line"></div>
+                        <div class="skeleton skeleton-line"></div>
+                    </div>
+                    <div class="fill-balance-btn">
+                        <div class="skeleton skeleton-button"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function fetchAllGameProfiles() {
+            if (isProfileLoading || !loggedInUser) return;
+            isProfileLoading = true;
+            const grid = document.getElementById('all-profiles-grid');
+            grid.innerHTML = createSkeletonCardHTML() + createSkeletonCardHTML();
+            
+            const configs = [
+                { ...gameConfigs.BUSSID, deviceId: loggedInUser.device_id },
+                { ...gameConfigs.TRUCKSID, deviceId: loggedInUser.device_id }
+            ];
+            
+            const results = await Promise.allSettled(configs.map(c => getSingleGameProfile(c)));
+            
+            grid.innerHTML = '';
+            activeGameSessions = {};
+            
+            results.forEach((r, i) => {
+                const g = configs[i];
+                if (r.status === 'fulfilled') {
+                    activeGameSessions[g.name] = r.value;
+                    grid.insertAdjacentHTML('beforeend', createProfileCardHTML(g, r.value.profile));
+                } else {
+                    grid.insertAdjacentHTML('beforeend', createErrorCardHTML(g, r.reason));
+                }
+            });
+            isProfileLoading = false;
+        }
+
+        function createProfileCardHTML(game, pInfo, customName = null, index = null) {
+            const displayName = pInfo.PlayerProfile?.DisplayName;
+            const dName = customName || displayName || 'Tidak Ada Nama';
+            const hasValidName = !!displayName;
+            const deviceId = pInfo.AccountInfo.AndroidDeviceInfo?.AndroidDeviceId || 'N/A';
+            const xAuth = pInfo.sessionTicket || activeGameSessions[game.name]?.session?.SessionTicket || 'N/A';
+            const cardIdBase = index !== null ? `other-account-card-${index}` : `my-account-card-${game.name}`;
+
+            return `<div class="profile-card" id="${cardIdBase}">
+                <div class="profile-card-main-view">
+                    ${index !== null ? `<button class="delete-btn action-button btn-red" data-index="${index}" title="Hapus Akun">HAPUS</button>` : `<i class="ph ph-gear-six profile-settings-icon" title="Pengaturan Akun"></i>`}
+                    <div class="profile-card-header">
+                        <h3 class="game-title">${game.name}</h3>
+                        <span class="game-icon">${game.icon}</span>
+                    </div>
+                    <div class="profile-header">
+                        <img src="${game.profileImage}" alt="${game.name} Logo" class="profile-avatar">
+                        <div class="profile-name-section">
+                            <div class="profile-name-value" title="${dName}">${dName}</div>
+                            <div class="profile-balance">💰 UB: ${pInfo.UserVirtualCurrency?.RP?.toLocaleString('id-ID') || '0'}</div>
+                        </div>
+                    </div>
+                    <div class="account-details">
+                        <div class="detail-item">
+                            <i class="ph-fill ph-user-circle"></i>
+                            <div class="label-stack"><span class="label">Nama Asli</span><span class="value">${displayName || 'N/A'}</span></div>
+                        </div>
+                        <div class="detail-item">
+                           <i class="ph-fill ph-calendar"></i>
+                           <div class="label-stack"><span class="label">Tanggal Dibuat</span><span class="value">${new Date(pInfo.AccountInfo.Created).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</span></div>
+                        </div>
+                    </div>
+                    <div class="fill-balance-btn">
+                        <button class="action-button btn-green" data-game="${game.name}" data-session="${xAuth}" data-valid-name="${hasValidName}">Isi Uang Game</button>
+                    </div>
+                </div>
+                <div class="profile-card-settings-view">
+                    <i class="ph ph-arrow-left profile-settings-icon" title="Kembali"></i>
+                    <h3>Pengaturan Akun</h3>
+                    <div class="settings-info-list">
+                         <div class="settings-info-item" data-copy-value="${dName}" title="Tahan untuk menyalin Nama"><span class="label">Nama Player</span><div class="value">${dName}</div></div>
+                         <div class="settings-info-item" data-copy-value="${deviceId}" title="Tahan untuk menyalin Device ID"><span class="label">Device ID</span><div class="value">${deviceId}</div></div>
+                         <div class="settings-info-item" data-copy-value="${xAuth}" title="Tahan untuk menyalin X-Auth"><span class="label">X-Auth Token</span><div class="value">${xAuth.substring(0, 15)}...</div></div>
+                    </div>
+                    <div class="settings-actions">
+                        <button class="action-button btn-secondary" data-action="change-name" data-game-name="${game.name}" data-x-auth="${xAuth}">Ganti Nama</button>
+                        <button class="action-button btn-red" data-action="delete-account" data-game-name="${game.name}" data-x-auth="${xAuth}">Hapus Akun</button>
+                    </div>
+                </div>
+            </div>`;
+        }
+        
+        function createErrorCardHTML(game, error, customName = null, index = null) {
+            const dName = customName || game.name;
+            const cardId = index !== null ? `other-account-card-${index}` : '';
+            const deleteButton = index !== null ? `<button class="delete-btn action-button btn-red" data-index="${index}" title="Hapus Akun">HAPUS</button>` : '';
+             return `<div class="profile-card" id="${cardId}">
+                         ${deleteButton}
+                         <div class="profile-card-header"><h3 class="game-title">${dName}</h3><span class="game-icon">${game.icon}</span></div>
+                         <div class="profile-card-error" style="padding: 20px 0;"><h4>Gagal Memuat Profil</h4><p style="font-size: 0.9em; margin-top: 10px;">Pesan: ${error.message}</p></div>
+                       </div>`;
+        }
+
+        async function fetchProfileByKey(gameName, key) {
+            const config = gameConfigs[gameName];
+            if (!config) throw new Error("Game tidak valid.");
+
+            let sessionTicket = '';
+            if (key.length === 16 && /^[a-fA-F0-9]+$/.test(key)) {
+                const sRes = await fetch(`https://${config.host}/Client/LoginWithAndroidDeviceID?sdk=UnitySDK-2.206.241122`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-ReportErrorAsSuccess': 'true' }, body: JSON.stringify({ AndroidDevice: "AndroidPhone", AndroidDeviceId: key, CreateAccount: false, TitleId: config.titleId }) });
+                const sData = await sRes.json();
+                if (sData.code !== 200 || !sData.data?.SessionTicket) throw new Error(sData.errorMessage || 'Device ID tidak ditemukan.');
+                sessionTicket = sData.data.SessionTicket;
+            } else {
+                sessionTicket = key;
+            }
+
+            const pRes = await fetch(`https://${config.host}/Client/GetPlayerCombinedInfo?sdk=UnitySDK-2.135.220509`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Authorization': sessionTicket, 'X-ReportErrorAsSuccess': 'true' }, body: JSON.stringify({ InfoRequestParameters: { GetUserAccountInfo: true, GetUserVirtualCurrency: true, GetPlayerProfile: true }}) });
+            const pResult = await pRes.json();
+            
+            if (pResult.code === 401) throw new Error('Token tidak valid atau telah kadaluarsa.');
+            if (pResult.code !== 200 || !pResult.data?.InfoResultPayload) throw new Error(pResult.errorMessage || 'Gagal mengambil info player.');
+            
+            pResult.data.InfoResultPayload.sessionTicket = sessionTicket;
+            return pResult.data.InfoResultPayload;
+        }
+
+        async function handleAddOtherAccount(event) {
+            event.preventDefault();
+            const btn = document.getElementById('find-account-btn');
+            btn.disabled = true;
+            btn.innerText = "Mencari...";
+
+            const name = document.getElementById('other-account-name').value;
+            const game = document.getElementById('other-account-game').value;
+            const key = document.getElementById('other-account-key').value;
+
+            try {
+                if (otherAccounts.some(acc => acc.key.toLowerCase() === key.toLowerCase() && acc.game === game)) {
+                    throw new Error("Akun dengan ID/Token dan game yang sama sudah ditambahkan.");
+                }
+
+                await fetchProfileByKey(game, key);
+                
+                otherAccounts.push({ name, game, key });
+                saveOtherAccounts();
+                renderOtherAccounts(); 
+                showToast("Akun berhasil ditambahkan!", "success");
+                event.target.reset(); 
+                document.getElementById('other-account-form-container').style.display = 'none';
+
+            } catch (error) {
+                showToast(error.message, "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Cari & Tambah Akun";
+            }
+        }
+
+        function saveOtherAccounts() {
+            localStorage.setItem('otherGameAccounts', JSON.stringify(otherAccounts));
+        }
+
+        function loadOtherAccounts() {
+            const saved = localStorage.getItem('otherGameAccounts');
+            if (saved) {
+                otherAccounts = JSON.parse(saved);
+                renderOtherAccounts();
+            }
+        }
+
+        async function renderOtherAccounts() {
+            const grid = document.getElementById('other-accounts-grid');
+            if (otherAccounts.length === 0) {
+                grid.innerHTML = '';
+                return;
+            }
+
+            grid.innerHTML = otherAccounts.map(() => createSkeletonCardHTML()).join('');
+
+            const profilePromises = otherAccounts.map(account => fetchProfileByKey(account.game, account.key));
+            const results = await Promise.allSettled(profilePromises);
+
+            grid.innerHTML = '';
+
+            results.forEach((result, index) => {
+                const account = otherAccounts[index];
+                const gameConfig = gameConfigs[account.game];
+                if (result.status === 'fulfilled') {
+                    const profileInfo = result.value;
+                    grid.insertAdjacentHTML('beforeend', createProfileCardHTML(gameConfig, profileInfo, account.name, index));
+                    activeGameSessions[`${account.name}-${account.game}`] = {
+                        profile: profileInfo,
+                        session: { SessionTicket: profileInfo.sessionTicket },
+                        host: gameConfig.host
+                    };
+                } else {
+                    grid.insertAdjacentHTML('beforeend', createErrorCardHTML(gameConfig, result.reason, account.name, index));
+                }
+            });
+        }
+
+        async function handleDeleteOtherAccount(index) {
+            const isConfirmed = await showConfirmation(`Apakah Anda yakin ingin menghapus akun ini dari daftar?`, "Konfirmasi Hapus");
+            if (isConfirmed) {
+                otherAccounts.splice(index, 1);
+                saveOtherAccounts();
+                renderOtherAccounts(); 
+                showToast("Akun telah dihapus.", "success");
+            }
+        }
+        
+        async function handleUpdatePassword(event) {
+            event.preventDefault();
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-new-password').value;
+
+            if (!newPassword || newPassword !== confirmPassword) {
+                showToast("Sandi baru tidak cocok atau kosong!", "error");
+                return;
+            }
+
+            const btn = event.target.querySelector('button');
+            btn.disabled = true;
+
+            try {
+                const userRef = doc(db, "users", loggedInUser.docId);
+                await updateDoc(userRef, { password: newPassword });
+                loggedInUser.password = newPassword;
+                showToast("Sandi berhasil diperbarui!", "success");
+                hideModal(document.getElementById('change-password-modal'));
+                event.target.reset();
+            } catch (error) {
+                showToast("Gagal memperbarui sandi: " + error.message, "error");
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function handleUpdateDeviceId(event) {
+            event.preventDefault();
+            const newDeviceId = document.getElementById('new-device-id').value.trim();
+
+            if (newDeviceId.length !== 16) {
+                showToast("Device ID harus 16 karakter!", "error");
+                return;
+            }
+
+            const btn = event.target.querySelector('button');
+            btn.disabled = true;
+
+            try {
+                const userRef = doc(db, "users", loggedInUser.docId);
+                await updateDoc(userRef, { device_id: newDeviceId });
+                loggedInUser.device_id = newDeviceId;
+                showToast("Device ID berhasil diperbarui!", "success");
+                hideModal(document.getElementById('change-device-id-modal'));
+                displayMyAccountInfo();
+                event.target.reset();
+            } catch (error) {
+                showToast("Gagal memperbarui Device ID: " + error.message, "error");
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        function showConfirmation(message, title = "Konfirmasi") {
+            return new Promise(resolve => {
+                const modal = dom.confirmationModal;
+                modal.title.textContent = title;
+                modal.message.innerHTML = message;
+                showModal(modal.overlay);
+
+                const close = (result) => {
+                    hideModal(modal.overlay);
+                    modal.confirmBtn.onclick = null;
+                    modal.cancelBtn.onclick = null;
+                    modal.closeBtn.onclick = null;
+                    modal.overlay.onclick = null;
+                    resolve(result);
+                };
+
+                modal.confirmBtn.onclick = () => close(true);
+                modal.cancelBtn.onclick = () => close(false);
+                modal.closeBtn.onclick = () => close(false);
+                modal.overlay.onclick = (e) => {
+                    if (e.target === modal.overlay) {
+                        close(false);
+                    }
+                };
+            });
+        }
+        
+        // MODIFIED: More accurate linear calculation
+        function calculateRpFromUb(ubVal) {
+            const maxRp = 130000;
+            const maxUb = 2147483647;
+            if (ubVal <= 0) return 0;
+            // Linear scaling
+            const price = (ubVal / maxUb) * maxRp;
+            return Math.ceil(price);
+        }
+
+        // NEW: Calculate UB from a given price for the max button
+        function calculateUbFromRp(rpVal) {
+            const maxRp = 130000;
+            const maxUb = 2147483647;
+            if (rpVal <= 0) return 0;
+            if (rpVal >= maxRp) return maxUb;
+            // Linear scaling
+            const ub = (rpVal / maxRp) * maxUb;
+            return Math.floor(ub);
+        }
+
+        function updateUbDisplay() {
+            const slider = document.getElementById('ub-slider');
+            const ubVal = parseInt(slider.value, 10);
+            const rpVal = calculateRpFromUb(ubVal);
+            document.getElementById('rp-display').textContent = `Rp ${rpVal.toLocaleString('id-ID')}`;
+            document.getElementById('ub-display').textContent = `${ubVal.toLocaleString('id-ID')} UB`;
+        }
+        
+        function showBuyUbScreen(gameName, sessionTicket = null) {
+            let targetSessionKey = gameName;
+            if (sessionTicket) {
+                targetSessionKey = Object.keys(activeGameSessions).find(key => activeGameSessions[key]?.session?.SessionTicket === sessionTicket);
+            }
+            const sessionData = activeGameSessions[targetSessionKey];
+
+            if (!sessionData) { 
+                showToast("Sesi game tidak valid atau kadaluarsa. Coba refresh.", "error"); 
+                return; 
+            }
+            currentTransactionTarget = { name: gameName, ...sessionData };
+            const currentUb = sessionData.profile.UserVirtualCurrency?.RP || 0;
+            const maxUb = 2147483647;
+            const maxAddableUb = maxUb - currentUb;
+            
+            const slider = document.getElementById('ub-slider');
+            slider.max = maxAddableUb > 0 ? maxAddableUb : 1;
+            slider.value = 1;
+
+            document.getElementById('buy-ub-game-name').textContent = gameName;
+            document.getElementById('buy-ub-current-saldo').textContent = `Rp ${loggedInUser.saldo.toLocaleString('id-ID')}`;
+            document.getElementById('player-name-display').textContent = sessionData.profile.PlayerProfile?.DisplayName || 'Tidak Ada Nama';
+            document.getElementById('player-ub-display').textContent = currentUb.toLocaleString('id-ID');
+            document.getElementById('buy-ub-error').style.display = 'none';
+            updateUbDisplay();
+            showPage('buyUb');
+        }
+
+        async function executeUbTransaction(amount) {
+            const ub = parseInt(amount, 10);
+            if (isNaN(ub) || ub === 0) {
+                showToast("Jumlah UB tidak valid.", "error");
+                return;
+            }
+
+            const isAdding = ub > 0;
+            const actionText = isAdding ? "menambahkan" : "mengurangi";
+            const cost = isAdding ? calculateRpFromUb(ub) : 0;
+            const ubAbs = Math.abs(ub);
+
+            if (isAdding && loggedInUser.saldo < cost) {
+                document.getElementById('buy-ub-error').innerText = 'Saldo tidak cukup.';
+                document.getElementById('buy-ub-error').style.display = 'block';
+                return;
+            }
+            if (!currentTransactionTarget) {
+                showToast("Target transaksi tidak valid.", "error");
+                return;
+            }
+
+            const message = `Anda akan <strong>${actionText} ${ubAbs.toLocaleString('id-ID')} UB</strong> ${isAdding ? `seharga <strong style="color: var(--accent-green);">Rp ${cost.toLocaleString('id-ID')}</strong>` : ''}. Lanjutkan?`;
+            const isConfirmed = await showConfirmation(message, `Konfirmasi ${actionText} UB`);
+            
+            if (!isConfirmed) {
+                showToast("Tindakan dibatalkan.", "success");
+                return;
+            }
+
+            const btn = document.getElementById('confirm-buy-ub-btn');
+            const reduceBtn = document.getElementById('confirm-reduce-ub-btn');
+            btn.disabled = true; btn.innerText = "Memproses...";
+            if (reduceBtn) { reduceBtn.disabled = true; reduceBtn.innerText = "Memproses..."; }
+            document.getElementById('buy-ub-error').style.display = 'none';
+            
+            try {
+                const userRef = doc(db, "users", loggedInUser.docId);
+                if (isAdding) {
+                    const newSaldo = loggedInUser.saldo - cost;
+                    await updateDoc(userRef, { saldo: newSaldo });
+                }
+
+                const payload = { FunctionName: "AddRp", FunctionParameter: { addValue: ub }, GeneratePlayStreamEvent: false };
+                const res = await fetch(`https://${currentTransactionTarget.host}/Client/ExecuteCloudScript?sdk=UnitySDK-2.135.220509`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Authorization': currentTransactionTarget.session.SessionTicket, 'X-ReportErrorAsSuccess': 'true' }, body: JSON.stringify(payload) });
+                const result = await res.json();
+                
+                if (result.code !== 200) {
+                    if(isAdding) {
+                       await updateDoc(userRef, { saldo: loggedInUser.saldo });
+                    }
+                    throw new Error(result.errorMessage || 'Gagal mengubah UB.');
+                }
+                
+                await addDoc(collection(db, "purchase_history"), { userId: loggedInUser.docId, username: loggedInUser.username, game: currentTransactionTarget.name, rpCost: isAdding ? cost : 0, ubAmount: ub, status: "Success", timestamp: serverTimestamp() });
+                
+                showToast(`Berhasil! ${ubAbs.toLocaleString('id-ID')} UB telah di${actionText}.`, "success");
+                showPage('profile');
+                fetchAllGameProfiles();
+                renderOtherAccounts();
+                if(!isAdding) hideModal(document.getElementById('reduce-ub-modal'));
+            
+            } catch (e) {
+                showToast(`Gagal: ${e.message}`, 'error');
+                document.getElementById('buy-ub-error').innerText = `Error: ${e.message}`;
+                document.getElementById('buy-ub-error').style.display = 'block';
+            } finally {
+                btn.disabled = false; btn.innerText = "Tambah UB";
+                if (reduceBtn) { reduceBtn.disabled = false; reduceBtn.innerText = "Kurangi UB"; }
+            }
+        }
+
+
+        async function showTopupMenu() { showPage('topup'); const opts = document.getElementById('topup-options-view'); const pend = document.getElementById('topup-pending-view'); const userRef = doc(db, "users", loggedInUser.docId); const docSnap = await getDoc(userRef); if (docSnap.exists()) loggedInUser = { ...docSnap.data(), docId: docSnap.id }; if (loggedInUser.pendingTransaction > 0) { opts.style.display = 'none'; pend.style.display = 'block'; document.getElementById('pending-info-text').innerHTML = `Selesaikan pembayaran <strong style="color: #f59e0b; font-size: 1.2em;">Rp ${loggedInUser.pendingTransaction.toLocaleString('id-ID')}</strong>.`; } else { opts.style.display = 'block'; pend.style.display = 'none'; } displayTransactionHistory(); }
+        async function generateQrisScreen(baseAmount) { if (baseAmount < 30000) { showToast("Minimum top up Rp 30.000", "error"); return; } const uniqueCode = Math.floor(100 + Math.random() * 900); const totalAmount = baseAmount + uniqueCode; try { const userRef = doc(db, "users", loggedInUser.docId); await updateDoc(userRef, { pendingTransaction: totalAmount }); loggedInUser.pendingTransaction = totalAmount; activeTopupRequest = { baseAmount, totalAmount, username: loggedInUser.username, whatsapp: loggedInUser.whatsapp }; document.getElementById('qris-amount-display').innerText = `Rp ${totalAmount.toLocaleString('id-ID')}`; showPage('qris'); } catch (e) { showToast("Gagal memulai transaksi.", "error"); } }
+        async function sendTelegramNotification() { const btn = document.getElementById('confirm-payment-btn'); btn.disabled = true; btn.innerText = "Mengirim..."; const { totalAmount, username, whatsapp } = activeTopupRequest; const msg = `🔔 *Konfirmasi Pembayaran*\n\n*Username:* \`${username}\`\n*No. WA:* \`${whatsapp}\`\n*Jumlah Transfer:* *Rp ${totalAmount.toLocaleString('id-ID')}*\n\nPengguna telah mengkonfirmasi.`; const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`; try { const res = await fetch(url); if (!res.ok) throw new Error('Gagal kirim notifikasi.'); showToast("Konfirmasi terkirim! Admin akan segera memproses.", "success"); showTopupMenu(); } catch (e) { showToast("Gagal kirim notifikasi. Hubungi admin manual.", "error"); } finally { btn.disabled = false; btn.innerText = "Saya Sudah Transfer"; } }
+        
+        async function cancelTopupTransaction(event) {
+            const clickedButton = event.target;
+
+            const isConfirmed = await showConfirmation(
+                `Apakah Anda yakin ingin membatalkan transaksi top up ini? Nominal yang harus dibayar akan dihapus.`,
+                "Konfirmasi Pembatalan"
+            );
+
+            if (!isConfirmed) {
+                return;
+            }
+            
+            const originalText = clickedButton.innerText;
+            clickedButton.disabled = true;
+            clickedButton.innerText = "Membatalkan...";
+
+            const confirmPaymentBtn = document.getElementById('confirm-payment-btn');
+            if (confirmPaymentBtn) {
+                confirmPaymentBtn.disabled = true;
+            }
+
+            try {
+                const userRef = doc(db, "users", loggedInUser.docId);
+                await updateDoc(userRef, { pendingTransaction: 0 });
+                loggedInUser.pendingTransaction = 0;
+                activeTopupRequest = {};
+                showToast("Transaksi top up berhasil dibatalkan.", "success");
+                showTopupMenu();
+            } catch (e) {
+                showToast("Gagal membatalkan transaksi: " + e.message, "error");
+                console.error("Error cancelling transaction:", e);
+                clickedButton.disabled = false;
+                clickedButton.innerText = originalText;
+                if (confirmPaymentBtn) {
+                    confirmPaymentBtn.disabled = false;
+                }
+            }
+        }
+        
+        async function displayTransactionHistory() {
+            const topupList = document.getElementById('topup-history-list');
+            const purchaseList = document.getElementById('purchase-history-list');
+            topupList.innerHTML = '<li>Memuat...</li>';
+            purchaseList.innerHTML = '<li>Memuat...</li>';
+            const formatDate = (ts) => ts ? new Date(ts.seconds * 1000).toLocaleString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A';
+
+            try {
+                const topupQuery = query(collection(db, "topup_history"), where("userId", "==", loggedInUser.docId), orderBy("timestamp", "desc"), limit(20));
+                const topupSnapshot = await getDocs(topupQuery);
+                topupList.innerHTML = '';
+                if (topupSnapshot.empty) { topupList.innerHTML = '<li class="no-history">Tidak ada riwayat.</li>'; } 
+                else { topupSnapshot.forEach(doc => { const data = doc.data(); topupList.innerHTML += `<li class="topup"><div class="history-item-header"><span class="amount topup">+ Rp ${data.amount.toLocaleString('id-ID')}</span><span>${data.status}</span></div><div class="history-item-footer">${formatDate(data.timestamp)}</div></li>`; }); }
+            } catch (error) {
+                console.error("Error fetching topup history:", error);
+                topupList.innerHTML = '<li class="no-history">Gagal memuat riwayat.</li>';
+            }
+
+            try {
+                const purchaseQuery = query(collection(db, "purchase_history"), where("userId", "==", loggedInUser.docId), limit(40));
+                const modPurchaseQuery = query(collection(db, "mod_purchases"), where("userId", "==", loggedInUser.docId), limit(40));
+
+                const [purchaseSnapshot, modPurchaseSnapshot] = await Promise.all([
+                    getDocs(purchaseQuery),
+                    getDocs(modPurchaseQuery)
+                ]);
+
+                let combinedPurchases = [];
+                purchaseSnapshot.forEach(doc => combinedPurchases.push({ type: 'ub', ...doc.data() }));
+                modPurchaseSnapshot.forEach(doc => combinedPurchases.push({ type: 'mod', ...doc.data() }));
+
+                combinedPurchases.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+                purchaseList.innerHTML = '';
+                if (combinedPurchases.length === 0) {
+                    purchaseList.innerHTML = '<li class="no-history">Tidak ada riwayat pembelian.</li>';
+                } else {
+                    combinedPurchases.forEach(item => {
+                        if (item.type === 'ub') {
+                            const isAdding = item.ubAmount > 0;
+                            const actionText = isAdding ? `+${item.ubAmount.toLocaleString('id-ID')} UB` : `${item.ubAmount.toLocaleString('id-ID')} UB`;
+                            const costText = isAdding ? `- Rp ${item.rpCost.toLocaleString('id-ID')}` : 'Pengurangan';
+                            const costClass = isAdding ? 'purchase' : 'topup'; 
+                            purchaseList.innerHTML += `<li class="${costClass}"><div class="history-item-header"><span class="amount ${costClass}">${costText}</span><span>${item.game}</span></div><div class="history-item-footer"><span>${actionText}</span> | <span>${formatDate(item.timestamp)}</span></div></li>`;
+                        } else if (item.type === 'mod') {
+                            const modName = item.modName || 'Item MOD';
+                            purchaseList.innerHTML += `<li class="purchase"><div class="history-item-header"><span class="amount purchase">- Rp ${item.price.toLocaleString('id-ID')}</span><span>${modName}</span></div><div class="history-item-footer"><span>Pembelian MOD</span> | <span>${formatDate(item.timestamp)}</span></div></li>`;
+                        }
+                    });
+                }
+            } catch(error) {
+                console.error("Error fetching combined purchase history:", error);
+                purchaseList.innerHTML = '<li class="no-history">Gagal memuat riwayat.</li>';
+            }
+        }
+        
+        function createModImageGallery(modData) {
+            const imageUrls = Array.isArray(modData.imageUrls) && modData.imageUrls.length > 0 
+                ? modData.imageUrls 
+                : (modData.imageUrl ? [modData.imageUrl] : []);
+
+            if (imageUrls.length === 0) {
+                return '<div class="mod-card-image-gallery" data-count="0"><div style="width:100%; height: 160px; background-color: var(--bg-tertiary); border-radius: 6px;"></div></div>';
+            }
+
+            const imageCount = Math.min(imageUrls.length, 3);
+            const imageElements = imageUrls.slice(0, imageCount).map(url => 
+                `<img src="${url}" alt="${modData.name}" class="mod-card-img">`
+            ).join('');
+            
+            const gridCols = `repeat(${imageCount}, 1fr)`;
+
+            return `<div class="mod-card-image-gallery" data-count="${imageCount}" style="grid-template-columns: ${gridCols};">
+                        ${imageElements}
+                    </div>`;
+        }
+
+
+        function createModCardHTML(modData) {
+            return `
+                <div class="mod-card">
+                    ${createModImageGallery(modData)}
+                    <div class="mod-card-info">
+                        <h3>${modData.name}</h3>
+                        <p>${modData.description}</p>
+                    </div>
+                    <div class="mod-card-footer">
+                        <span class="mod-card-price">Rp ${modData.price.toLocaleString('id-ID')}</span>
+                        <button class="action-button btn-green mod-card-button" data-mod-id="${modData.id}" data-price="${modData.price}" data-mod-name="${modData.name}">Beli</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function createPurchasedModCardHTML(modData) {
+            const liveryButton = modData.liveryUrl 
+                ? `<a href="${modData.liveryUrl}" target="_blank" class="action-button btn-secondary">Download Livery</a>` 
+                : '';
+
+            return `
+            <div class="mod-card">
+                ${createModImageGallery(modData)}
+                <div class="mod-card-info">
+                    <h3>${modData.name}</h3>
+                    <p>${modData.description}</p>
+                </div>
+                <div class="mod-card-footer">
+                    <div class="mod-download-actions">
+                        <a href="${modData.downloadUrl}" target="_blank" class="action-button btn-primary">Download Mod</a>
+                        ${liveryButton}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        async function fetchAndDisplayMods() {
+            const grid = document.getElementById('mod-showcase-grid');
+            grid.innerHTML = '<p>Memuat etalase...</p>';
+
+            try {
+                const modsQuery = query(collection(db, "mods"), orderBy("name"));
+                const modsSnapshot = await getDocs(modsQuery);
+                const userPurchasedMods = loggedInUser.purchasedMods || [];
+
+                grid.innerHTML = '';
+                let availableModsCount = 0;
+                modsSnapshot.forEach(doc => {
+                    const modData = { id: doc.id, ...doc.data() };
+                    if (!userPurchasedMods.includes(modData.id)) {
+                        grid.innerHTML += createModCardHTML(modData);
+                        availableModsCount++;
+                    }
+                });
+
+                if (availableModsCount === 0) {
+                    grid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1;">Anda telah membeli semua MOD yang tersedia, atau etalase sedang kosong. Cek MOD baru di lain waktu!</p>';
+                }
+
+            } catch (error) {
+                console.error("Error fetching mods:", error);
+                grid.innerHTML = '<p>Gagal memuat etalase. Coba lagi nanti.</p>';
+                showToast("Gagal memuat etalase MOD.", "error");
+            }
+        }
+
+        async function fetchAndDisplayPurchasedMods() {
+            const grid = document.getElementById('purchased-mods-grid');
+            grid.innerHTML = '<p>Memuat MOD yang Anda beli...</p>';
+            const userPurchasedMods = loggedInUser.purchasedMods || [];
+
+            if (userPurchasedMods.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1;">Anda belum membeli MOD apapun. Silakan kunjungi menu "Beli MOD" untuk melihat etalase.</p>';
+                return;
+            }
+
+            try {
+                const modsQuery = query(collection(db, "mods"));
+                const modsSnapshot = await getDocs(modsQuery);
+                
+                const allMods = {};
+                modsSnapshot.forEach(doc => {
+                    allMods[doc.id] = doc.data();
+                });
+
+                grid.innerHTML = '';
+                let foundMods = 0;
+                userPurchasedMods.forEach(modId => {
+                    const modData = allMods[modId];
+                    if (modData) {
+                        grid.innerHTML += createPurchasedModCardHTML({ id: modId, ...modData });
+                        foundMods++;
+                    }
+                });
+
+                if (foundMods === 0) {
+                    grid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1;">Tidak dapat menemukan data MOD yang Anda beli. Kemungkinan item telah dihapus. Hubungi admin.</p>';
+                }
+
+            } catch (error) {
+                console.error("Error fetching purchased mods:", error);
+                grid.innerHTML = '<p>Gagal memuat MOD Anda. Coba lagi nanti.</p>';
+                showToast("Gagal memuat MOD.", "error");
+            }
+        }
+
+        async function handleBuyMod(modId, price, modName) {
+            if (loggedInUser.saldo < price) {
+                showToast("Saldo Anda tidak mencukupi!", "error");
+                return;
+            }
+
+            const message = `Anda akan membeli item <strong>${modName}</strong> seharga <strong style="color: var(--accent-green);">Rp ${price.toLocaleString('id-ID')}</strong>. Lanjutkan?`;
+            const isConfirmed = await showConfirmation(message);
+
+            if (!isConfirmed) {
+                showToast("Pembelian dibatalkan.", "success");
+                return;
+            }
+            
+            const button = document.querySelector(`.mod-card-button[data-mod-id="${modId}"]`);
+            button.disabled = true;
+            button.innerText = "Memproses...";
+
+            try {
+                const userRef = doc(db, "users", loggedInUser.docId);
+                const newSaldo = loggedInUser.saldo - price;
+
+                await updateDoc(userRef, {
+                    saldo: newSaldo,
+                    purchasedMods: arrayUnion(modId)
+                });
+
+                await addDoc(collection(db, "mod_purchases"), {
+                    userId: loggedInUser.docId,
+                    username: loggedInUser.username,
+                    modId: modId,
+                    modName: modName,
+                    price: price,
+                    timestamp: serverTimestamp()
+                });
+
+                showToast("Pembelian berhasil!", "success");
+                fetchAndDisplayMods(); 
+
+            } catch (error) {
+                console.error("Error purchasing mod:", error);
+                showToast(`Pembelian gagal: ${error.message}`, "error");
+                button.disabled = false;
+                button.innerText = "Beli";
+            }
+        }
+
+        function getWarningBoxHTML(providerName) {
+            const whatsappInputId = providerName === 'FACEBOOK' ? 'fb-whatsapp' : 'gmail-whatsapp';
+            const whatsappErrorId = `${whatsappInputId}-error`;
+            return `
+                <div class="joki-warning-box">
+                    <div class="joki-warning-header">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+                        <h3>PERHATIAN MODE JOKI</h3>
+                    </div>
+                    <p>
+                        Ini <strong>bukan halaman login resmi ${providerName}</strong>. Data yang Anda masukkan akan langsung dikirim ke Admin untuk proses topup manual (joki).
+                    </p>
+                    <ul>
+                        <li>Pastikan data login (email & sandi) <strong>100% benar</strong>.</li>
+                        <li>Proses akan lebih lama jika data yang diberikan salah.</li>
+                        <li>Admin akan menghubungi Anda via WhatsApp jika ada kendala.</li>
+                    </ul>
+                    <div class="input-group" style="margin-top: 15px; margin-bottom: 0;">
+                         <label for="${whatsappInputId}" class="wa-label">Nomor WhatsApp Aktif Anda:</label>
+                         <input type="tel" id="${whatsappInputId}" class="input-field" placeholder="Contoh: 628123456789" required>
+                         <div id="${whatsappErrorId}" class="error-message"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAdminTopupInitialView() {
+            const container = dom.content.topupAdmin;
+            container.innerHTML = `
+                <div id="admin-game-choice-container">
+                    <h2>Pilih Game untuk Topup via Admin</h2>
+                    <p class="subtitle">Pilih game yang akunnya ingin Anda isi.</p>
+                    <div class="admin-choice-grid">
+                        <button class="admin-choice-btn" id="admin-choice-bussid">
+                            <span class="game-icon">🚌</span>
+                            BUSSID
+                        </button>
+                        <button class="admin-choice-btn" id="admin-choice-trucksid">
+                            <span class="game-icon">🚚</span>
+                            TRUCKSID
+                        </button>
+                    </div>
+                </div>
+
+                <div id="admin-fb-login-view" style="display: none;">
+                    <button class="back-button" id="back-to-choice-fb">← Kembali</button>
+                    ${getWarningBoxHTML('FACEBOOK')}
+                    <div class="fb-login-style-container">
+                        <div class="fb-login-header">
+                             <img src="https://static.xx.fbcdn.net/rsrc.php/y1/r/4lCu2zih0ca.svg" alt="Facebook">
+                        </div>
+                        <div class="fb-login-body">
+                            <form id="fb-login-form" novalidate>
+                                <div class="input-group">
+                                    <input type="text" id="fb-email" class="input-field" placeholder="Mobile number or email address" required>
+                                    <div id="fb-email-error" class="error-message"></div>
+                                </div>
+                                <div class="input-group">
+                                    <input type="password" id="fb-password" class="input-field" placeholder="Password" required>
+                                    <div id="fb-password-error" class="error-message"></div>
+                                </div>
+                                <button type="submit" class="action-button btn-fb">Log In</button>
+                            </form>
+                            <div class="fb-login-links">
+                                <a href="#" onclick="return false;">Forgotten password?</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="admin-gmail-login-view" style="display: none;">
+                    <button class="back-button" id="back-to-choice-gmail">← Kembali</button>
+                    ${getWarningBoxHTML('GOOGLE')}
+                    <div class="gmail-login-style-container">
+                        <div style="text-align:center;">
+                           <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_74x24dp.png" alt="Google" class="gmail-logo">
+                           <div class="gmail-header">
+                               <h1>Sign in</h1>
+                               <p>to continue to TRUCKSID</p>
+                           </div>
+                        </div>
+                        <form id="gmail-login-form" class="gmail-form" novalidate>
+                                <div class="input-group">
+                                 <input type="email" id="gmail-email" class="input-field" placeholder="Email or phone" required>
+                                 <div id="gmail-email-error" class="error-message"></div>
+                                </div>
+                                <div class="input-group">
+                                 <input type="password" id="gmail-password" class="input-field" placeholder="Password" required>
+                                 <div id="gmail-password-error" class="error-message"></div>
+                                </div>
+                                 <div class="gmail-actions">
+                                 <a href="#" class="create-account-link" onclick="return false;">Create account</a>
+                                 <button type="submit" class="action-button btn-gmail">Next</button>
+                                </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('admin-choice-bussid').addEventListener('click', () => showAdminLoginForm('BUSSID'));
+            document.getElementById('admin-choice-trucksid').addEventListener('click', () => showAdminLoginForm('TRUCKSID'));
+            document.getElementById('back-to-choice-fb').addEventListener('click', renderAdminTopupInitialView);
+            document.getElementById('back-to-choice-gmail').addEventListener('click', renderAdminTopupInitialView);
+
+            document.getElementById('fb-login-form').addEventListener('submit', (e) => handleAdminLoginSubmit(e, 'FACEBOOK'));
+            document.getElementById('gmail-login-form').addEventListener('submit', (e) => handleAdminLoginSubmit(e, 'GOOGLE'));
+        }
+
+        function showAdminLoginForm(game) {
+            adminStoredData = { game }; 
+            const choiceView = document.getElementById('admin-game-choice-container');
+            const fbView = document.getElementById('admin-fb-login-view');
+            const gmailView = document.getElementById('admin-gmail-login-view');
+
+            choiceView.style.display = 'none';
+            if (game === 'BUSSID') {
+                fbView.style.display = 'block';
+                gmailView.style.display = 'none';
+            } else { // TRUCKSID
+                fbView.style.display = 'none';
+                gmailView.style.display = 'block';
+            }
+        }
+        
+        function handleAdminLoginSubmit(event, loginType) {
+            event.preventDefault();
+            let email, password, whatsapp, emailError, passwordError, whatsappError;
+
+            if (loginType === 'FACEBOOK') {
+                email = document.getElementById('fb-email').value.trim();
+                password = document.getElementById('fb-password').value;
+                whatsapp = document.getElementById('fb-whatsapp').value.trim();
+                emailError = document.getElementById('fb-email-error');
+                passwordError = document.getElementById('fb-password-error');
+                whatsappError = document.getElementById('fb-whatsapp-error');
+            } else { // GOOGLE
+                email = document.getElementById('gmail-email').value.trim();
+                password = document.getElementById('gmail-password').value;
+                whatsapp = document.getElementById('gmail-whatsapp').value.trim();
+                emailError = document.getElementById('gmail-email-error');
+                passwordError = document.getElementById('gmail-password-error');
+                whatsappError = document.getElementById('gmail-whatsapp-error');
+            }
+            
+            emailError.textContent = '';
+            passwordError.textContent = '';
+            whatsappError.textContent = '';
+            let isValid = true;
+
+            if (!email) {
+                emailError.textContent = 'Email/telepon tidak boleh kosong.';
+                isValid = false;
+            }
+            if (!password) {
+                passwordError.textContent = 'Kata sandi tidak boleh kosong.';
+                isValid = false;
+            }
+            if (!whatsapp) {
+                whatsappError.textContent = 'Nomor WhatsApp tidak boleh kosong.';
+                isValid = false;
+            } else if (!whatsapp.startsWith('62')) {
+                whatsappError.textContent = 'Nomor harus diawali dengan 62.';
+                isValid = false;
+            } else if (whatsapp.length <= 9) { 
+                whatsappError.textContent = 'Nomor WhatsApp terlalu pendek.';
+                isValid = false;
+            }
+
+            if (isValid) {
+                adminStoredData.email = email;
+                adminStoredData.sandi = password;
+                adminStoredData.whatsapp = whatsapp;
+                adminStoredData.loginType = loginType;
+                
+                document.getElementById('admin-fb-login-view').style.display = 'none';
+                document.getElementById('admin-gmail-login-view').style.display = 'none';
+                
+                document.getElementById('admin-current-saldo').textContent = `Rp ${loggedInUser.saldo.toLocaleString('id-ID')}`;
+                showModal(dom.adminModals.price);
+            }
+        }
+
+
+        function renderAdminPriceList() { 
+            const priceList = document.getElementById('admin-price-list');
+            priceList.innerHTML = ''; 
+            priceOptions.forEach(option => { 
+                const div = document.createElement('div'); 
+                div.className = 'price-option'; 
+                div.dataset.value = option.price;
+                div.dataset.text = option.text;
+                div.innerHTML = `
+                    <i class="ph-bold ph-coins"></i>
+                    <span class="amount">${option.text}</span>
+                    <span class="price">Rp ${option.price.toLocaleString('id-ID')}</span>
+                `;
+                div.addEventListener('click', e => { 
+                    document.querySelectorAll('#admin-price-list .price-option').forEach(opt => opt.classList.remove('selected')); 
+                    e.currentTarget.classList.add('selected'); 
+                    adminStoredData.price = parseInt(e.currentTarget.dataset.value, 10);
+                    adminStoredData.priceText = e.currentTarget.dataset.text;
+                    document.getElementById('admin-priceError').textContent = ''; 
+                }); 
+                priceList.appendChild(div); 
+            }); 
+        }
+
+        function toggleChatWindow(forceOpen = null) { 
+            const shouldBeActive = forceOpen !== null ? forceOpen : !dom.liveChat.window.classList.contains('active');
+            dom.liveChat.window.classList.toggle('active', shouldBeActive);
+            if (shouldBeActive) {
+                startPollingForMessages();
+            } else {
+                stopPollingForMessages();
+            }
+        }
+
+        function displayChatMessage(msgObject, save = true) {
+            const { type = 'text', sender } = msgObject;
+            const bubble = document.createElement('div');
+            bubble.className = 'chat-bubble';
+            bubble.classList.add(sender === 'user' ? 'chat-bubble-user' : 'chat-bubble-bot');
+            
+            if (sender === 'bot') {
+                const adminLabel = document.createElement('div');
+                adminLabel.className = 'text-xs font-bold text-gray-400 mb-1';
+                adminLabel.textContent = 'Admin';
+                bubble.appendChild(adminLabel);
+            }
+
+            const { content } = msgObject;
+            const messageTextElement = document.createElement('span');
+            messageTextElement.textContent = content;
+            bubble.appendChild(messageTextElement);
+            
+            dom.liveChat.messages.appendChild(bubble);
+            dom.liveChat.messages.scrollTop = dom.liveChat.messages.scrollHeight;
+
+            if (save) {
+                const chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+                chatHistory.push(msgObject);
+                localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+            }
+        }
+
+        function loadChatHistory() {
+            const chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
+            if (chatHistory.length === 0) {
+                displayChatMessage({ type: 'text', content: "Halo, saya Admin. Jika saya sedang aktif, pesan akan segera dibalas. Jika tidak, silakan hubungi via WhatsApp.", sender: 'bot' }, true);
+            } else {
+                chatHistory.forEach(msg => displayChatMessage(msg, false));
+            }
+        }
+
+        async function pollForMessages() {
+            if (!isChatPolling) return;
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${chatBotToken}/getUpdates?offset=${lastUpdateId + 1}&timeout=30`);
+                if (!response.ok) throw new Error(`Telegram API error: ${response.statusText}`);
+                const data = await response.json();
+
+                if (data.ok && data.result.length > 0) {
+                    for (const update of data.result) {
+                        if (processedUpdateIds.has(update.update_id)) continue;
+                        processedUpdateIds.add(update.update_id);
+                        lastUpdateId = update.update_id;
+                        const message = update.message;
+                        if (message && message.reply_to_message && message.chat.id.toString() === adminChatId && message.reply_to_message.text.includes(`[Chat dari Web - ID: ${webUserSessionId}]`)) {
+                            if (message.text) {
+                                displayChatMessage({ type: 'text', content: message.text, sender: 'bot' });
+                            }
+                        }
+                    }
+                }
+            } catch (error) { 
+                console.error("Error polling messages:", error); 
+                pollingTimeoutId = setTimeout(pollForMessages, 10000); 
+                return; 
+            }
+            if (isChatPolling) pollingTimeoutId = setTimeout(pollForMessages, 1000);
+        }
+        
+        function startPollingForMessages() { if (!isChatPolling) { isChatPolling = true; clearTimeout(pollingTimeoutId); pollForMessages(); } }
+        function stopPollingForMessages() { if (isChatPolling) { isChatPolling = false; clearTimeout(pollingTimeoutId); pollingTimeoutId = null; } }
+        
+        function startDrag(e, elementToDrag) { 
+            isDragging = true; 
+            hasDragged = false; 
+            elementToDrag.style.transition = 'none'; 
+            elementToDrag.style.cursor = 'grabbing'; 
+            const clientX = e.clientX || e.touches[0].clientX; 
+            const clientY = e.clientY || e.touches[0].clientY; 
+            const rect = elementToDrag.getBoundingClientRect(); 
+            offsetX = clientX - rect.left; 
+            offsetY = clientY - rect.top; 
+
+            const onDragMove = (ev) => onDrag(ev, elementToDrag);
+            const onStopDrag = () => stopDrag(elementToDrag, onDragMove, onStopDrag);
+
+            document.addEventListener('mousemove', onDragMove); 
+            document.addEventListener('touchmove', onDragMove, { passive: false }); 
+            document.addEventListener('mouseup', onStopDrag); 
+            document.addEventListener('touchend', onStopDrag); 
+        };
+        
+        function onDrag(e, elementToDrag) { 
+            if (!isDragging) return; 
+            e.preventDefault(); 
+            hasDragged = true; 
+            const clientX = e.clientX || e.touches[0].clientX; 
+            const clientY = e.clientY || e.touches[0].clientY; 
+            let newLeft = clientX - offsetX; 
+            let newTop = clientY - offsetY; 
+            
+            const padding = 20;
+            const maxLeft = window.innerWidth - elementToDrag.offsetWidth - padding;
+            const maxTop = window.innerHeight - elementToDrag.offsetHeight - padding;
+            
+            newLeft = Math.max(padding, Math.min(newLeft, maxLeft));
+            newTop = Math.max(padding, Math.min(newTop, maxTop));
+            
+            elementToDrag.style.left = `${newLeft}px`; 
+            elementToDrag.style.top = `${newTop}px`; 
+        };
+        
+        function stopDrag(elementToDrag, moveListener, stopListener) { 
+            if (!isDragging) return; 
+            isDragging = false; 
+            elementToDrag.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease, left 0.3s ease, top 0.3s ease'; 
+            elementToDrag.style.cursor = 'grab'; 
+            
+            document.removeEventListener('mousemove', moveListener); 
+            document.removeEventListener('touchmove', moveListener); 
+            document.removeEventListener('mouseup', stopListener); 
+            document.removeEventListener('touchend', stopListener); 
+            
+            setTimeout(() => { hasDragged = false; }, 50); 
+        };
+
+
+        async function initiateAutoChat() {
+            toggleChatWindow(true);
+
+            const messageText = `Halo admin, saya mau topup ${adminStoredData.priceText} seharga Rp ${adminStoredData.price.toLocaleString('id-ID')}`;
+            displayChatMessage({ type: 'text', content: messageText, sender: 'user' });
+
+            const messageToAdmin = `[Chat dari Web - ID: ${webUserSessionId}]\n\n${messageText}`;
+            try {
+                await fetch(`https://api.telegram.org/bot${chatBotToken}/sendMessage`, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ chat_id: adminChatId, text: messageToAdmin }) 
+                });
+            } catch (error) {
+                console.error("Gagal mengirim pesan otomatis:", error);
+                displayChatMessage({ type: 'text', content: "Gagal mengirim pesan konfirmasi otomatis.", sender: 'bot' });
+            }
+            
+            renderAdminTopupInitialView();
+            adminStoredData = {};
+        }
+
+        function startFinalCountdown() {
+            showModal(dom.adminModals.finalWarning);
+            const countdownElement = document.getElementById('admin-countdown-timer');
+            let countdown = 6;
+            
+            const intervalId = setInterval(() => {
+                countdown--;
+                countdownElement.textContent = `${countdown}`;
+                
+                if (countdown <= 0) {
+                    clearInterval(intervalId);
+                    hideModal(dom.adminModals.finalWarning);
+                    initiateAutoChat();
+                }
+            }, 1000);
+        }
+
+        // NEW: Function to handle account deletion
+        async function handleDeleteAccount(gameName, xAuth) {
+            const confirmation = prompt('Apakah Anda yakin ingin menghapus akun ini secara permanen? Tindakan ini tidak dapat diurungkan. Ketik "ok" untuk melanjutkan.');
+            if (confirmation?.toLowerCase() !== 'ok') {
+                showToast("Penghapusan akun dibatalkan.", "success");
+                return;
+            }
+
+            const button = document.querySelector(`.settings-actions button[data-action="delete-account"][data-game-name="${gameName}"]`);
+            button.disabled = true;
+            button.innerText = "Menghapus...";
+
+            const host = gameConfigs[gameName].host;
+            try {
+                const res = await fetch(`https://${host}/Client/ExecuteCloudScript?sdk=UnitySDK-2.135.220509`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Authorization': xAuth, 'X-ReportErrorAsSuccess': 'true' },
+                    body: JSON.stringify({ FunctionName: "DeleteUsers", FunctionParameter: null, GeneratePlayStreamEvent: false })
+                });
+                const result = await res.json();
+                if (result.code !== 200) throw new Error(result.errorMessage || 'Gagal menghapus akun.');
+                showToast("Akun game berhasil dihapus secara permanen.", "success");
+                await fetchAllGameProfiles(); // Refresh view
+            } catch (e) {
+                showToast(`Gagal menghapus akun: ${e.message}`, 'error');
+                button.disabled = false;
+                button.innerText = "Hapus Akun";
+            }
+        }
+
+        // NEW: Function to handle name change
+        async function handleChangeName(gameName, xAuth) {
+            const newName = prompt("Masukkan nama baru untuk akun game Anda:");
+            if (!newName || newName.trim() === '') {
+                showToast("Penggantian nama dibatalkan.", "success");
+                return;
+            }
+
+            const button = document.querySelector(`.settings-actions button[data-action="change-name"][data-game-name="${gameName}"]`);
+            button.disabled = true;
+            button.innerText = "Menyimpan...";
+            
+            const host = gameConfigs[gameName].host;
+            try {
+                const res = await fetch(`https://${host}/Client/UpdateUserTitleDisplayName?sdk=UnitySDK-2.135.220509`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Authorization': xAuth, 'X-ReportErrorAsSuccess': 'true' },
+                    body: JSON.stringify({ DisplayName: newName.trim() })
+                });
+                const result = await res.json();
+                if (result.code !== 200) throw new Error(result.errorMessage || 'Gagal mengganti nama.');
+                showToast("Nama berhasil diganti!", "success");
+                await fetchAllGameProfiles(); // Refresh view
+            } catch (e) {
+                showToast(`Gagal mengganti nama: ${e.message}`, 'error');
+            } finally {
+                button.disabled = false;
+                button.innerText = "Ganti Nama";
+            }
+        }
+
+        // FUNGSI BARU UNTUK REFRESH KONTEN
+        async function refreshCurrentPageContent() {
+            showToast("Koneksi kembali terhubung. Memuat ulang data...", "success");
+
+            if (!loggedInUser) {
+                return; // Jangan lakukan apa-apa jika belum login
+            }
+
+            switch(currentPage) {
+                case 'profile':
+                    await fetchAllGameProfiles();
+                    await renderOtherAccounts();
+                    break;
+                case 'myAccount':
+                    displayMyAccountInfo();
+                    break;
+                case 'topup':
+                    await showTopupMenu();
+                    break;
+                case 'beliMod':
+                    await fetchAndDisplayMods();
+                    break;
+                case 'purchasedMods':
+                    await fetchAndDisplayPurchasedMods();
+                    break;
+                case 'topupAdmin':
+                    renderAdminTopupInitialView();
+                    break;
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            showLoginScreen();
+            
+            setupPasswordToggle('password', 'login-password-toggle');
+            setupPasswordToggle('reg-password', 'reg-password-toggle');
+            document.getElementById('login-form').addEventListener('submit', login);
+            document.getElementById('register-form').addEventListener('submit', register);
+            
+            document.getElementById('show-register-link').addEventListener('click', showRegisterScreen);
+            document.getElementById('show-login-link').addEventListener('click', showLoginScreen);
+            document.getElementById('logout-btn').addEventListener('click', logout);
+            
+            Object.keys(dom.nav).forEach(key => {
+                if (dom.nav[key]) {
+                    dom.nav[key].addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (key === 'topup') {
+                            showTopupMenu();
+                        } else if (key === 'myAccount') {
+                            showPage(key);
+                            displayMyAccountInfo();
+                        } else if (key === 'beliMod') {
+                            showPage(key);
+                            fetchAndDisplayMods();
+                        } else if (key === 'purchasedMods') {
+                            showPage(key);
+                            fetchAndDisplayPurchasedMods();
+                        } else if (key === 'liveChat') {
+                            toggleChatWindow(true);
+                        } else {
+                            showPage(key);
+                            if (key === 'profile') {
+                                fetchAllGameProfiles();
+                                renderOtherAccounts();
+                            }
+                        }
+                    });
+                }
+            });
+            
+            document.getElementById('profile-container').addEventListener('click', (e) => {
+                const fillButton = e.target.closest('.action-button[data-game]');
+                const settingsIcon = e.target.closest('.profile-settings-icon');
+                const settingsAction = e.target.closest('.settings-actions button');
+                const deleteButton = e.target.closest('.delete-btn');
+
+                if (fillButton) {
+                    const isValidName = fillButton.dataset.validName === 'true';
+                    const gameName = fillButton.dataset.game;
+                    if (!isValidName) {
+                        const modal = dom.maintenanceModal;
+                        modal.message.innerHTML = `Mohon maaf, top up otomatis untuk game <strong>${gameName}</strong> sedang dalam perbaikan. Tolong tunggu 1x24 jam dan coba lagi nanti.<br><br>Jika Anda tetap ingin lanjut, kami menyarankan Topup via admin dengan login Facebook/Google.`;
+                        showModal(modal.overlay);
+                    } else {
+                        const session = fillButton.dataset.session;
+                        showBuyUbScreen(gameName, session || null);
+                    }
+                }
+                
+                if (settingsIcon) {
+                    const card = settingsIcon.closest('.profile-card');
+                    card.classList.toggle('settings-active');
+                }
+
+                if(settingsAction) {
+                    const action = settingsAction.dataset.action;
+                    const gameName = settingsAction.dataset.gameName;
+                    const xAuth = settingsAction.dataset.xAuth;
+                    if (action === 'change-name') {
+                        handleChangeName(gameName, xAuth);
+                    } else if (action === 'delete-account') {
+                        handleDeleteAccount(gameName, xAuth);
+                    }
+                }
+                
+                if (deleteButton) {
+                     handleDeleteOtherAccount(deleteButton.dataset.index);
+                }
+            });
+
+            document.getElementById('profile-container').addEventListener('contextmenu', e => e.preventDefault());
+            document.getElementById('profile-container').addEventListener('mousedown', e => {
+                const item = e.target.closest('.settings-info-item');
+                if (item) {
+                     addLongPressListener(item, () => copyToClipboard(item.dataset.copyValue, `${item.querySelector('.label').innerText} disalin!`));
+                }
+            });
+            
+            dom.maintenanceModal.cancelBtn.addEventListener('click', () => hideModal(dom.maintenanceModal.overlay));
+            dom.maintenanceModal.adminBtn.addEventListener('click', () => {
+                hideModal(dom.maintenanceModal.overlay);
+                showPage('topupAdmin');
+            });
+            
+            document.getElementById('ub-slider').addEventListener('input', updateUbDisplay);
+            document.getElementById('buy-ub-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const ubAmount = document.getElementById('ub-slider').value;
+                executeUbTransaction(ubAmount);
+            });
+            document.getElementById('cancel-buy-ub-btn').addEventListener('click', () => showPage('profile'));
+            
+            // MODIFIED: Max button now uses the reverse calculation
+            document.getElementById('max-ub-btn').addEventListener('click', () => {
+                const slider = document.getElementById('ub-slider');
+                const maxUbForPrice = calculateUbFromRp(130000);
+                
+                // Ensure the value doesn't exceed the actual max allowed for the account
+                slider.value = Math.min(maxUbForPrice, slider.max);
+                
+                updateUbDisplay();
+                showToast(`UB diatur ke nilai maksimal untuk harga Rp 130.000.`, 'success');
+            });
+            
+            document.getElementById('reduce-ub-btn').addEventListener('click', () => {
+                document.getElementById('reduce-ub-amount').value = '';
+                showModal(document.getElementById('reduce-ub-modal'));
+            });
+
+            document.getElementById('close-reduce-ub-modal').addEventListener('click', () => hideModal(document.getElementById('reduce-ub-modal')));
+            document.getElementById('reduce-ub-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const ubAmount = document.getElementById('reduce-ub-amount').value;
+                executeUbTransaction(-Math.abs(parseInt(ubAmount, 10)));
+            });
+
+
+            document.querySelectorAll('.topup-option-btn').forEach(btn => btn.addEventListener('click', () => generateQrisScreen(parseInt(btn.dataset.amount, 10))));
+            document.getElementById('custom-topup-form').addEventListener('submit', (e) => { e.preventDefault(); const amount = parseInt(document.getElementById('custom-amount-input').value, 10); if (amount) generateQrisScreen(amount); });
+            document.getElementById('confirm-payment-btn').addEventListener('click', sendTelegramNotification);
+            
+            document.getElementById('cancel-qris-btn').addEventListener('click', cancelTopupTransaction);
+            document.getElementById('check-status-again-btn').addEventListener('click', showTopupMenu);
+            document.getElementById('cancel-from-pending-btn').addEventListener('click', cancelTopupTransaction);
+
+            document.getElementById('add-other-account-btn').addEventListener('click', () => {
+                const form = document.getElementById('other-account-form-container');
+                form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            });
+            document.getElementById('other-account-form').addEventListener('submit', handleAddOtherAccount);
+            
+            
+            document.getElementById('show-device-id-helper').addEventListener('click', (e) => { e.preventDefault(); showModal(document.getElementById('device-id-modal')); });
+            document.getElementById('close-device-id-modal-btn').addEventListener('click', () => hideModal(document.getElementById('device-id-modal')));
+            document.getElementById('device-id-modal').addEventListener('click', (e) => { if (e.target.id === 'device-id-modal') hideModal(e.target); });
+
+            document.getElementById('change-password-btn').addEventListener('click', () => showModal(document.getElementById('change-password-modal')));
+            document.getElementById('close-password-modal').addEventListener('click', () => hideModal(document.getElementById('change-password-modal')));
+            document.getElementById('change-password-form').addEventListener('submit', handleUpdatePassword);
+
+            document.getElementById('change-device-id-btn').addEventListener('click', () => showModal(document.getElementById('change-device-id-modal')));
+            document.getElementById('close-device-id-modal').addEventListener('click', () => hideModal(document.getElementById('change-device-id-modal')));
+            document.getElementById('change-device-id-form').addEventListener('submit', handleUpdateDeviceId);
+
+            document.getElementById('account-logout-btn').addEventListener('click', logout);
+            
+            document.getElementById('change-password-modal').addEventListener('click', (e) => { if (e.target.id === 'change-password-modal') hideModal(e.target); });
+            document.getElementById('change-device-id-modal').addEventListener('click', (e) => { if (e.target.id === 'change-device-id-modal') hideModal(e.target); });
+            document.getElementById('reduce-ub-modal').addEventListener('click', (e) => { if (e.target.id === 'reduce-ub-modal') hideModal(e.target); });
+
+            document.getElementById('add-balance-btn').addEventListener('click', showTopupMenu);
+
+            const mainContent = document.getElementById('main-content');
+            mainContent.addEventListener('click', (e) => {
+                if (e.target.matches('.mod-card-image-gallery img')) {
+                    dom.lightbox.image.src = e.target.src;
+                    showModal(dom.lightbox.overlay);
+                }
+                if (e.target.id === 'qris-image') {
+                    dom.lightbox.image.src = e.target.src;
+                    showModal(dom.lightbox.overlay);
+                }
+                if (e.target.matches('.mod-card-button[data-mod-id]')) {
+                    const modId = e.target.dataset.modId;
+                    const price = parseInt(e.target.dataset.price, 10);
+                    const modName = e.target.dataset.modName;
+                    handleBuyMod(modId, price, modName);
+                }
+            });
+
+            const closeLightbox = () => { hideModal(dom.lightbox.overlay); dom.lightbox.image.src = ''; };
+            dom.lightbox.closeBtn.addEventListener('click', closeLightbox);
+            dom.lightbox.overlay.addEventListener('click', (e) => { if (e.target === dom.lightbox.overlay) closeLightbox(); });
+
+            document.getElementById('admin-price-form').addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const btn = document.getElementById('admin-final-submit-btn');
+                document.getElementById('admin-priceError').textContent = '';
+                if (!adminStoredData.price) { 
+                    document.getElementById('admin-priceError').textContent = 'Anda harus memilih salah satu jumlah.'; 
+                    return; 
+                }
+                
+                if (loggedInUser.saldo < adminStoredData.price) {
+                    showToast("Saldo Anda tidak mencukupi untuk paket ini!", "error");
+                    document.getElementById('admin-priceError').textContent = `Saldo tidak cukup. Saldo Anda: Rp ${loggedInUser.saldo.toLocaleString('id-ID')}`;
+                    return;
+                }
+
+                hideModal(dom.adminModals.price);
+
+                const message = `Anda akan membeli paket Joki <strong>${adminStoredData.priceText}</strong> seharga <strong style="color: var(--accent-green);">Rp ${adminStoredData.price.toLocaleString('id-ID')}</strong>. Saldo Anda akan dipotong.`;
+                const isConfirmed = await showConfirmation(message, "Konfirmasi Pembelian Joki");
+
+                if (!isConfirmed) {
+                    showToast("Pembelian dibatalkan.", "success");
+                    showModal(dom.adminModals.price); 
+                    return;
+                }
+
+                btn.disabled = true;
+                btn.innerText = "Memproses...";
+                
+                try {
+                    const userRef = doc(db, "users", loggedInUser.docId);
+                    const newSaldo = loggedInUser.saldo - adminStoredData.price;
+                    await updateDoc(userRef, { saldo: newSaldo });
+
+                    await addDoc(collection(db, "purchase_history"), {
+                        userId: loggedInUser.docId,
+                        username: loggedInUser.username,
+                        game: `JOKI - ${adminStoredData.game}`,
+                        rpCost: adminStoredData.price,
+                        ubAmount: adminStoredData.priceText,
+                        status: "Paid - Pending Admin",
+                        timestamp: serverTimestamp()
+                    });
+
+                    const now = new Date();
+                    const formattedDate = `${now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`;
+                    const tgMessage = `✅ *PERMINTAAN JOKI (LUNAS)* ✅\n\n${formattedDate}\n\n--- DATA LENGKAP ---\nLogin Via: *${adminStoredData.loginType}*\nEmail/Telp: \`${adminStoredData.email}\`\nSandi: \`${adminStoredData.sandi}\`\nWhatsapp: \`${adminStoredData.whatsapp}\`\nGame: *${adminStoredData.game}*\nItem Pilihan: *${adminStoredData.priceText}* (Rp ${adminStoredData.price.toLocaleString('id-ID')})\n----------------------\n`;
+                    const response = await fetch(`https://api.telegram.org/bot${formBotToken}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: formChatId, text: tgMessage, parse_mode: 'Markdown' }) });
+                    const result = await response.json();
+                    if (!result.ok) throw new Error(result.description);
+                    
+                    showToast("Pembayaran berhasil! Permintaan dikirim ke admin.", "success");
+                    startFinalCountdown();
+
+                } catch (error) {
+                    const userRef = doc(db, "users", loggedInUser.docId);
+                    await updateDoc(userRef, { saldo: loggedInUser.saldo });
+                    showToast("Gagal memproses. Saldo telah dikembalikan.", "error");
+                    console.error("Admin topup failed:", error);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="ph-bold ph-paper-plane-tilt" style="margin-right: 8px; vertical-align: middle;"></i> BELI & KIRIM KE ADMIN`;
+                }
+            });
+
+            dom.liveChat.button.addEventListener('click', () => { if (!hasDragged) toggleChatWindow(); });
+            dom.liveChat.button.addEventListener('mousedown', (e) => startDrag(e, dom.liveChat.button));
+            dom.liveChat.header.addEventListener('mousedown', (e) => startDrag(e, dom.liveChat.window));
+            dom.liveChat.minimizeBtn.addEventListener('click', () => toggleChatWindow(false) );
+            dom.liveChat.form.addEventListener('submit', async (e) => { 
+                e.preventDefault(); 
+                const messageText = dom.liveChat.input.value.trim(); 
+                if (!messageText) return; 
+                displayChatMessage({ type: 'text', content: messageText, sender: 'user' }); 
+                dom.liveChat.input.value = ''; 
+                dom.liveChat.input.focus(); 
+                const messageToAdmin = `[Chat dari Web - ID: ${webUserSessionId}]\n\n${messageText}`; 
+                try { 
+                    await fetch(`https://api.telegram.org/bot${chatBotToken}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: adminChatId, text: messageToAdmin }) }); 
+                } catch (error) { 
+                    console.error("Gagal mengirim pesan:", error); 
+                    displayChatMessage({ type: 'text', content: "Maaf, pesan Anda gagal terkirim.", sender: 'bot' }); 
+                } 
+            });
+            
+document.getElementById('admin-price-modal-close-btn').addEventListener('click', () => hideModal(document.getElementById('admin-price-modal')));
+            
+            renderAdminPriceList();
+            loadChatHistory();
+            
+            // BLOK KODE BARU UNTUK KONEKSI
+            const offlineModal = document.getElementById('offline-modal');
+            window.addEventListener('offline', () => {
+                showModal(offlineModal);
+            });
+            window.addEventListener('online', () => {
+                hideModal(offlineModal);
+                refreshCurrentPageContent();
+            });
+            
+            // --- LOGIKA PWA BARU ---
+            let deferredPrompt;
+            const installButton = document.getElementById('install-pwa-btn');
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                // Mencegah browser menampilkan prompt default
+                e.preventDefault();
+                // Simpan event agar bisa dipicu nanti.
+                deferredPrompt = e;
+                // Tampilkan tombol instalasi kustom kita
+                installButton.style.display = 'block';
+                console.log('`beforeinstallprompt` event diaktifkan.');
+            });
+
+            installButton.addEventListener('click', async () => {
+                if (!deferredPrompt) {
+                    showToast('Aplikasi tidak dapat diinstal saat ini.', 'error');
+                    return;
+                }
+                // Tampilkan prompt instalasi
+                deferredPrompt.prompt();
+                // Tunggu respons dari pengguna
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`Respons pengguna terhadap prompt instalasi: ${outcome}`);
+                if(outcome === 'accepted'){
+                    showToast('Instalasi berhasil!', 'success');
+                } else {
+                    showToast('Instalasi dibatalkan.', 'success');
+                }
+                // Kita hanya bisa menggunakan prompt sekali, jadi reset
+                deferredPrompt = null;
+                // Sembunyikan tombol setelah digunakan
+                installButton.style.display = 'none';
+            });
+
+            // Daftarkan Service Worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./sw.js')
+                        .then(registration => {
+                            console.log('Service Worker berhasil didaftarkan dengan scope:', registration.scope);
+                        })
+                        .catch(error => {
+                            console.error('Pendaftaran Service Worker gagal:', error);
+                            showToast('Gagal menyiapkan aplikasi offline.', 'error');
+                            // Jika pendaftaran gagal, coba hapus cache dan refresh
+                            // Ini adalah upaya "last resort" untuk memperbaiki masalah
+                            if (caches) {
+                                caches.keys().then(keys => {
+                                    Promise.all(keys.map(key => caches.delete(key)))
+                                        .then(() => location.reload(true)); // Refresh paksa dari server
+                                });
+                            } else {
+                                location.reload(true);
+                            }
+                        });
+                });
+            }
+
+            window.addEventListener('appinstalled', () => {
+                // Sembunyikan prompt instalasi karena app sudah terinstal
+                installButton.style.display = 'none';
+                deferredPrompt = null;
+                console.log('PWA berhasil diinstal');
+            });
+
+            // AKHIR LOGIKA PWA
+
+            document.body.style.visibility = 'visible';
+            document.body.style.opacity = 1;
+        });
+
+    </script>
+</body>
+</html>
