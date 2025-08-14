@@ -1,993 +1,474 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang=id>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maleo SHOP</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <style>
-        :root {
-            --bg-primary: #111827; --bg-secondary: #1F2937; --bg-tertiary: #374151;
-            --border-color: #4B5563; --text-primary: #F9FAFB; --text-secondary: #D1D5DB;
-            --accent-blue: #3B82F6; --accent-green: #22C55E; --accent-red: #EF4444;
-            --accent-cyan: #06B6D4; --premium-gold: #FBBF24;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            -webkit-user-select: none;
-            user-select: none;
-            font-size: 12px;
-        }
-
-        #app-layout {
-            display: none;
-            flex-direction: column;
-            min-height: 100vh;
-            width: 100%;
-        }
-
-        #top-navbar {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            padding: 6px 10px;
-            background: var(--bg-primary);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 1001;
-            gap: 8px;
-        }
-
-        .header-top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
-        #top-navbar h1 {
-            font-size: 1.2em;
-            font-weight: 800;
-            color: var(--text-primary);
-            line-height: 1;
-        }
-        
-        .subtitle-brand {
-            display: block;
-            font-size: 0.4em;
-            font-weight: 500;
-            color: var(--text-secondary);
-            margin-top: 2px;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .sidebar-balance-card {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background-color: var(--bg-secondary);
-            padding: 4px 6px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .sidebar-balance-card:hover {
-            border-color: var(--accent-blue);
-        }
-
-        .balance-info {
-            text-align: left;
-        }
-
-        .sidebar-balance-card .balance-label { display: block; font-size: 0.7em; color: var(--text-secondary); line-height: 1.1; }
-        .sidebar-balance-card .balance-amount { display: block; font-size: 0.9em; font-weight: 700; color: var(--accent-green); line-height: 1.2; }
-        .sidebar-balance-card .balance-amount.premium, .sidebar-balance-card .balance-amount.subscription { color: var(--premium-gold); font-size: 0.85em; }
-
-        .add-balance-icon {
-            font-size: 1.3em;
-            color: var(--accent-green);
-            cursor: pointer;
-            transition: transform 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .add-balance-icon:hover { transform: scale(1.1); }
-        
-        #header-my-account-btn, #logout-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 6px !important;
-            font-size: 0.8em !important;
-            line-height: 1;
-            background-color: var(--bg-tertiary);
-            width: 32px;
-            height: 32px;
-        }
-        #header-my-account-btn:hover {
-            background-color: var(--accent-blue);
-        }
-        #logout-btn:hover {
-            background-color: var(--accent-red);
-        }
-        #header-my-account-btn i, #logout-btn i { font-size: 1.3em; }
-        .logout-text { display: none; }
-
-
-        #top-navbar nav {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
-        #top-navbar nav::-webkit-scrollbar { display: none; }
-
-        .sidebar-nav {
-            display: flex;
-            justify-content: space-between;
-            gap: 4px;
-            list-style: none;
-            padding: 0;
-            flex-wrap: nowrap;
-        }
-
-        .nav-item a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 6px 10px;
-            border-radius: 6px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.85em;
-            white-space: nowrap;
-            transition: all 0.3s ease-in-out;
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-        }
-        .nav-item a:hover {
-            color: var(--text-primary);
-            border-color: var(--accent-blue);
-        }
-        .nav-item a.active {
-            background-color: var(--accent-blue);
-            color: white;
-            font-weight: 700;
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
-        }
-        
-        .nav-icon {
-            font-size: 1.3em;
-            transition: all 0.3s ease;
-        }
-
-        .nav-icon-img {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            object-fit: cover;
-            transition: all 0.3s ease;
-        }
-
-        .nav-text {
-            display: none;
-            margin-left: 6px;
-            transition: opacity 0.3s ease-in-out;
-        }
-        
-        .nav-item a.active .nav-text {
-            display: inline;
-        }
-
-
-        .main-content {
-            padding: 10px;
-            min-height: 100vh;
-            background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhI8j1iJeFgIagFemTu0q3_yxUph06s4T6K03apxFf11HmQagnDM-PkaUNlV-VK0k2O-Mj93P4cnVZSWjf6jbmt1imTeAP_woH6aUMEsp9YgyMzCdHNoixyuWtvUf9pmhXlYIvwVt1Tb9CuSFi-Jk6D3pB6-ggMzhKMGkpoJD9ZT-d5T3LcJkW4d_mfGLA/s1600/1750238969835.jpg');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-position: center;
-        }
-
-        .content-container { max-width: 1200px; margin: 0 auto; }
-        .content-card { max-width: 600px; margin: 0 auto; background-color: var(--bg-secondary); padding: 12px 15px; border-radius: 10px; }
-        #auth-wrapper { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; padding: 16px; background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhI8j1iJeFgIagFemTu0q3_yxUph06s4T6K03apxFf11HmQagnDM-PkaUNlV-VK0k2O-Mj93P4cnVZSWjf6jbmt1imTeAP_woH6aUMEsp9YgyMzCdHNoixyuWtvUf9pmhXlYIvwVt1Tb9CuSFi-Jk6D3pB6-ggMzhKMGkpoJD9ZT-d5T3LcJkW4d_mfGLA/s1600/1750238969835.jpg'); background-size: cover; background-position: center; gap: 15px;}
-        #login-container, #register-container, #forgot-password-container { width: 100%; max-width: 400px; background-color: var(--bg-secondary); padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border-color); }
-        #register-container, #forgot-password-container { display: none; }
-        #app-layout, #profile-container, #topup-container, #buy-ub-container, #qris-display-container, #my-account-container, #beli-mod-container, #purchased-mods-container, #topup-admin-container, #subscription-container, #subscription-qris-container { display: none; }
-        h2 { font-size: 1.3em; font-weight: 700; margin-bottom: 8px; color: var(--text-primary); }
-        .subtitle { font-size: 0.8em; color: var(--text-secondary); margin-bottom: 15px; }
-        .input-group { margin-bottom: 8px; position: relative; }
-        .input-field { width: 100%; padding: 9px 12px; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.9em; }
-        .input-field.password-input { padding-right: 40px; }
-        .password-toggle { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer; color: var(--text-secondary); width: 20px; height: 20px; }
-        .input-field:focus { outline: none; border-color: var(--accent-blue); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
-        .action-button { width: 100%; padding: 9px; border-radius: 6px; color: white; font-size: 0.9em; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s ease; }
-        .action-button:hover { opacity: 0.9; transform: translateY(-1px); }
-        .action-button:disabled { background-color: var(--bg-tertiary); cursor: not-allowed; opacity: 0.7; }
-        .btn-green { background-color: var(--accent-green); }
-        .btn-primary { background-color: var(--accent-blue); }
-        .btn-red { background-color: var(--accent-red); }
-        .btn-secondary { background-color: var(--bg-tertiary); }
-        .btn-cyan { background-color: var(--accent-cyan); }
-        .switch-link { margin-top: 12px; font-size: 0.8em; color: var(--text-secondary); text-align: center; }
-        .switch-link a { color: var(--accent-blue); text-decoration: none; font-weight: 600; }
-        .switch-link a:hover { text-decoration: underline; }
-        
-        #other-account-form-container {
-            padding: 8px 12px;
-            max-width: 450px;
-        }
-        #other-account-form-container .subtitle {
-            font-size: 0.7em;
-            margin-bottom: 8px;
-            line-height: 1.3;
-        }
-
-        #all-profiles-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-        }
-        .profile-card { background-color: #2d2e33; border-radius: 8px; border: 1px solid var(--border-color); position: relative; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; perspective: 1000px; display: flex; flex-direction: column; }
-        .profile-card.hidden { display: none; }
-        .profile-card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); }
-        .profile-card-main-view, .profile-card-settings-view { padding: 10px; display: flex; flex-direction: column; backface-visibility: hidden; transition: transform 0.6s ease; width: 100%; flex-grow: 1; }
-        .profile-card-main-view { transform: rotateY(0deg); }
-        .profile-card-settings-view { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--bg-secondary); transform: rotateY(180deg); }
-        .profile-card.settings-active .profile-card-main-view { transform: rotateY(-180deg); }
-        .profile-card.settings-active .profile-card-settings-view { transform: rotateY(0deg); }
-        
-        /* Compact Settings View */
-        .profile-card-settings-view h3 { font-size: 0.75em; margin-bottom: 6px; }
-        .settings-info-item { padding: 1px 5px; margin-bottom: 2px; }
-        .settings-info-item .label { font-size: 0.55em; line-height: 1.1; }
-        .settings-info-item .value { font-size: 0.65em; line-height: 1.1; }
-        .settings-actions { margin-top: 8px; }
-        .settings-actions .action-button { padding: 4px; font-size: 0.65em; }
-
-
-        .player-display-container {
-            margin: 6px 0 8px 0;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .player-name-plate, .player-ub-plate {
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            background-position: center;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 10px;
-            width: 78%;
-            margin: 0 auto;
-            border-radius: 6px;
-        }
-        .player-name-plate {
-            background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiy8bkfRaz2UWiO9tnX8IDy9OJwti__IkaN5CBSsybGTzWG7_sSqWTmOBRj0X3NEQQv1cW1thZcmPSjVcpS2JSamwsCN4_u_QQqzdYa7BhyfM8QwQAsPMVeokL1rUfxRAZx_s_46Gb27M1u40kP55xVpyjBgBcuDGs-CD9t0B4IgnkyS9DS228u_sgdkc4/s1600/IMG_20250812_161453.jpg');
-        }
-        .player-ub-plate {
-            background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhJhoq7BI37iRAjcjRibzR3_-YgzMDy00OkGH_omg-c8FC1K2OmJdgyhiw8ARhhbLa7Bnip1h9_nBk2bdPJ3lhsdjgi9NTL43KQSH8Z4g8pT7RQLnUzdqqZc8Sn1ZZJm_3zJ-WwEhnWGCyW8cIAE_u8HewZspCCvr7l-EHkq8ln3pAXe_MkVVOx-9WA5UM/s1600/IMG_20250812_161504.jpg');
-        }
-        .player-name-text, .player-ub-text {
-            color: #FFFFFF;
-            font-weight: 700;
-            font-size: 0.765em;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            flex-grow: 1;
-            text-align: center;
-        }
-        .plate-icon {
-            font-size: 1.2em;
-            color: white;
-            cursor: pointer;
-            opacity: 0.8;
-            transition: opacity 0.2s, transform 0.2s;
-            flex-shrink: 0;
-        }
-        .plate-icon:hover {
-            opacity: 1;
-            transform: scale(1.1);
-        }
-        .plate-icon-placeholder {
-            width: 1.2em; /* Match icon size to keep text centered */
-            flex-shrink: 0;
-        }
-
-
-        .info-banner { border: 1px solid var(--accent-green); color: var(--text-primary); background-color: rgba(34, 197, 94, 0.1); padding: 10px 12px; border-radius: 6px; text-align: center; font-weight: 500; margin-bottom: 15px; font-size: 0.8em; }
-        .current-balance-display { color: var(--text-secondary); background-color: var(--bg-primary); padding: 8px 10px; border-radius: 6px; margin-bottom: 12px; text-align: center; font-size: 0.9em; }
-        .current-balance-display span { font-weight: 700; color: var(--accent-green); font-size: 1em; }
-        .ub-store-display { background: var(--bg-tertiary); border-radius: 8px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border-color); }
-        .display-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .display-label { font-weight: 600; color: var(--text-secondary); font-size: 0.85em; }
-        .display-value { font-weight: 700; font-size: 1.1em; }
-        .display-value.rp { color: #f59e0b; }
-        .display-value.ub { color: var(--accent-green); }
-        #ub-slider { width: 100%; margin: 6px 0; }
-        .buy-ub-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-        .buy-ub-extra-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .hasil-text.error { background-color: #991b1b; color: #fee2e2; margin-top: 12px; padding: 8px; border-radius: 6px; font-weight: 600; display: block; font-size: 0.85em; }
-        .topup-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .topup-option-btn { background-color: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-primary); padding: 12px 8px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.9em; transition: all 0.2s ease; }
-        .topup-option-btn:hover { background-color: var(--bg-primary); border-color: var(--accent-blue); }
-        #qris-display-container img, #subscription-qris-container img { width: 100%; max-width: 200px; border-radius: 8px; margin-bottom: 12px; background: white; cursor: pointer; }
-        .important-notice { background-color: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.5); padding: 10px; border-radius: 6px; margin-bottom: 15px; }
-        .important-notice .notice-title { font-weight: 700; color: #f59e0b; display: block; margin-bottom: 4px; font-size: 0.9em; }
-        .important-notice .notice-amount { font-weight: 700; color: #ffffff; font-size: 1.2em; letter-spacing: 1px; }
-        .history-section { margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color); }
-        .history-section h3 { font-size: 1.2em; margin-bottom: 12px; text-align: center; }
-        .history-tables-container { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        .history-table h4 { font-size: 0.9em; margin-bottom: 10px; color: var(--text-secondary); }
-        .history-list { list-style: none; max-height: 300px; overflow-y: auto; padding-right: 6px; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px; }
-        .history-list li { background-color: var(--bg-tertiary); padding: 10px; border-radius: 6px; margin-bottom: 6px; border-left: 3px solid var(--border-color); }
-        .history-list li.topup { border-left-color: var(--accent-green); }
-        .history-list li.purchase { border-left-color: var(--accent-red); }
-        .history-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .history-item-header .amount { font-size: 1em; font-weight: 700; }
-        .history-item-header .amount.topup { color: var(--accent-green); }
-        .history-item-header .amount.purchase { color: var(--accent-red); }
-        .history-item-footer { font-size: 0.7em; color: var(--text-secondary); }
-        .history-list .no-history { text-align: center; padding: 12px; color: var(--text-secondary); background: none; border: none; }
-        #toast-container { position: fixed; top: 15px; right: 15px; z-index: 10005; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; pointer-events: none; }
-        .toast { background: rgba(55, 65, 81, 0.9); color: #fff; padding: 10px 15px; border-radius: 6px; box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3); min-width: 220px; max-width: 320px; text-align: center; font-size: 0.9em; font-weight: 600; border-left-width: 4px; border-left-style: solid; border-left-color: var(--border-color); pointer-events: all; opacity: 0; transform: translateX(100%); transition: all .3s ease-in-out; }
-        .toast.show { opacity: 1; transform: translateX(0); }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 10002; display: none; padding: 16px;}
-        .modal-content { background-color: var(--bg-secondary); padding: 20px; border-radius: 10px; width: 100%; max-width: 450px; position: relative; border: 1px solid var(--border-color); }
-        .modal-close { position: absolute; top: 6px; right: 10px; font-size: 2em; color: var(--text-secondary); cursor: pointer; line-height: 1; }
-        .modal-warning { background-color: rgba(239, 68, 68, 0.1); border: 1px solid var(--accent-red); padding: 10px; border-radius: 6px; margin-top: 12px; margin-bottom: 15px; color: var(--text-primary); }
-        .modal-warning p { margin-bottom: 6px; line-height: 1.5; font-size: 0.85em; }
-        .modal-actions { display: flex; flex-direction: column; gap: 10px; }
-        .modal-actions .action-button { text-align: center; text-decoration: none; padding: 8px; font-size: 0.9em; }
-        .account-info-details { margin-top: 20px; margin-bottom: 25px; border-top: 1px solid var(--border-color); padding-top: 12px; }
-        .info-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 6px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; gap: 5px;}
-        .info-row:last-child { border-bottom: none; }
-        .info-label { font-weight: 500; color: var(--text-secondary); font-size: 0.9em; }
-        .info-value { font-weight: 600; font-size: 0.95em; text-align: right; }
-        .info-value.accent-green { color: var(--accent-green); }
-        .info-value.premium, .info-value.subscription { color: var(--premium-gold); }
-        .info-value.small-text { font-size: 0.8em; font-family: monospace; word-break: break-all; cursor: pointer; }
-        .account-actions { display: flex; flex-direction: column; gap: 10px; }
-        #mod-showcase-grid, #purchased-mods-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-top: 20px; }
-        .mod-card { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
-        .mod-card-image-gallery { display: grid; gap: 3px; background-color: var(--bg-primary); padding: 3px; }
-        .mod-card-image-gallery img { width: 100%; height: 120px; object-fit: cover; cursor: pointer; border-radius: 5px; transition: transform 0.2s ease, opacity 0.2s ease; background-color: var(--bg-tertiary); }
-        .mod-card-image-gallery img:hover { transform: scale(1.03); opacity: 0.9; }
-        .mod-card-image-gallery[data-count="2"] img, .mod-card-image-gallery[data-count="3"] img { height: 90px; }
-        .mod-card-info { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; }
-        .mod-card-info h3 { font-size: 1em; margin-bottom: 5px; }
-        .mod-card-info p { font-size: 0.8em; color: var(--text-secondary); flex-grow: 1; margin-bottom: 10px; }
-        .mod-card-footer { display: flex; justify-content: space-between; align-items: center; padding: 0 12px 12px; flex-wrap: wrap; gap: 6px; }
-        .mod-card-price { font-size: 1.1em; font-weight: 700; color: var(--accent-green); flex-basis: 100%; margin-bottom: 4px; }
-        .mod-card-button { padding: 7px 14px; font-size: 0.8em; min-width: 80px; flex-grow: 1; }
-        .mod-download-actions { display: flex; flex-direction: column; gap: 6px; width: 100%; }
-        .mod-download-actions .action-button { text-decoration: none; text-align: center; }
-        .lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 10004; }
-        .lightbox-content { position: relative; max-width: 90vw; max-height: 90vh; }
-        .lightbox-content img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
-        .lightbox-close { position: absolute; top: -35px; right: 0; font-size: 2.5em; color: #fff; cursor: pointer; line-height: 1; font-weight: 700; }
-        .skeleton-card { background-color: var(--bg-secondary); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); }
-        .skeleton { animation: skeleton-loading 1s linear infinite alternate; opacity: 0.7; background-color: var(--bg-tertiary); }
-        @keyframes skeleton-loading { 0% { background-color: var(--bg-tertiary); } 100% { background-color: #4B5563; } }
-        .skeleton-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-        .skeleton-avatar { width: 40px; height: 40px; border-radius: 50%; }
-        .skeleton-text-group { flex-grow: 1; }
-        .skeleton-text { height: 14px; border-radius: 4px; margin-bottom: 6px; }
-        .skeleton-text.short { width: 50%; }
-        .skeleton-line { height: 8px; border-radius: 4px; margin-bottom: 8px; }
-        .skeleton-button { height: 34px; border-radius: 6px; margin-top: 12px; }
-        #maintenance-modal .modal-content { text-align: center; }
-        #maintenance-modal-message { font-size: 1em; line-height: 1.6; color: var(--text-secondary); margin-bottom: 25px; }
-        #confirmation-modal { z-index: 10003; }
-        .error-message { color: #fca5a5; font-size: 0.8rem; margin-top: 0.4rem; min-height: 1.1rem; }
-        .price-option-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; max-height: 70vh; overflow-y: auto; padding: 4px; }
-        .price-option { background: linear-gradient(to right, #2d3748, #4a5568); border: 1px solid #718096; transition: all 0.3s ease; padding: 0.7rem; border-radius: 0.4rem; cursor: pointer; text-align: center; color: white; }
-        .price-option:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(99, 179, 237, 0.4); border-color: #63b3ed; }
-        .price-option.selected { background: linear-gradient(to right, var(--accent-blue), #3182ce); border-color: #bee3f8; box-shadow: 0 0 12px rgba(255, 255, 255, 0.5); transform: scale(1.05); }
-        .price-option .ph-coins { font-size: 1.3rem; color: #f6e05e; margin-bottom: 0.2rem; }
-        .price-option .amount { font-weight: 700; font-size: 0.75rem; }
-        .price-option .price { font-size: 0.65rem; font-weight: 600; background-color: rgba(0, 0, 0, 0.2); padding: 2px 5px; border-radius: 99px; margin-top: 0.3rem; display: inline-block; }
-        #admin-game-choice-container { text-align: center; }
-        .admin-choice-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 15px; }
-        .admin-choice-btn { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; padding: 25px 15px; cursor: pointer; transition: all 0.2s ease-in-out; font-size: 1.2em; font-weight: 700; color: var(--text-primary); }
-        .admin-choice-btn:hover { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); border-color: var(--accent-cyan); }
-        .admin-choice-btn .game-icon { font-size: 2.2em; display: block; margin-bottom: 10px; }
-        .back-button { background: none; border: none; color: var(--accent-blue); cursor: pointer; font-weight: 600; margin-bottom: 12px; font-size: 0.85em; padding: 4px; }
-        .back-button:hover { text-decoration: underline; }
-        .joki-warning-box { background-color: var(--accent-red); color: var(--text-primary); padding: 12px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #FCA5A5; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2); }
-        .joki-warning-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-        .joki-warning-header svg { color: #FEE2E2; flex-shrink: 0; }
-        .joki-warning-header h3 { font-size: 1em; font-weight: 800; color: white; margin: 0; }
-        .joki-warning-box p { font-size: 0.85em; line-height: 1.5; margin-bottom: 10px; color: #FEE2E2; }
-        .joki-warning-box p strong { color: white; font-weight: 700; }
-        .joki-warning-box ul { list-style-type: none; padding-left: 0; font-size: 0.85em; line-height: 1.6; color: #FEE2E2; margin-bottom: 10px; }
-        .joki-warning-box ul li { margin-bottom: 5px; display: flex; align-items: flex-start; gap: 6px; }
-        .joki-warning-box ul li::before { content: '•'; color: white; font-weight: bold; line-height: 1.6; }
-        .joki-warning-box .wa-label { font-weight: 700; display: block; margin-bottom: 5px; font-size: 0.9em; color: white; }
-        .joki-warning-box .input-field { background-color: rgba(0, 0, 0, 0.2); border-color: #FCA5A5; color: white; }
-        .joki-warning-box .input-field::placeholder { color: #FECACA; }
-        .joki-warning-box .input-field:focus { border-color: white; box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2); }
-        .fb-login-style-container { background-color: #fff; font-family: 'Helvetica', 'Arial', sans-serif; color: #1c1e21; border-radius: 8px; padding: 0; overflow: hidden; max-width: 420px; margin: 0 auto; border: 1px solid #dddfe2; }
-        .fb-login-style-container .input-field { background-color: #f5f6f7; border: 1px solid #dddfe2; color: #1c1e21; }
-        .fb-login-style-container .input-field::placeholder { color: #90949c; }
-        .fb-login-style-container .input-field:focus { border-color: #1877f2; box-shadow: 0 0 0 2px #e7f3ff; }
-        .fb-login-style-container .error-message, .gmail-login-style-container .error-message { color: #fa3e3e; text-align: left; }
-        .fb-login-header { padding: 12px; text-align: center; border-bottom: 1px solid #dddfe2; }
-        .fb-login-header img { height: 30px; }
-        .fb-login-body { padding: 15px; }
-        .action-button.btn-fb { background-color: #1877f2; font-weight: 700; border-radius: 6px; }
-        .fb-login-links { text-align: center; margin-top: 12px; }
-        .fb-login-links a { color: #1877f2; text-decoration: none; font-weight: 500; font-size: 0.85em; }
-        .gmail-login-style-container { background-color: #fff; font-family: 'Roboto', 'Arial', sans-serif; color: #202124; border: 1px solid #dadce0; border-radius: 8px; padding: 40px 30px 30px; max-width: 450px; margin: 0 auto; text-align: center; }
-        .gmail-login-style-container .input-field { background-color: #fff; border: 1px solid #ccc; color: #202124; border-radius: 4px; }
-        .gmail-login-style-container .input-field:focus { border-color: #1a73e8; box-shadow: 0 0 0 1px #1a73e8; }
-        .gmail-logo { width: 70px; margin-bottom: 12px; }
-        .gmail-header h1 { font-size: 22px; font-weight: 400; margin-bottom: 6px; }
-        .gmail-header p { font-size: 14px; margin-bottom: 20px; }
-        .gmail-form .input-group { margin-bottom: 12px; }
-        .gmail-links { text-align: left; margin: 12px 0; }
-        .gmail-links a { font-family: 'Roboto', sans-serif; color: #1a73e8; text-decoration: none; font-weight: 500; font-size: 13px; }
-        .gmail-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; }
-        .gmail-actions .create-account-link { font-family: 'Roboto', sans-serif; color: #1a73e8; text-decoration: none; font-weight: 500; font-size: 13px; background: none; border: none; cursor: pointer; padding: 8px 0; }
-        .action-button.btn-gmail { background-color: #1a73e8; padding: 0 20px; height: 32px; line-height: 32px; font-size: 13px; font-weight: 500; width: auto; }
-        #offline-modal .modal-content { text-align: center; }
-        #offline-modal .subtitle { margin-bottom: 0; }
-        #subscription-expired-modal .modal-content { text-align: center; border-color: var(--accent-red); }
-        #subscription-expired-modal .modal-content h2 { color: var(--accent-red); }
-
-        /* Subscription Page Styles */
-        .subscription-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 20px; }
-        .subscription-card { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; text-align: center; transition: all 0.3s ease; display: flex; flex-direction: column;}
-        .subscription-card:hover { transform: translateY(-5px); border-color: var(--accent-blue); }
-        .subscription-card.premium { border-left: 4px solid var(--accent-blue); }
-        .subscription-card.permanent { border-left: 4px solid var(--accent-green); }
-        .subscription-card h3 { font-size: 1.2em; margin-bottom: 10px; color: var(--text-primary); }
-        .subscription-card .sub-price { font-size: 1.8em; font-weight: 800; margin-bottom: 15px; }
-        .subscription-card .promo-price { color: var(--accent-blue); }
-        .subscription-card.permanent .sub-price { color: var(--accent-green); }
-        .subscription-card .original-price { text-decoration: line-through; color: var(--text-secondary); font-size: 0.6em; margin-left: 8px; font-weight: 500; }
-        .subscription-card .sub-price .sub-duration { font-size: 0.5em; font-weight: 500; color: var(--text-secondary); }
-        .subscription-card ul { list-style: none; padding: 0; margin: 20px 0; text-align: left; font-size: 0.9em; flex-grow: 1; }
-        .subscription-card ul li { margin-bottom: 10px; display: flex; align-items: center; gap: 8px; color: var(--text-secondary); }
-        .subscription-card ul li .ph-bold { font-size: 1.2em; }
-        .subscription-card ul li .ph-check-circle { color: var(--accent-green); }
-        .subscription-card .action-button { margin-top: auto; }
-
-        /* Status Modal Styles */
-        #status-modal-content h4 { font-size: 1.1em; color: var(--premium-gold); margin-bottom: 10px; text-align: center; }
-        #status-modal-content p { color: var(--text-secondary); text-align: center; margin-bottom: 20px; font-size: 0.9em; }
-        #status-modal-content ul { list-style: none; padding: 0; margin-top: 15px; }
-        #status-modal-content ul li { background-color: var(--bg-primary); padding: 8px 12px; border-radius: 6px; margin-bottom: 6px; font-size: 0.85em; }
-
-        @media screen and (min-width: 768px) {
-            #top-navbar {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                padding: 8px 20px;
-            }
-            .sidebar-nav {
-                justify-content: center;
-                gap: 6px;
-            }
-            #top-navbar nav {
-                flex-grow: 1;
-            }
-            #header-my-account-btn, #logout-btn {
-                width: auto;
-                padding: 7px 14px !important;
-            }
-            .logout-text {
-                display: inline-block;
-            }
-            .history-tables-container { grid-template-columns: 1fr 1fr; }
-            .price-option-grid { grid-template-columns: repeat(3, 1fr); }
-            .admin-choice-grid { grid-template-columns: 1fr 1fr; }
-            .subscription-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-
-        @media screen and (max-width: 480px) {
-            h2 { font-size: 1.2em; }
-            .subtitle { font-size: 0.75em; }
-            .content-card { padding: 10px 15px; }
-            #login-container, #register-container, #forgot-password-container { padding: 15px 20px; }
-            .info-banner, .important-notice { padding: 8px; font-size: 0.8em; }
-            #mod-showcase-grid, #purchased-mods-grid { grid-template-columns: 1fr; gap: 12px; }
-            .modal-content { padding: 15px; }
-            .history-tables-container { gap: 12px; }
-            .history-list li { padding: 8px; }
-            #topup-options-grid { grid-template-columns: 1fr; }
-            .buy-ub-actions, .buy-ub-extra-actions { grid-template-columns: 1fr; }
-            .gmail-login-style-container { padding: 25px 15px 20px; }
-            .fb-login-body { padding: 12px; }
-            .subscription-grid { grid-template-columns: 1fr; }
-        }
-
-    </style>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width, initial-scale=1.0">
+<title>Maleo SHOP</title>
+<link rel=preconnect href=https://fonts.googleapis.com>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel=stylesheet>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel=stylesheet>
+<script src=https://unpkg.com/@phosphor-icons/web></script>
+<style>:root{--bg-primary:#111827;--bg-secondary:#1f2937;--bg-tertiary:#374151;--border-color:#4b5563;--text-primary:#f9fafb;--text-secondary:#d1d5db;--accent-blue:#3b82f6;--accent-green:#22c55e;--accent-red:#ef4444;--accent-cyan:#06b6d4;--premium-gold:#fbbf24}*{margin:0;padding:0;box-sizing:border-box}html,body{font-family:'Inter',sans-serif;background-color:var(--bg-primary);color:var(--text-primary);-webkit-user-select:none;user-select:none;font-size:12px}#app-layout{display:none;flex-direction:column;min-height:100vh;width:100%}#top-navbar{display:flex;flex-direction:column;align-items:stretch;padding:6px 10px;background:var(--bg-primary);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:1001;gap:8px}.header-top-row{display:flex;justify-content:space-between;align-items:center;width:100%}#top-navbar h1{font-size:1.2em;font-weight:800;color:var(--text-primary);line-height:1}.subtitle-brand{display:block;font-size:.4em;font-weight:500;color:var(--text-secondary);margin-top:2px}.header-actions{display:flex;align-items:center;gap:8px}.sidebar-balance-card{display:flex;align-items:center;gap:6px;background-color:var(--bg-secondary);padding:4px 6px;border-radius:6px;border:1px solid var(--border-color);cursor:pointer;transition:all .2s ease}.sidebar-balance-card:hover{border-color:var(--accent-blue)}.balance-info{text-align:left}.sidebar-balance-card .balance-label{display:block;font-size:.7em;color:var(--text-secondary);line-height:1.1}.sidebar-balance-card .balance-amount{display:block;font-size:.9em;font-weight:700;color:var(--accent-green);line-height:1.2}.sidebar-balance-card .balance-amount.premium,.sidebar-balance-card .balance-amount.subscription{color:var(--premium-gold);font-size:.85em}.add-balance-icon{font-size:1.3em;color:var(--accent-green);cursor:pointer;transition:transform .2s;display:flex;align-items:center;justify-content:center}.add-balance-icon:hover{transform:scale(1.1)}#header-my-account-btn,#logout-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:6px!important;font-size:.8em!important;line-height:1;background-color:var(--bg-tertiary);width:32px;height:32px}#header-my-account-btn:hover{background-color:var(--accent-blue)}#logout-btn:hover{background-color:var(--accent-red)}#header-my-account-btn i,#logout-btn i{font-size:1.3em}.logout-text{display:none}#top-navbar nav{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}#top-navbar nav::-webkit-scrollbar{display:none}.sidebar-nav{display:flex;justify-content:space-between;gap:4px;list-style:none;padding:0;flex-wrap:nowrap}.nav-item a{display:flex;align-items:center;justify-content:center;padding:6px 10px;border-radius:6px;color:var(--text-secondary);text-decoration:none;font-weight:600;font-size:.85em;white-space:nowrap;transition:all .3s ease-in-out;background-color:var(--bg-secondary);border:1px solid var(--border-color)}.nav-item a:hover{color:var(--text-primary);border-color:var(--accent-blue)}.nav-item a.active{background-color:var(--accent-blue);color:white;font-weight:700;border-color:var(--accent-blue);box-shadow:0 0 10px rgba(59,130,246,0.3)}.nav-icon{font-size:1.3em;transition:all .3s ease}.nav-icon-img{width:20px;height:20px;border-radius:4px;object-fit:cover;transition:all .3s ease}.nav-text{display:none;margin-left:6px;transition:opacity .3s ease-in-out}.nav-item a.active .nav-text{display:inline}.main-content{padding:10px;min-height:100vh;background-image:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhI8j1iJeFgIagFemTu0q3_yxUph06s4T6K03apxFf11HmQagnDM-PkaUNlV-VK0k2O-Mj93P4cnVZSWjf6jbmt1imTeAP_woH6aUMEsp9YgyMzCdHNoixyuWtvUf9pmhXlYIvwVt1Tb9CuSFi-Jk6D3pB6-ggMzhKMGkpoJD9ZT-d5T3LcJkW4d_mfGLA/s1600/1750238969835.jpg');background-size:cover;background-repeat:no-repeat;background-attachment:fixed;background-position:center}.content-container{max-width:1200px;margin:0 auto}.content-card{max-width:600px;margin:0 auto;background-color:var(--bg-secondary);padding:12px 15px;border-radius:10px}#auth-wrapper{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:16px;background-image:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhI8j1iJeFgIagFemTu0q3_yxUph06s4T6K03apxFf11HmQagnDM-PkaUNlV-VK0k2O-Mj93P4cnVZSWjf6jbmt1imTeAP_woH6aUMEsp9YgyMzCdHNoixyuWtvUf9pmhXlYIvwVt1Tb9CuSFi-Jk6D3pB6-ggMzhKMGkpoJD9ZT-d5T3LcJkW4d_mfGLA/s1600/1750238969835.jpg');background-size:cover;background-position:center;gap:15px}#login-container,#register-container,#forgot-password-container{width:100%;max-width:400px;background-color:var(--bg-secondary);padding:15px 20px;border-radius:12px;border:1px solid var(--border-color)}#register-container,#forgot-password-container{display:none}#app-layout,#profile-container,#topup-container,#buy-ub-container,#qris-display-container,#my-account-container,#beli-mod-container,#purchased-mods-container,#topup-admin-container,#subscription-container,#subscription-qris-container{display:none}h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.subtitle{font-size:.8em;color:var(--text-secondary);margin-bottom:15px}.input-group{margin-bottom:8px;position:relative}.input-field{width:100%;padding:9px 12px;background-color:var(--bg-primary);border:1px solid var(--border-color);border-radius:6px;color:var(--text-primary);font-size:.9em}.input-field.password-input{padding-right:40px}.password-toggle{position:absolute;top:50%;right:10px;transform:translateY(-50%);cursor:pointer;color:var(--text-secondary);width:20px;height:20px}.input-field:focus{outline:0;border-color:var(--accent-blue);box-shadow:0 0 0 2px rgba(59,130,246,0.2)}.action-button{width:100%;padding:9px;border-radius:6px;color:white;font-size:.9em;font-weight:600;cursor:pointer;border:0;transition:all .2s ease}.action-button:hover{opacity:.9;transform:translateY(-1px)}.action-button:disabled{background-color:var(--bg-tertiary);cursor:not-allowed;opacity:.7}.btn-green{background-color:var(--accent-green)}.btn-primary{background-color:var(--accent-blue)}.btn-red{background-color:var(--accent-red)}.btn-secondary{background-color:var(--bg-tertiary)}.btn-cyan{background-color:var(--accent-cyan)}.switch-link{margin-top:12px;font-size:.8em;color:var(--text-secondary);text-align:center}.switch-link a{color:var(--accent-blue);text-decoration:none;font-weight:600}.switch-link a:hover{text-decoration:underline}#other-account-form-container{padding:8px 12px;max-width:300px;margin:0 auto}#other-account-form-container .subtitle{font-size:.7em;margin-bottom:8px;line-height:1.3}#all-profiles-grid{display:grid;grid-template-columns:1fr;gap:12px}.profile-card{background-color:#2d2e33;border-radius:8px;border:1px solid var(--border-color);position:relative;overflow:hidden;transition:transform .3s ease,box-shadow .3s ease;perspective:1000px;display:flex;flex-direction:column}.profile-card.hidden{display:none}.profile-card:hover{transform:translateY(-3px);box-shadow:0 6px 12px rgba(0,0,0,0.2)}.profile-card-main-view,.profile-card-settings-view{padding:10px;display:flex;flex-direction:column;backface-visibility:hidden;transition:transform .6s ease;width:100%;flex-grow:1}.profile-card-main-view{transform:rotateY(0deg)}.profile-card-settings-view{position:absolute;top:0;left:0;right:0;bottom:0;background-color:var(--bg-secondary);transform:rotateY(180deg)}.profile-card.settings-active .profile-card-main-view{transform:rotateY(-180deg)}.profile-card.settings-active .profile-card-settings-view{transform:rotateY(0deg)}.profile-card-settings-view h3{font-size:.75em;margin-bottom:6px}.settings-info-item{padding:1px 5px;margin-bottom:2px}.settings-info-item .label{font-size:.55em;line-height:1.1}.settings-info-item .value{font-size:.65em;line-height:1.1}.settings-actions{margin-top:8px}.settings-actions .action-button{padding:4px;font-size:.65em}.player-display-container{margin:6px 0 8px 0;display:flex;flex-direction:column;gap:5px}.player-name-plate,.player-ub-plate{background-size:100% 100%;background-repeat:no-repeat;background-position:center;height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;width:78%;margin:0 auto;border-radius:6px}.player-name-plate{background-image:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiy8bkfRaz2UWiO9tnX8IDy9OJwti__IkaN5CBSsybGTzWG7_sSqWTmOBRj0X3NEQQv1cW1thZcmPSjVcpS2JSamwsCN4_u_QQqzdYa7BhyfM8QwQAsPMVeokL1rUfxRAZx_s_46Gb27M1u40kP55xVpyjBgBcuDGs-CD9t0B4IgnkyS9DS228u_sgdkc4/s1600/IMG_20250812_161453.jpg')}.player-ub-plate{background-image:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhJhoq7BI37iRAjcjRibzR3_-YgzMDy00OkGH_omg-c8FC1K2OmJdgyhiw8ARhhbLa7Bnip1h9_nBk2bdPJ3lhsdjgi9NTL43KQSH8Z4g8pT7RQLnUzdqqZc8Sn1ZZJm_3zJ-WwEhnWGCyW8cIAE_u8HewZspCCvr7l-EHkq8ln3pAXe_MkVVOx-9WA5UM/s1600/IMG_20250812_161504.jpg')}.player-name-text,.player-ub-text{color:#fff;font-weight:700;font-size:.765em;text-shadow:1px 1px 2px rgba(0,0,0,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-grow:1;text-align:center}.plate-icon{font-size:1.2em;color:white;cursor:pointer;opacity:.8;transition:opacity .2s,transform .2s;flex-shrink:0}.plate-icon:hover{opacity:1;transform:scale(1.1)}.plate-icon-placeholder{width:1.2em;flex-shrink:0}.info-banner{border:1px solid var(--accent-green);color:var(--text-primary);background-color:rgba(34,197,94,0.1);padding:10px 12px;border-radius:6px;text-align:center;font-weight:500;margin-bottom:15px;font-size:.8em}.current-balance-display{color:var(--text-secondary);background-color:var(--bg-primary);padding:8px 10px;border-radius:6px;margin-bottom:12px;text-align:center;font-size:.9em}.current-balance-display span{font-weight:700;color:var(--accent-green);font-size:1em}.ub-store-display{background:var(--bg-tertiary);border-radius:8px;padding:12px;margin-bottom:12px;border:1px solid var(--border-color)}.display-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.display-label{font-weight:600;color:var(--text-secondary);font-size:.85em}.display-value{font-weight:700;font-size:1.1em}.display-value.rp{color:#f59e0b}.display-value.ub{color:var(--accent-green)}#ub-slider{width:100%;margin:6px 0}.buy-ub-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.buy-ub-extra-actions{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:10px}.hasil-text.error{background-color:#991b1b;color:#fee2e2;margin-top:12px;padding:8px;border-radius:6px;font-weight:600;display:block;font-size:.85em}.topup-options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}.topup-option-btn{background-color:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-primary);padding:12px 8px;border-radius:8px;cursor:pointer;font-weight:600;font-size:.9em;transition:all .2s ease}.topup-option-btn:hover{background-color:var(--bg-primary);border-color:var(--accent-blue)}#qris-display-container img,#subscription-qris-container img{width:100%;max-width:200px;border-radius:8px;margin-bottom:12px;background:white;cursor:pointer}.important-notice{background-color:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.5);padding:10px;border-radius:6px;margin-bottom:15px}.important-notice .notice-title{font-weight:700;color:#f59e0b;display:block;margin-bottom:4px;font-size:.9em}.important-notice .notice-amount{font-weight:700;color:#fff;font-size:1.2em;letter-spacing:1px}.history-section{margin-top:25px;padding-top:20px;border-top:1px solid var(--border-color)}.history-section h3{font-size:1.2em;margin-bottom:12px;text-align:center}.history-tables-container{display:grid;grid-template-columns:1fr;gap:20px}.history-table h4{font-size:.9em;margin-bottom:10px;color:var(--text-secondary)}.history-list{list-style:none;max-height:300px;overflow-y:auto;padding-right:6px;border:1px solid var(--border-color);border-radius:6px;padding:6px}.history-list li{background-color:var(--bg-tertiary);padding:10px;border-radius:6px;margin-bottom:6px;border-left:3px solid var(--border-color)}.history-list li.topup{border-left-color:var(--accent-green)}.history-list li.purchase{border-left-color:var(--accent-red)}.history-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.history-item-header .amount{font-size:1em;font-weight:700}.history-item-header .amount.topup{color:var(--accent-green)}.history-item-header .amount.purchase{color:var(--accent-red)}.history-item-footer{font-size:.7em;color:var(--text-secondary)}.history-list .no-history{text-align:center;padding:12px;color:var(--text-secondary);background:0;border:0}#toast-container{position:fixed;top:15px;right:15px;z-index:10005;display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none}.toast{background:rgba(55,65,81,0.9);color:#fff;padding:10px 15px;border-radius:6px;box-shadow:0 6px 25px rgba(0,0,0,0.3);min-width:220px;max-width:320px;text-align:center;font-size:.9em;font-weight:600;border-left-width:4px;border-left-style:solid;border-left-color:var(--border-color);pointer-events:all;opacity:0;transform:translateX(100%);transition:all .3s ease-in-out}.toast.show{opacity:1;transform:translateX(0)}.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:10002;display:none;padding:16px}.modal-content{background-color:var(--bg-secondary);padding:20px;border-radius:10px;width:100%;max-width:450px;position:relative;border:1px solid var(--border-color)}.modal-close{position:absolute;top:6px;right:10px;font-size:2em;color:var(--text-secondary);cursor:pointer;line-height:1}.modal-warning{background-color:rgba(239,68,68,0.1);border:1px solid var(--accent-red);padding:10px;border-radius:6px;margin-top:12px;margin-bottom:15px;color:var(--text-primary)}.modal-warning p{margin-bottom:6px;line-height:1.5;font-size:.85em}.modal-actions{display:flex;flex-direction:column;gap:10px}.modal-actions .action-button{text-align:center;text-decoration:none;padding:8px;font-size:.9em}.account-info-details{margin-top:20px;margin-bottom:25px;border-top:1px solid var(--border-color);padding-top:12px}.info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 6px;border-bottom:1px solid var(--border-color);flex-wrap:wrap;gap:5px}.info-row:last-child{border-bottom:0}.info-label{font-weight:500;color:var(--text-secondary);font-size:.9em}.info-value{font-weight:600;font-size:.95em;text-align:right}.info-value.accent-green{color:var(--accent-green)}.info-value.premium,.info-value.subscription{color:var(--premium-gold)}.info-value.small-text{font-size:.8em;font-family:monospace;word-break:break-all;cursor:pointer}.account-actions{display:flex;flex-direction:column;gap:10px}#mod-showcase-grid,#purchased-mods-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:15px;margin-top:20px}.mod-card{background-color:var(--bg-secondary);border:1px solid var(--border-color);border-radius:8px;overflow:hidden;display:flex;flex-direction:column}.mod-card-image-gallery{display:grid;gap:3px;background-color:var(--bg-primary);padding:3px}.mod-card-image-gallery img{width:100%;height:120px;object-fit:cover;cursor:pointer;border-radius:5px;transition:transform .2s ease,opacity .2s ease;background-color:var(--bg-tertiary)}.mod-card-image-gallery img:hover{transform:scale(1.03);opacity:.9}.mod-card-image-gallery[data-count="2"] img,.mod-card-image-gallery[data-count="3"] img{height:90px}.mod-card-info{padding:12px;flex-grow:1;display:flex;flex-direction:column}.mod-card-info h3{font-size:1em;margin-bottom:5px}.mod-card-info p{font-size:.8em;color:var(--text-secondary);flex-grow:1;margin-bottom:10px}.mod-card-footer{display:flex;justify-content:space-between;align-items:center;padding:0 12px 12px;flex-wrap:wrap;gap:6px}.mod-card-price{font-size:1.1em;font-weight:700;color:var(--accent-green);flex-basis:100%;margin-bottom:4px}.mod-card-button{padding:7px 14px;font-size:.8em;min-width:80px;flex-grow:1}.mod-download-actions{display:flex;flex-direction:column;gap:6px;width:100%}.mod-download-actions .action-button{text-decoration:none;text-align:center}.lightbox-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.85);display:none;justify-content:center;align-items:center;z-index:10004}.lightbox-content{position:relative;max-width:90vw;max-height:90vh}.lightbox-content img{width:100%;height:100%;object-fit:contain;border-radius:8px}.lightbox-close{position:absolute;top:-35px;right:0;font-size:2.5em;color:#fff;cursor:pointer;line-height:1;font-weight:700}.skeleton-card{background-color:var(--bg-secondary);padding:12px;border-radius:10px;border:1px solid var(--border-color)}.skeleton{animation:skeleton-loading 1s linear infinite alternate;opacity:.7;background-color:var(--bg-tertiary)}@keyframes skeleton-loading{0%{background-color:var(--bg-tertiary)}100%{background-color:#4b5563}}.skeleton-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}.skeleton-avatar{width:40px;height:40px;border-radius:50%}.skeleton-text-group{flex-grow:1}.skeleton-text{height:14px;border-radius:4px;margin-bottom:6px}.skeleton-text.short{width:50%}.skeleton-line{height:8px;border-radius:4px;margin-bottom:8px}.skeleton-button{height:34px;border-radius:6px;margin-top:12px}#maintenance-modal .modal-content{text-align:center}#maintenance-modal-message{font-size:1em;line-height:1.6;color:var(--text-secondary);margin-bottom:25px}#confirmation-modal{z-index:10003}.error-message{color:#fca5a5;font-size:.8rem;margin-top:.4rem;min-height:1.1rem}.price-option-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem;max-height:70vh;overflow-y:auto;padding:4px}.price-option{background:linear-gradient(to right,#2d3748,#4a5568);border:1px solid #718096;transition:all .3s ease;padding:.7rem;border-radius:.4rem;cursor:pointer;text-align:center;color:white}.price-option:hover{transform:scale(1.05);box-shadow:0 0 15px rgba(99,179,237,0.4);border-color:#63b3ed}.price-option.selected{background:linear-gradient(to right,var(--accent-blue),#3182ce);border-color:#bee3f8;box-shadow:0 0 12px rgba(255,255,255,0.5);transform:scale(1.05)}.price-option .ph-coins{font-size:1.3rem;color:#f6e05e;margin-bottom:.2rem}.price-option .amount{font-weight:700;font-size:.75rem}.price-option .price{font-size:.65rem;font-weight:600;background-color:rgba(0,0,0,0.2);padding:2px 5px;border-radius:99px;margin-top:.3rem;display:inline-block}#admin-game-choice-container{text-align:center}.admin-choice-grid{display:grid;grid-template-columns:1fr;gap:15px;margin-top:15px}.admin-choice-btn{background-color:var(--bg-secondary);border:1px solid var(--border-color);border-radius:10px;padding:25px 15px;cursor:pointer;transition:all .2s ease-in-out;font-size:1.2em;font-weight:700;color:var(--text-primary)}.admin-choice-btn:hover{transform:translateY(-4px);box-shadow:0 6px 20px rgba(0,0,0,0.2);border-color:var(--accent-cyan)}.admin-choice-btn .game-icon{font-size:2.2em;display:block;margin-bottom:10px}.back-button{background:0;border:0;color:var(--accent-blue);cursor:pointer;font-weight:600;margin-bottom:12px;font-size:.85em;padding:4px}.back-button:hover{text-decoration:underline}.joki-warning-box{background-color:var(--accent-red);color:var(--text-primary);padding:12px;border-radius:10px;margin-bottom:15px;border:1px solid #fca5a5;box-shadow:0 4px 15px rgba(239,68,68,0.2)}.joki-warning-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}.joki-warning-header svg{color:#fee2e2;flex-shrink:0}.joki-warning-header h3{font-size:1em;font-weight:800;color:white;margin:0}.joki-warning-box p{font-size:.85em;line-height:1.5;margin-bottom:10px;color:#fee2e2}.joki-warning-box p strong{color:white;font-weight:700}.joki-warning-box ul{list-style-type:none;padding-left:0;font-size:.85em;line-height:1.6;color:#fee2e2;margin-bottom:10px}.joki-warning-box ul li{margin-bottom:5px;display:flex;align-items:flex-start;gap:6px}.joki-warning-box ul li::before{content:'•';color:white;font-weight:bold;line-height:1.6}.joki-warning-box .wa-label{font-weight:700;display:block;margin-bottom:5px;font-size:.9em;color:white}.joki-warning-box .input-field{background-color:rgba(0,0,0,0.2);border-color:#fca5a5;color:white}.joki-warning-box .input-field::placeholder{color:#fecaca}.joki-warning-box .input-field:focus{border-color:white;box-shadow:0 0 0 2px rgba(255,255,255,0.2)}.fb-login-style-container{background-color:#fff;font-family:'Helvetica','Arial',sans-serif;color:#1c1e21;border-radius:8px;padding:0;overflow:hidden;max-width:420px;margin:0 auto;border:1px solid #dddfe2}.fb-login-style-container .input-field{background-color:#f5f6f7;border:1px solid #dddfe2;color:#1c1e21}.fb-login-style-container .input-field::placeholder{color:#90949c}.fb-login-style-container .input-field:focus{border-color:#1877f2;box-shadow:0 0 0 2px #e7f3ff}.fb-login-style-container .error-message,.gmail-login-style-container .error-message{color:#fa3e3e;text-align:left}.fb-login-header{padding:12px;text-align:center;border-bottom:1px solid #dddfe2}.fb-login-header img{height:30px}.fb-login-body{padding:15px}.action-button.btn-fb{background-color:#1877f2;font-weight:700;border-radius:6px}.fb-login-links{text-align:center;margin-top:12px}.fb-login-links a{color:#1877f2;text-decoration:none;font-weight:500;font-size:.85em}.gmail-login-style-container{background-color:#fff;font-family:'Roboto','Arial',sans-serif;color:#202124;border:1px solid #dadce0;border-radius:8px;padding:40px 30px 30px;max-width:450px;margin:0 auto;text-align:center}.gmail-login-style-container .input-field{background-color:#fff;border:1px solid #ccc;color:#202124;border-radius:4px}.gmail-login-style-container .input-field:focus{border-color:#1a73e8;box-shadow:0 0 0 1px #1a73e8}.gmail-logo{width:70px;margin-bottom:12px}.gmail-header h1{font-size:22px;font-weight:400;margin-bottom:6px}.gmail-header p{font-size:14px;margin-bottom:20px}.gmail-form .input-group{margin-bottom:12px}.gmail-links{text-align:left;margin:12px 0}.gmail-links a{font-family:'Roboto',sans-serif;color:#1a73e8;text-decoration:none;font-weight:500;font-size:13px}.gmail-actions{display:flex;justify-content:space-between;align-items:center;margin-top:28px}.gmail-actions .create-account-link{font-family:'Roboto',sans-serif;color:#1a73e8;text-decoration:none;font-weight:500;font-size:13px;background:0;border:0;cursor:pointer;padding:8px 0}.action-button.btn-gmail{background-color:#1a73e8;padding:0 20px;height:32px;line-height:32px;font-size:13px;font-weight:500;width:auto}#offline-modal .modal-content{text-align:center}#offline-modal .subtitle{margin-bottom:0}#subscription-expired-modal .modal-content{text-align:center;border-color:var(--accent-red)}#subscription-expired-modal .modal-content h2{color:var(--accent-red)}.subscription-grid{display:grid;grid-template-columns:1fr;gap:20px;margin-top:20px}.subscription-card{background-color:var(--bg-secondary);border:1px solid var(--border-color);border-radius:12px;padding:20px;text-align:center;transition:all .3s ease;display:flex;flex-direction:column}.subscription-card:hover{transform:translateY(-5px);border-color:var(--accent-blue)}.subscription-card.premium{border-left:4px solid var(--accent-blue)}.subscription-card.permanent{border-left:4px solid var(--accent-green)}.subscription-card h3{font-size:1.2em;margin-bottom:10px;color:var(--text-primary)}.subscription-card .sub-price{font-size:1.8em;font-weight:800;margin-bottom:15px}.subscription-card .promo-price{color:var(--accent-blue)}.subscription-card.permanent .sub-price{color:var(--accent-green)}.subscription-card .original-price{text-decoration:line-through;color:var(--text-secondary);font-size:.6em;margin-left:8px;font-weight:500}.subscription-card .sub-price .sub-duration{font-size:.5em;font-weight:500;color:var(--text-secondary)}.subscription-card ul{list-style:none;padding:0;margin:20px 0;text-align:left;font-size:.9em;flex-grow:1}.subscription-card ul li{margin-bottom:10px;display:flex;align-items:center;gap:8px;color:var(--text-secondary)}.subscription-card ul li .ph-bold{font-size:1.2em}.subscription-card ul li .ph-check-circle{color:var(--accent-green)}.subscription-card .action-button{margin-top:auto}#status-modal-content h4{font-size:1.1em;color:var(--premium-gold);margin-bottom:10px;text-align:center}#status-modal-content p{color:var(--text-secondary);text-align:center;margin-bottom:20px;font-size:.9em}#status-modal-content ul{list-style:none;padding:0;margin-top:15px}#status-modal-content ul li{background-color:var(--bg-primary);padding:8px 12px;border-radius:6px;margin-bottom:6px;font-size:.85em}@media screen and (min-width:768px){#top-navbar{flex-direction:row;justify-content:space-between;align-items:center;padding:8px 20px}.sidebar-nav{justify-content:center;gap:6px}#top-navbar nav{flex-grow:1}#header-my-account-btn,#logout-btn{width:auto;padding:7px 14px!important}.logout-text{display:inline-block}.nav-text{display:inline-block;margin-left:6px}.nav-icon-img{display:inline-block!important;vertical-align:middle}.history-tables-container{grid-template-columns:1fr 1fr}.price-option-grid{grid-template-columns:repeat(3,1fr)}.admin-choice-grid{grid-template-columns:1fr 1fr}.subscription-grid{grid-template-columns:repeat(3,1fr)}}@media screen and (max-width:767px){.nav-item a .nav-icon-img{margin-right:0}}@media screen and (max-width:480px){h2{font-size:1.2em}.subtitle{font-size:.75em}.content-card{padding:10px 15px}#login-container,#register-container,#forgot-password-container{padding:15px 20px}.info-banner,.important-notice{padding:8px;font-size:.8em}#mod-showcase-grid,#purchased-mods-grid{grid-template-columns:1fr;gap:12px}.modal-content{padding:15px}.history-tables-container{gap:12px}.history-list li{padding:8px}#topup-options-grid{grid-template-columns:1fr}.buy-ub-actions,.buy-ub-extra-actions{grid-template-columns:1fr}.gmail-login-style-container{padding:25px 15px 20px}.fb-login-body{padding:12px}.subscription-grid{grid-template-columns:1fr}}</style>
 </head>
-<body style="visibility: hidden; opacity: 0; transition: opacity 0.5s;">
-    <div id="toast-container"></div>
-
-    <div id="auth-wrapper">
-        <div id="login-container">
-            <h2>Selamat Datang</h2>
-            <form id="login-form">
-                <div class="input-group">
-                    <input type="text" id="username" class="input-field" placeholder="Nama Pengguna" required>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="password" class="input-field password-input" placeholder="Kata Sandi" required>
-                    <span class="password-toggle" id="login-password-toggle"></span>
-                </div>
-                <button type="submit" id="login-btn" class="action-button btn-primary">Masuk</button>
-            </form>
-            <p class="switch-link"> Belum punya akun? <a href="#" id="show-register-link">Buat akun baru</a></p>
-            <p class="switch-link"><a href="#" id="show-forgot-password-link">Lupa kata sandi</a></p>
-        </div>
-        <div id="register-container">
-            <h2>Buat Akun Baru</h2>
-            <form id="register-form">
-                <div class="input-group">
-                    <input type="text" id="reg-username" class="input-field" placeholder="Username" required>
-                </div>
-                <div class="input-group">
-                    <input type="email" id="reg-email" class="input-field" placeholder="Email" required>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="reg-whatsapp" class="input-field" placeholder="Nomor WhatsApp (62...)" required>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="reg-password" class="input-field password-input" placeholder="Sandi Akun" required>
-                    <span class="password-toggle" id="reg-password-toggle"></span>
-                </div>
-                <button type="submit" id="register-btn" class="action-button btn-primary">Daftar</button>
-            </form>
-            <p class="switch-link">Sudah punya akun? <a href="#" id="show-login-link-from-reg">Login</a></p>
-        </div>
-        <div id="forgot-password-container">
-            <div id="verify-user-view">
-                <h2>Lupa Kata Sandi</h2>
-                <p class="subtitle">Masukkan data akun Anda untuk verifikasi.</p>
-                <form id="verify-user-form">
-                    <div class="input-group">
-                        <input type="text" id="verify-username" class="input-field" placeholder="Username" required>
-                    </div>
-                    <div class="input-group">
-                        <input type="email" id="verify-email" class="input-field" placeholder="Email" required>
-                    </div>
-                    <div class="input-group">
-                        <input type="text" id="verify-whatsapp" class="input-field" placeholder="Nomor WhatsApp (62...)" required>
-                    </div>
-                    <button type="submit" id="verify-user-btn" class="action-button btn-primary">Verifikasi Akun</button>
-                </form>
-                <p class="switch-link">Ingat sandi Anda? <a href="#" id="show-login-link-from-forgot">Login</a></p>
-            </div>
-            <div id="reset-password-view" style="display: none;">
-                <h2>Buat Sandi Baru</h2>
-                <p class="subtitle">Verifikasi berhasil. Silakan masukkan kata sandi baru Anda.</p>
-                <form id="reset-password-form">
-                    <div class="input-group">
-                        <input type="password" id="reset-new-password" class="input-field password-input" placeholder="Sandi Baru" required>
-                        <span class="password-toggle" id="reset-password-toggle"></span>
-                    </div>
-                    <div class="input-group">
-                        <input type="password" id="reset-confirm-password" class="input-field" placeholder="Konfirmasi Sandi Baru" required>
-                    </div>
-                    <button type="submit" id="reset-password-btn" class="action-button btn-green">Simpan Sandi Baru</button>
-                </form>
-            </div>
-        </div>
+<body style="visibility:hidden;opacity:0;transition:opacity .5s">
+<div id=toast-container></div>
+<div id=auth-wrapper>
+<div id=login-container>
+<h2>Selamat Datang</h2>
+<form id=login-form>
+<div class=input-group>
+<input type=text id=username class=input-field placeholder="Nama Pengguna" required>
+</div>
+<div class=input-group>
+<input type=password id=password class="input-field password-input" placeholder="Kata Sandi" required>
+<span class=password-toggle id=login-password-toggle></span>
+</div>
+<button type=submit id=login-btn class="action-button btn-primary">Masuk</button>
+</form>
+<p class=switch-link> Belum punya akun? <a href=# id=show-register-link>Buat akun baru</a></p>
+<p class=switch-link><a href=# id=show-forgot-password-link>Lupa kata sandi</a></p>
+</div>
+<div id=register-container>
+<h2>Buat Akun Baru</h2>
+<form id=register-form>
+<div class=input-group>
+<input type=text id=reg-username class=input-field placeholder=Username required>
+</div>
+<div class=input-group>
+<input type=email id=reg-email class=input-field placeholder=Email required>
+</div>
+<div class=input-group>
+<input type=text id=reg-whatsapp class=input-field placeholder="Nomor WhatsApp (62...)" required>
+</div>
+<div class=input-group>
+<input type=password id=reg-password class="input-field password-input" placeholder="Sandi Akun" required>
+<span class=password-toggle id=reg-password-toggle></span>
+</div>
+<button type=submit id=register-btn class="action-button btn-primary">Daftar</button>
+</form>
+<p class=switch-link>Sudah punya akun? <a href=# id=show-login-link-from-reg>Login</a></p>
+</div>
+<div id=forgot-password-container>
+<div id=verify-user-view>
+<h2>Lupa Kata Sandi</h2>
+<p class=subtitle>Masukkan data akun Anda untuk verifikasi.</p>
+<form id=verify-user-form>
+<div class=input-group>
+<input type=text id=verify-username class=input-field placeholder=Username required>
+</div>
+<div class=input-group>
+<input type=email id=verify-email class=input-field placeholder=Email required>
+</div>
+<div class=input-group>
+<input type=text id=verify-whatsapp class=input-field placeholder="Nomor WhatsApp (62...)" required>
+</div>
+<button type=submit id=verify-user-btn class="action-button btn-primary">Verifikasi Akun</button>
+</form>
+<p class=switch-link>Ingat sandi Anda? <a href=# id=show-login-link-from-forgot>Login</a></p>
+</div>
+<div id=reset-password-view style=display:none>
+<h2>Buat Sandi Baru</h2>
+<p class=subtitle>Verifikasi berhasil. Silakan masukkan kata sandi baru Anda.</p>
+<form id=reset-password-form>
+<div class=input-group>
+<input type=password id=reset-new-password class="input-field password-input" placeholder="Sandi Baru" required>
+<span class=password-toggle id=reset-password-toggle></span>
+</div>
+<div class=input-group>
+<input type=password id=reset-confirm-password class=input-field placeholder="Konfirmasi Sandi Baru" required>
+</div>
+<button type=submit id=reset-password-btn class="action-button btn-green">Simpan Sandi Baru</button>
+</form>
+</div>
+</div>
+</div>
+<div id=app-layout>
+<header id=top-navbar>
+<div class=header-top-row>
+<h1>Maleo SHOP<span class=subtitle-brand>by@donitata1717®</span></h1>
+<div class=header-actions>
+<div class=sidebar-balance-card>
+<div class=balance-info>
+<span class=balance-label id=sidebar-balance-label>Saldo</span>
+<span class=balance-amount id=sidebar-balance-amount>Rp 0</span>
+</div>
+<span id=add-balance-btn class=add-balance-icon title="Top Up Saldo">
+<i class="ph-bold ph-plus-circle"></i>
+</span>
+</div>
+<button id=header-my-account-btn class=action-button title="Akun Saya">
+<i class="ph-bold ph-gear"></i>
+</button>
+<button id=logout-btn class=action-button title=Logout>
+<i class="ph-bold ph-sign-out"></i>
+<span class=logout-text>Logout</span>
+</button>
+</div>
+</div>
+<nav>
+<ul class=sidebar-nav>
+<li class=nav-item><a href=# id=nav-subscription><i class="ph-bold ph-crown nav-icon"></i><span class=nav-text>Langganan</span></a></li>
+<li class=nav-item><a href=# id=nav-topupBussid class=active><img src=https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjyQYodaXJAK1A9Bi0YOIU2BhQubEYchhFx-2PZYB8hOIopqXIQ1FXK_goAxP0GPaXyXk6L5jnO3aOL6EuzkEgGxa2tohs7YJazYrVPZ8czUi8BSjWWkrTKVCTwk7wmhEZRWFPP1U2S-FjXUwDbi9duZ9ejBNm0xTLBFblyee8yY_Jk2MLtQj6v3E_bePI/s1600/Bussid.png class=nav-icon-img alt="BUSSID Icon"><span class=nav-text>Topup BUSSID</span></a></li>
+<li class=nav-item><a href=# id=nav-topupTrucksid><img src=https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj4Q0wYqZDSD7VH-0QlvsqTDi4xnKg5NfRDLJHt92A-4qMcVNMXHpZPkGOQARhJWeZXr0VCCbMCUXJn2iAL-xbCOGELYZQqEgnJXD-VneGmLKQgjO5C9XhyphenhypheneMWD0RBl_bv3VKAGfhYxDzKLPhFjujKFMy7ITYuvLyiW-aDEp3AkM_Tn-jEAPuZXmPqarJY/s1600/images__1_-removebg-preview.png class=nav-icon-img alt="TRUCKSID Icon"><span class=nav-text>Topup TRUCKSID</span></a></li>
+<li class=nav-item><a href=# id=nav-topup><i class="ph-bold ph-wallet nav-icon"></i><span class=nav-text>Topup Saldo</span></a></li>
+<li class=nav-item><a href=# id=nav-purchased-mods><i class="ph-bold ph-folder-simple-user nav-icon"></i><span class=nav-text>MOD Terbeli</span></a></li>
+<li class=nav-item><a href=# id=nav-beli-mod><i class="ph-bold ph-shopping-bag-open nav-icon"></i><span class=nav-text>Beli MOD</span></a></li>
+<li class=nav-item><a href=# id=nav-topup-admin><i class="ph-bold ph-user-circle-gear nav-icon"></i><span class=nav-text>Topup via Admin</span></a></li>
+</ul>
+</nav>
+</header>
+<main class=main-content id=main-content>
+<div id=my-account-container class=content-card>
+<h2>Informasi Akun Saya</h2>
+<div class=account-info-details>
+<div class=info-row>
+<span class=info-label>Username</span>
+<span id=account-username class=info-value></span>
+</div>
+<div class=info-row>
+<span class=info-label id=account-saldo-label>Status & Saldo</span>
+<span id=account-saldo class="info-value accent-green"></span>
+</div>
+<div class=info-row>
+<span class=info-label>Device ID</span>
+<span id=account-device-id class="info-value small-text" title="Tahan untuk menyalin"></span>
+</div>
+<div class=info-row>
+<span class=info-label>Email Terdaftar</span>
+<span id=account-email class=info-value></span>
+</div>
+<div class=info-row>
+<span class=info-label>WhatsApp Terdaftar</span>
+<span id=account-whatsapp class=info-value></span>
+</div>
+</div>
+<div class=account-actions>
+<button id=change-device-id-btn class="action-button btn-secondary">Ganti Device ID</button>
+<button id=change-password-btn class="action-button btn-secondary">Ubah Sandi</button>
+<button id=account-logout-btn class="action-button btn-red">Logout</button>
+</div>
+</div>
+<div id=profile-container class=content-container>
+<div id=other-account-section style="margin-bottom:15px">
+<div id=other-account-form-container class=content-card>
+<p class=subtitle style="margin-bottom:10px; font-size: 0.75em;">Tambahkan akun via Device ID atau X-Auth Token.</p>
+<form id=other-account-form>
+<div class=input-group style=display:none>
+<select id=other-account-game class=input-field>
+<option value disabled selected>Pilih Game</option>
+<option value=BUSSID>BUSSID</option>
+<option value=TRUCKSID>TRUCKSID</option>
+</select>
+</div>
+<div class=input-group>
+<input type=text id=other-account-key class=input-field placeholder="Device ID / X-Auth Token" required style="font-size: 0.8em;">
+</div>
+<button type=submit id=find-account-btn class="action-button btn-primary" style="font-size: 0.8em; padding: 7px;">Cari & Tambah Akun</button>
+</form>
+</div>
+</div>
+<div id="search-account-section" style="margin-bottom: 20px; max-width: 450px; margin-left: auto; margin-right: auto;">
+    <div class="input-group">
+        <input type="text" id="search-account-input" class="input-field" placeholder="🔍 Cari akun berdasarkan nama atau Device ID...">
     </div>
-
-    <div id="app-layout">
-        <header id="top-navbar">
-            <div class="header-top-row">
-                <h1>Maleo SHOP<span class="subtitle-brand">by@donitata1717®</span></h1>
-                <div class="header-actions">
-                    <div class="sidebar-balance-card">
-                        <div class="balance-info">
-                            <span class="balance-label" id="sidebar-balance-label">Saldo</span>
-                            <span class="balance-amount" id="sidebar-balance-amount">Rp 0</span>
-                        </div>
-                        <span id="add-balance-btn" class="add-balance-icon" title="Top Up Saldo">
-                            <i class="ph-bold ph-plus-circle"></i>
-                        </span>
-                    </div>
-                    <button id="header-my-account-btn" class="action-button" title="Akun Saya">
-                        <i class="ph-bold ph-gear"></i>
-                    </button>
-                    <button id="logout-btn" class="action-button" title="Logout">
-                        <i class="ph-bold ph-sign-out"></i>
-                        <span class="logout-text">Logout</span>
-                    </button>
-                </div>
-            </div>
-            <nav>
-                <ul class="sidebar-nav">
-                    <li class="nav-item"><a href="#" id="nav-subscription"><i class="ph-bold ph-crown nav-icon"></i><span class="nav-text">Langganan</span></a></li>
-                    <li class="nav-item"><a href="#" id="nav-topupBussid" class="active"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjyQYodaXJAK1A9Bi0YOIU2BhQubEYchhFx-2PZYB8hOIopqXIQ1FXK_goAxP0GPaXyXk6L5jnO3aOL6EuzkEgGxa2tohs7YJazYrVPZ8czUi8BSjWWkrTKVCTwk7wmhEZRWFPP1U2S-FjXUwDbi9duZ9ejBNm0xTLBFblyee8yY_Jk2MLtQj6v3E_bePI/s1600/Bussid.png" class="nav-icon-img" alt="BUSSID Icon"><span class="nav-text">Topup BUSSID</span></a></li>
-                    <li class="nav-item"><a href="#" id="nav-topupTrucksid"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj4Q0wYqZDSD7VH-0QlvsqTDi4xnKg5NfRDLJHt92A-4qMcVNMXHpZPkGOQARhJWeZXr0VCCbMCUXJn2iAL-xbCOGELYZQqEgnJXD-VneGmLKQgjO5C9XhyphenhypheneMWD0RBl_bv3VKAGfhYxDzKLPhFjujKFMy7ITYuvLyiW-aDEp3AkM_Tn-jEAPuZXmPqarJY/s1600/images__1_-removebg-preview.png" class="nav-icon-img" alt="TRUCKSID Icon"><span class="nav-text">Topup TRUCKSID</span></a></li>
-                    <li class="nav-item"><a href="#" id="nav-topup"><i class="ph-bold ph-wallet nav-icon"></i><span class="nav-text">Topup Saldo</span></a></li>
-                    <li class="nav-item"><a href="#" id="nav-purchased-mods"><i class="ph-bold ph-folder-simple-user nav-icon"></i><span class="nav-text">MOD Terbeli</span></a></li>
-                    <li class="nav-item"><a href="#" id="nav-beli-mod"><i class="ph-bold ph-shopping-bag-open nav-icon"></i><span class="nav-text">Beli MOD</span></a></li>
-                    <li class="nav-item"><a href="#" id="nav-topup-admin"><i class="ph-bold ph-user-circle-gear nav-icon"></i><span class="nav-text">Topup via Admin</span></a></li>
-                </ul>
-            </nav>
-        </header>
-
-        <main class="main-content" id="main-content">
-            <div id="my-account-container" class="content-card">
-                <h2>Informasi Akun Saya</h2>
-                <div class="account-info-details">
-                    <div class="info-row">
-                        <span class="info-label">Username</span>
-                        <span id="account-username" class="info-value"></span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label" id="account-saldo-label">Status & Saldo</span>
-                        <span id="account-saldo" class="info-value accent-green"></span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Device ID</span>
-                        <span id="account-device-id" class="info-value small-text" title="Tahan untuk menyalin"></span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Email Terdaftar</span>
-                        <span id="account-email" class="info-value"></span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">WhatsApp Terdaftar</span>
-                        <span id="account-whatsapp" class="info-value"></span>
-                    </div>
-                </div>
-                <div class="account-actions">
-                    <button id="change-device-id-btn" class="action-button btn-secondary">Ganti Device ID</button>
-                    <button id="change-password-btn" class="action-button btn-secondary">Ubah Sandi</button>
-                    <button id="account-logout-btn" class="action-button btn-red">Logout</button>
-                </div>
-            </div>
-            <div id="profile-container" class="content-container">
-                <div id="other-account-section" style="margin-bottom: 20px;">
-                    <div id="other-account-form-container" class="content-card" style="display: block; max-width: 100%;">
-                        <p class="subtitle" style="margin-bottom: 15px;">Tambahkan akun game menggunakan Device ID atau X-Auth Token.</p>
-                        <form id="other-account-form">
-                            <div class="input-group" style="display: none;">
-                                <select id="other-account-game" class="input-field">
-                                    <option value="" disabled selected>Pilih Game</option>
-                                    <option value="BUSSID">BUSSID</option>
-                                    <option value="TRUCKSID">TRUCKSID</option>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <input type="text" id="other-account-key" class="input-field" placeholder="Device ID atau X-Auth Token" required>
-                            </div>
-                            <button type="submit" id="find-account-btn" class="action-button btn-primary">Cari & Tambah Akun</button>
-                        </form>
-                    </div>
-                </div>
-                <div id="all-profiles-grid"></div>
-            </div>
-            <div id="topup-container" class="content-card">
-                <div id="topup-options-view">
-                    <h2>Pilih Nominal Top Up</h2>
-                    <div class="topup-options-grid">
-                        <button class="topup-option-btn" data-amount="50000">Rp 50.000</button>
-                        <button class="topup-option-btn" data-amount="100000">Rp 100.000</button>
-                    </div>
-                    <p class="subtitle" style="margin-top: 8px; margin-bottom: 12px;">Atau masukkan jumlah lain</p>
-                    <form id="custom-topup-form">
-                        <div class="input-group">
-                            <input type="number" id="custom-amount-input" class="input-field" placeholder="Minimal 10.000" min="10000" required>
-                        </div>
-                        <button type="submit" class="action-button btn-primary">Lanjutkan</button>
-                    </form>
-                </div>
-                <div id="topup-pending-view" style="display: none;">
-                    <h2>Transaksi Dalam Proses</h2>
-                    <div class="important-notice">
-                        <span class="notice-title">Anda memiliki transaksi yang belum selesai.</span>
-                        <p id="pending-info-text"></p>
-                    </div>
-                    <button id="check-status-again-btn" class="action-button btn-primary">Cek Status Lagi</button>
-                    <button id="cancel-from-pending-btn" class="action-button btn-red" style="margin-top: 8px;">Batalkan Transaksi</button>
-                </div>
-                <div class="history-section">
-                    <h3>Riwayat Transaksi</h3>
-                    <div class="history-tables-container">
-                        <div class="history-table">
-                            <h4>Riwayat Top Up Saldo</h4>
-                            <ul class="history-list" id="topup-history-list"></ul>
-                        </div>
-                        <div class="history-table">
-                            <h4>Riwayat Pembelian</h4>
-                            <ul class="history-list" id="purchase-history-list"></ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="qris-display-container" class="content-card">
-                <h2>Scan untuk Membayar</h2>
-                <div style="text-align:center;">
-                    <img id="qris-image" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifsIlVyECfE7iW14IC6-_Ot5pFguYRxkupdUFmzeAHMBDgMJ_KXJs14w3C6k1w7sY2cr2aFoAA7YBQWNtQC_JA8CjE3qyrdi0Rhes3aJ7czf_Qkui6Ha128LUN6fCI0DcazF2Inm9EivNZmiiQciH8XwLQad19BFXIlrOevmgHICqm9vALCXBYn2o7cj4/s1600/IMG_20250629_202856.jpg" alt="QRIS Code">
-                </div>
-                <div class="important-notice">
-                    <span class="notice-title">PENTING: Transfer Sesuai Nominal Unik</span>
-                    <span id="qris-amount-display" class="notice-amount">Rp 0</span>
-                </div>
-                <div class="buy-ub-actions">
-                    <button id="cancel-qris-btn" class="action-button btn-red">Batalkan Transaksi</button>
-                    <button id="confirm-payment-btn" class="action-button btn-green">Saya Sudah Transfer</button>
-                </div>
-            </div>
-            <div id="buy-ub-container" class="content-card">
-                <h2>Toko UB (<span id="buy-ub-game-name"></span>)</h2>
-                <div id="buy-ub-balance-display-wrapper" class="current-balance-display">Saldo Akun Anda: <span id="buy-ub-current-saldo">Rp 0</span></div>
-                <div class="player-info-display">
-                    <p>Nama Player: <span id="player-name-display"></span></p>
-                    <p>UB yang dimiliki: <span id="player-ub-display"></span></p>
-                </div>
-                <div class="ub-store-display">
-                    <div class="display-row">
-                        <span class="display-label">Anda Dapat:</span>
-                        <span class="display-value ub" id="ub-display">0 UB</span>
-                    </div>
-                    <div class="display-row" id="rp-display-row">
-                        <span class="display-label">Harga:</span>
-                        <span class="display-value rp" id="rp-display">Rp 0</span>
-                    </div>
-                </div>
-                <input type="range" min="1" max="2147483647" value="1" step="1000" class="input-field" id="ub-slider" style="padding: 0;">
-                <form id="buy-ub-form">
-                    <div id="buy-ub-error" class="hasil-text error" style="display:none;"></div>
-                    <div class="buy-ub-extra-actions">
-                        <button type="button" id="reduce-ub-btn" class="action-button btn-cyan">Kurangi UB</button>
-                        <button type="button" id="max-ub-btn" class="action-button btn-primary">Max UB</button>
-                    </div>
-                    <div class="buy-ub-actions">
-                        <button type="button" id="cancel-buy-ub-btn" class="action-button btn-secondary">Batal</button>
-                        <button id="confirm-buy-ub-btn" type="submit" class="action-button btn-green">Tambah UB</button>
-                    </div>
-                </form>
-            </div>
-             <div id="subscription-container" class="content-container">
-                <div id="subscription-packages-view">
-                    <h2>Paket Langganan</h2>
-                    <p class="subtitle">Pilih paket untuk menikmati fitur-fitur eksklusif tanpa batas.</p>
-                    <div class="subscription-grid">
-                        <div class="subscription-card">
-                            <h3>User Biasa</h3>
-                            <p class="sub-price">GRATIS</p>
-                            <ul>
-                                <li><i class="ph-bold ph-check-circle"></i>Akses dasar ke aplikasi</li>
-                                <li><i class="ph-bold ph-check-circle"></i>Top-up UB menggunakan saldo</li>
-                                <li><i class="ph-bold ph-check-circle"></i>Pembelian MOD menggunakan saldo</li>
-                            </ul>
-                            <button class="action-button btn-secondary" disabled>Paket Anda Saat Ini</button>
-                        </div>
-                        <div class="subscription-card premium">
-                            <h3>Langganan Bulanan</h3>
-                            <p class="sub-price">
-                                <span class="promo-price">Rp 35.000</span>
-                                <span class="original-price">Rp 65.000</span>
-                                <span class="sub-duration">/ bulan</span>
-                            </p>
-                            <ul>
-                                <li><i class="ph-bold ph-check-circle"></i>Top-up UB tanpa batas (GRATIS)</li>
-                                <li><i class="ph-bold ph-check-circle"></i>Beli semua MOD (GRATIS)</li>
-                                <li><i class="ph-bold ph-check-circle"></i>Akses Joki via Admin (GRATIS)</li>
-                                <li><i class="ph-bold ph-check-circle"></i>Tanpa perlu top-up saldo</li>
-                            </ul>
-                            <button id="buy-monthly-sub-btn" class="action-button btn-primary">Beli Langganan</button>
-                        </div>
-                        <div class="subscription-card permanent">
-                            <h3>Premium Permanen</h3>
-                            <p class="sub-price">Rp 199.000 <span class="sub-duration">/ sekali bayar</span></p>
-                            <ul>
-                                <li><i class="ph-bold ph-check-circle"></i>Semua keuntungan Langganan Bulanan</li>
-                                <li><i class="ph-bold ph-check-circle"></i>Top-up UB tanpa batas (GRATIS)</li>
-                                <li><i class="ph-bold ph-check-circle"></i>Beli Semua MOD (GRATIS)</li>
-                                <li><i class="ph-bold ph-check-circle"></i>Tanpa perlu Top-up Saldo</li>
-                                <li><i class="ph-bold ph-check-circle"></i>Akses premium selamanya</li>
-                                <li><i class="ph-bold ph-check-circle"></i>Satu kali pembayaran</li>
-                                <li><i class="ph-bold ph-check-circle"></i>Dukungan prioritas dari admin</li>
-                            </ul>
-                            <button id="buy-permanent-sub-btn" class="action-button btn-green">Beli Premium</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="subscription-qris-container" class="content-card">
-                <h2>Pembayaran Langganan</h2>
-                <p class="subtitle" id="sub-qris-package-name" style="text-align: center; font-weight: bold; color: var(--text-primary);"></p>
-                <div style="text-align:center;">
-                    <img id="sub-qris-image" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifsIlVyECfE7iW14IC6-_Ot5pFguYRxkupdUFmzeAHMBDgMJ_KXJs14w3C6k1w7sY2cr2aFoAA7YBQWNtQC_JA8CjE3qyrdi0Rhes3aJ7czf_Qkui6Ha128LUN6fCI0DcazF2Inm9EivNZmiiQciH8XwLQad19BFXIlrOevmgHICqm9vALCXBYn2o7cj4/s1600/IMG_20250629_202856.jpg" alt="QRIS Code">
-                </div>
-                <div class="important-notice">
-                    <span class="notice-title">PENTING: Transfer Sesuai Nominal Unik</span>
-                    <span id="sub-qris-amount-display" class="notice-amount">Rp 0</span>
-                </div>
-                <p class="subtitle" style="text-align:center; font-weight: 600;" id="sub-qris-timer">Batal Otomatis dalam: 06:00:00</p>
-                <div class="buy-ub-actions">
-                    <button id="cancel-sub-qris-btn" class="action-button btn-red">Batalkan Transaksi</button>
-                    <button id="confirm-sub-payment-btn" class="action-button btn-green">Saya Sudah Transfer</button>
-                </div>
-            </div>
-            <div id="beli-mod-container" class="content-container">
-                <h2>Toko MOD</h2>
-                <p class="subtitle">Pilih MOD yang ingin Anda beli. Item yang sudah dibeli tidak akan ditampilkan di sini.</p>
-                <div id="mod-showcase-grid"></div>
-            </div>
-            <div id="purchased-mods-container" class="content-container">
-                <h2>MOD yang Anda Beli</h2>
-                <p class="subtitle">Berikut adalah semua item MOD yang telah Anda beli. Anda dapat mengunduhnya kapan saja.</p>
-                <div id="purchased-mods-grid"></div>
-            </div>
-            <div id="topup-admin-container" class="content-card"></div>
-        </main>
-    </div>
-    <div id="device-id-modal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="modal-close" id="close-device-id-modal-btn">×</span>
-            <h2>Cara Mendapatkan Device ID</h2>
-            <div class="modal-warning">
-                <p><strong>PERINGATAN:</strong></p>
-                <p>Download bussid 3.6.1 Dan Canary di bawah ini lalu instal, sebelum itu hapus bussid anda terlebih dahulu!</p>
-                <p>Setelah bussid 3.6.1 dan canary telah diinstal, Klik tombol "Tutorial Menggunakan" untuk lanjut!.</p>
-            </div>
-            <div class="modal-actions">
-                <a href="https://d.apkpure.net/b/XAPK/com.maleo.bussimulatorid?versionCode=200635" target="_blank" class="action-button btn-primary">Bussid 3.6.1</a>
-                <a href="https://d.apkpure.com/b/APK/com.guoshi.httpcanary?versionCode=19" target="_blank" class="action-button btn-primary">Canary</a>
-                <a href="https://m.youtube.com/watch?v=kGtflL4TdyM&pp=0gcJCfwAo7VqN5tD" target="_blank" class="action-button btn-green">Tutorial Menggunakan</a>
-            </div>
-        </div>
-    </div>
-    <div id="account-status-modal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="modal-close" id="close-status-modal-btn">×</span>
-            <h2 id="status-modal-title">Kelebihan Akun</h2>
-            <div id="status-modal-content"></div>
-        </div>
-    </div>
-    <div id="change-device-id-modal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="modal-close" id="close-device-id-modal">×</span>
-            <h2>Ganti Device ID</h2>
-            <form id="change-device-id-form">
-                <div class="input-group">
-                    <input type="text" id="new-device-id" class="input-field" placeholder="Masukkan Device ID Baru (16 Karakter)" required minlength="16" maxlength="16">
-                </div>
-                <button type="submit" class="action-button btn-primary">Simpan Device ID</button>
-            </form>
-        </div>
-    </div>
-    <div id="change-password-modal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="modal-close" id="close-password-modal">×</span>
-            <h2>Ubah Sandi</h2>
-            <form id="change-password-form">
-                <div class="input-group">
-                    <input type="password" id="new-password" class="input-field" placeholder="Masukkan Sandi Baru" required>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="confirm-new-password" class="input-field" placeholder="Konfirmasi Sandi Baru" required>
-                </div>
-                <button type="submit" class="action-button btn-primary">Simpan Sandi</button>
-            </form>
-        </div>
-    </div>
-    <div id="reduce-ub-modal" class="modal-overlay">
-        <div class="modal-content">
-            <span class="modal-close" id="close-reduce-ub-modal">×</span>
-            <div style="text-align: center; margin-bottom: 20px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="var(--accent-red)" viewBox="0 0 256 256">
-                    <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm48-88a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16h80A8,8,0,0,1,176,128Z"></path>
-                </svg>
-            </div>
-            <h2 style="text-align: center;">Kurangi Uang Game (UB)</h2>
-            <p class="subtitle" style="text-align: center; max-width: 350px; margin-left:auto; margin-right:auto;">Masukkan jumlah UB yang ingin Anda kurangi dari akun game. Tindakan ini tidak akan mengurangi saldo Rupiah Anda.</p>
-            <div class="modal-warning" style="background-color: rgba(239, 68, 68, 0.1); border-color: var(--accent-red); margin-top: 0; margin-bottom: 25px;">
-                <p style="margin:0;"><strong>Peringatan:</strong> Pastikan jumlah yang dimasukkan benar. Pengurangan UB tidak dapat dibatalkan.</p>
-            </div>
-            <form id="reduce-ub-form">
-                <div class="input-group">
-                    <input type="number" id="reduce-ub-amount" class="input-field" placeholder="Contoh: 50000" required min="1">
-                </div>
-                <button type="submit" id="confirm-reduce-ub-btn" class="action-button btn-red">Konfirmasi & Kurangi UB</button>
-            </form>
-        </div>
-    </div>
-    <div id="image-lightbox" class="lightbox-overlay">
-        <span class="lightbox-close" id="close-lightbox-btn">×</span>
-        <div class="lightbox-content">
-            <img src="" alt="Tampilan Penuh" id="lightbox-image">
-        </div>
-    </div>
-    <div id="confirmation-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 450px;">
-            <span class="modal-close" id="confirm-modal-close-btn">×</span>
-            <h2 id="confirm-modal-title">Konfirmasi Pembelian</h2>
-            <p id="confirm-modal-message" class="subtitle" style="margin-bottom: 25px; line-height: 1.6;"></p>
-            <div class="modal-actions" style="flex-direction: row; gap: 15px;">
-                <button id="confirm-modal-cancel-btn" class="action-button btn-secondary" style="width: 50%;">Batal</button>
-                <button id="confirm-modal-confirm-btn" class="action-button btn-green" style="width: 50%;">Konfirmasi</button>
-            </div>
-        </div>
-    </div>
-    <div id="maintenance-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h2>Pemberitahuan Perbaikan</h2>
-            <p id="maintenance-modal-message"></p>
-            <div class="modal-actions" style="flex-direction: row; gap: 15px;">
-                <button id="maintenance-cancel-btn" class="action-button btn-secondary" style="width: 50%;">Batal</button>
-                <button id="maintenance-admin-btn" class="action-button btn-primary" style="width: 50%;">Topup via Admin</button>
-            </div>
-        </div>
-    </div>
-    <div id="admin-price-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 600px;">
-            <span class="modal-close" id="admin-price-modal-close-btn">×</span>
-            <h2 class="text-center">Pilih Paket Topup Anda</h2>
-            <div class="current-balance-display" style="margin-top:20px;">Saldo Anda: <span id="admin-current-saldo">Rp 0</span></div>
-            <p class="subtitle text-center" style="margin-bottom: 15px;">Pilih salah satu untuk melanjutkan</p>
-            <form id="admin-price-form" novalidate>
-                <div id="admin-price-list" class="price-option-grid"></div>
-                <div id="admin-priceError" class="error-message" style="text-align: center; margin-top: 1rem;"></div>
-                <button id="admin-final-submit-btn" type="submit" class="action-button btn-green" style="margin-top: 1.5rem;"><i class="ph-bold ph-paper-plane-tilt" style="margin-right: 8px; vertical-align: middle;"></i> BELI & KIRIM KE ADMIN</button>
-            </form>
-        </div>
-    </div>
-    <div id="admin-final-warning-modal" class="modal-overlay">
-        <div class="modal-content text-center">
-            <h2 style="color: var(--accent-cyan);">PERMINTAAN DIKIRIM</h2>
-            <p class="subtitle" style="line-height: 1.6;">Data Anda telah berhasil dikirim ke Admin.<br><strong style="color: white;">Mohon jangan tutup halaman ini.</strong><br>Silakan hubungi admin via WhatsApp untuk konfirmasi.</p>
-            <div id="admin-countdown-timer" style="font-size: 2rem; font-weight: 700; color: white; margin-top: 1rem;"></div>
-        </div>
-    </div>
-    <div id="offline-modal" class="modal-overlay">
-        <div class="modal-content">
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="var(--accent-red)" viewBox="0 0 256 256" style="margin-bottom: 20px;">
-                <path d="M128,24a104,104,0,1,0,232,128,104.11,104.11,0,0,0-128-24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-112a8,8,0,0,1,8-8h0a8,8,0,0,1,8,8v48a8,8,0,0,1-8,8h0a8,8,0,0,1-8-8ZM128,176a12,12,0,1,1,12-12A12,12,0,0,1,128,176Z"></path>
-            </svg>
-            <h2 style="margin-bottom: 15px;">Koneksi Terputus</h2>
-            <p class="subtitle">Anda sedang OFFLINE atau koneksi Internet anda bermasalah, mohon cek koneksi internet anda!!!</p>
-        </div>
-    </div>
-    <div id="subscription-expired-modal" class="modal-overlay">
-        <div class="modal-content">
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="var(--accent-red)" viewBox="0 0 256 256" style="margin-bottom: 20px;">
-                <path d="M128,24a104,104,0,1,0,232,128,104.11,104.11,0,0,0-128-24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-112a8,8,0,0,1,8-8h0a8,8,0,0,1,8,8v48a8,8,0,0,1-8,8h0a8,8,0,0,1-8-8ZM128,176a12,12,0,1,1,12-12A12,12,0,0,1,128,176Z"></path>
-            </svg>
-            <h2>Masa Aktif Habis</h2>
-            <p class="subtitle" style="line-height: 1.6; margin-bottom: 25px;">Masa Aktif Akun Anda Telah Berakhir. Harap hubungi Admin @donitata1717@dt17corp untuk memperpanjang.</p>
-        </div>
-    </div>
-    
-    <script type="module">
+</div>
+<div id=all-profiles-grid></div>
+</div>
+<div id=topup-container class=content-card>
+<div id=topup-options-view>
+<h2>Pilih Nominal Top Up</h2>
+<div class=topup-options-grid>
+<button class=topup-option-btn data-amount=50000>Rp 50.000</button>
+<button class=topup-option-btn data-amount=100000>Rp 100.000</button>
+</div>
+<p class=subtitle style=margin-top:8px;margin-bottom:12px>Atau masukkan jumlah lain</p>
+<form id=custom-topup-form>
+<div class=input-group>
+<input type=number id=custom-amount-input class=input-field placeholder="Minimal 10.000" min=10000 required>
+</div>
+<button type=submit class="action-button btn-primary">Lanjutkan</button>
+</form>
+</div>
+<div id=topup-pending-view style=display:none>
+<h2>Transaksi Dalam Proses</h2>
+<div class=important-notice>
+<span class=notice-title>Anda memiliki transaksi yang belum selesai.</span>
+<p id=pending-info-text></p>
+</div>
+<button id=check-status-again-btn class="action-button btn-primary">Cek Status Lagi</button>
+<button id=cancel-from-pending-btn class="action-button btn-red" style=margin-top:8px>Batalkan Transaksi</button>
+</div>
+<div class=history-section>
+<h3>Riwayat Transaksi</h3>
+<div class=history-tables-container>
+<div class=history-table>
+<h4>Riwayat Top Up Saldo</h4>
+<ul class=history-list id=topup-history-list></ul>
+</div>
+<div class=history-table>
+<h4>Riwayat Pembelian</h4>
+<ul class=history-list id=purchase-history-list></ul>
+</div>
+</div>
+</div>
+</div>
+<div id=qris-display-container class=content-card>
+<h2>Scan untuk Membayar</h2>
+<div style=text-align:center>
+<img id=qris-image src=https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifsIlVyECfE7iW14IC6-_Ot5pFguYRxkupdUFmzeAHMBDgMJ_KXJs14w3C6k1w7sY2cr2aFoAA7YBQWNtQC_JA8CjE3qyrdi0Rhes3aJ7czf_Qkui6Ha128LUN6fCI0DcazF2Inm9EivNZmiiQciH8XwLQad19BFXIlrOevmgHICqm9vALCXBYn2o7cj4/s1600/IMG_20250629_202856.jpg alt="QRIS Code">
+</div>
+<div class=important-notice>
+<span class=notice-title>PENTING: Transfer Sesuai Nominal Unik</span>
+<span id=qris-amount-display class=notice-amount>Rp 0</span>
+</div>
+<div class=buy-ub-actions>
+<button id=cancel-qris-btn class="action-button btn-red">Batalkan Transaksi</button>
+<button id=confirm-payment-btn class="action-button btn-green">Saya Sudah Transfer</button>
+</div>
+</div>
+<div id=buy-ub-container class=content-card>
+<h2>Toko UB (<span id=buy-ub-game-name></span>)</h2>
+<div id=buy-ub-balance-display-wrapper class=current-balance-display>Saldo Akun Anda: <span id=buy-ub-current-saldo>Rp 0</span></div>
+<div class=player-info-display>
+<p>Nama Player: <span id=player-name-display></span></p>
+<p>UB yang dimiliki: <span id=player-ub-display></span></p>
+</div>
+<div class=ub-store-display>
+<div class=display-row>
+<span class=display-label>Anda Dapat:</span>
+<span class="display-value ub" id=ub-display>0 UB</span>
+</div>
+<div class=display-row id=rp-display-row>
+<span class=display-label>Harga:</span>
+<span class="display-value rp" id=rp-display>Rp 0</span>
+</div>
+</div>
+<input type=range min=1 max=2147483647 value=1 step=1000 class=input-field id=ub-slider style=padding:0>
+<form id=buy-ub-form>
+<div id=buy-ub-error class="hasil-text error" style=display:none></div>
+<div class=buy-ub-extra-actions>
+<button type=button id=max-ub-btn class="action-button btn-primary">Max UB</button>
+</div>
+<div class=buy-ub-actions>
+<button type=button id=cancel-buy-ub-btn class="action-button btn-secondary">Batal</button>
+<button id=confirm-buy-ub-btn type=submit class="action-button btn-green">Tambah UB</button>
+</div>
+</form>
+</div>
+<div id=subscription-container class=content-container>
+<div id=subscription-packages-view>
+<h2>Paket Langganan</h2>
+<p class=subtitle>Pilih paket untuk menikmati fitur-fitur eksklusif tanpa batas.</p>
+<div class=subscription-grid>
+<div class=subscription-card>
+<h3>User Biasa</h3>
+<p class=sub-price>GRATIS</p>
+<ul>
+<li><i class="ph-bold ph-check-circle"></i>Akses dasar ke aplikasi</li>
+<li><i class="ph-bold ph-check-circle"></i>Top-up UB menggunakan saldo</li>
+<li><i class="ph-bold ph-check-circle"></i>Pembelian MOD menggunakan saldo</li>
+</ul>
+<button class="action-button btn-secondary" disabled>Paket Anda Saat Ini</button>
+</div>
+<div class="subscription-card premium">
+<h3>Langganan Bulanan</h3>
+<p class=sub-price>
+<span class=promo-price>Rp 35.000</span>
+<span class=original-price>Rp 65.000</span>
+<span class=sub-duration>/ bulan</span>
+</p>
+<ul>
+<li><i class="ph-bold ph-check-circle"></i>Top-up UB tanpa batas (GRATIS)</li>
+<li><i class="ph-bold ph-check-circle"></i>Beli semua MOD (GRATIS)</li>
+<li><i class="ph-bold ph-check-circle"></i>Akses Joki via Admin (GRATIS)</li>
+<li><i class="ph-bold ph-check-circle"></i>Tanpa perlu top-up saldo</li>
+</ul>
+<button id=buy-monthly-sub-btn class="action-button btn-primary">Beli Langganan</button>
+</div>
+<div class="subscription-card permanent">
+<h3>Premium Permanen</h3>
+<p class=sub-price>Rp 199.000 <span class=sub-duration>/ sekali bayar</span></p>
+<ul>
+<li><i class="ph-bold ph-check-circle"></i>Semua keuntungan Langganan Bulanan</li>
+<li><i class="ph-bold ph-check-circle"></i>Top-up UB tanpa batas (GRATIS)</li>
+<li><i class="ph-bold ph-check-circle"></i>Beli Semua MOD (GRATIS)</li>
+<li><i class="ph-bold ph-check-circle"></i>Tanpa perlu Top-up Saldo</li>
+<li><i class="ph-bold ph-check-circle"></i>Akses premium selamanya</li>
+<li><i class="ph-bold ph-check-circle"></i>Satu kali pembayaran</li>
+<li><i class="ph-bold ph-check-circle"></i>Dukungan prioritas dari admin</li>
+</ul>
+<button id=buy-permanent-sub-btn class="action-button btn-green">Beli Premium</button>
+</div>
+</div>
+</div>
+</div>
+<div id=subscription-qris-container class=content-card>
+<h2>Pembayaran Langganan</h2>
+<p class=subtitle id=sub-qris-package-name style=text-align:center;font-weight:bold;color:var(--text-primary)></p>
+<div style=text-align:center>
+<img id=sub-qris-image src=https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifsIlVyECfE7iW14IC6-_Ot5pFguYRxkupdUFmzeAHMBDgMJ_KXJs14w3C6k1w7sY2cr2aFoAA7YBQWNtQC_JA8CjE3qyrdi0Rhes3aJ7czf_Qkui6Ha128LUN6fCI0DcazF2Inm9EivNZmiiQciH8XwLQad19BFXIlrOevmgHICqm9vALCXBYn2o7cj4/s1600/IMG_20250629_202856.jpg alt="QRIS Code">
+</div>
+<div class=important-notice>
+<span class=notice-title>PENTING: Transfer Sesuai Nominal Unik</span>
+<span id=sub-qris-amount-display class=notice-amount>Rp 0</span>
+</div>
+<p class=subtitle style=text-align:center;font-weight:600 id=sub-qris-timer>Batal Otomatis dalam: 06:00:00</p>
+<div class=buy-ub-actions>
+<button id=cancel-sub-qris-btn class="action-button btn-red">Batalkan Transaksi</button>
+<button id=confirm-sub-payment-btn class="action-button btn-green">Saya Sudah Transfer</button>
+</div>
+</div>
+<div id=beli-mod-container class=content-container>
+<h2>Toko MOD</h2>
+<p class=subtitle>Pilih MOD yang ingin Anda beli. Item yang sudah dibeli tidak akan ditampilkan di sini.</p>
+<div id=mod-showcase-grid></div>
+</div>
+<div id=purchased-mods-container class=content-container>
+<h2>MOD yang Anda Beli</h2>
+<p class=subtitle>Berikut adalah semua item MOD yang telah Anda beli. Anda dapat mengunduhnya kapan saja.</p>
+<div id=purchased-mods-grid></div>
+</div>
+<div id=topup-admin-container class=content-card></div>
+</main>
+</div>
+<div id=device-id-modal class=modal-overlay>
+<div class=modal-content>
+<span class=modal-close id=close-device-id-modal-btn>×</span>
+<h2>Cara Mendapatkan Device ID</h2>
+<div class=modal-warning>
+<p><strong>PERINGATAN:</strong></p>
+<p>Download bussid 3.6.1 Dan Canary di bawah ini lalu instal, sebelum itu hapus bussid anda terlebih dahulu!</p>
+<p>Setelah bussid 3.6.1 dan canary telah diinstal, Klik tombol "Tutorial Menggunakan" untuk lanjut!.</p>
+</div>
+<div class=modal-actions>
+<a href="https://d.apkpure.net/b/XAPK/com.maleo.bussimulatorid?versionCode=200635" target=_blank class="action-button btn-primary">Bussid 3.6.1</a>
+<a href="https://d.apkpure.com/b/APK/com.guoshi.httpcanary?versionCode=19" target=_blank class="action-button btn-primary">Canary</a>
+<a href="https://m.youtube.com/watch?v=kGtflL4TdyM&pp=0gcJCfwAo7VqN5tD" target=_blank class="action-button btn-green">Tutorial Menggunakan</a>
+</div>
+</div>
+</div>
+<div id=account-status-modal class=modal-overlay>
+<div class=modal-content>
+<span class=modal-close id=close-status-modal-btn>×</span>
+<h2 id=status-modal-title>Kelebihan Akun</h2>
+<div id=status-modal-content></div>
+</div>
+</div>
+<div id=change-device-id-modal class=modal-overlay>
+<div class=modal-content>
+<span class=modal-close id=close-device-id-modal>×</span>
+<h2>Ganti Device ID</h2>
+<form id=change-device-id-form>
+<div class=input-group>
+<input type=text id=new-device-id class=input-field placeholder="Masukkan Device ID Baru (16 Karakter)" required minlength=16 maxlength=16>
+</div>
+<button type=submit class="action-button btn-primary">Simpan Device ID</button>
+</form>
+</div>
+</div>
+<div id=change-password-modal class=modal-overlay>
+<div class=modal-content>
+<span class=modal-close id=close-password-modal>×</span>
+<h2>Ubah Sandi</h2>
+<form id=change-password-form>
+<div class=input-group>
+<input type=password id=new-password class=input-field placeholder="Masukkan Sandi Baru" required>
+</div>
+<div class=input-group>
+<input type=password id=confirm-new-password class=input-field placeholder="Konfirmasi Sandi Baru" required>
+</div>
+<button type=submit class="action-button btn-primary">Simpan Sandi</button>
+</form>
+</div>
+</div>
+<div id=reduce-ub-modal class=modal-overlay>
+<div class=modal-content>
+<span class=modal-close id=close-reduce-ub-modal>×</span>
+<div style=text-align:center;margin-bottom:20px>
+<svg xmlns=http://www.w3.org/2000/svg width=64 height=64 fill=var(--accent-red) viewBox="0 0 256 256">
+<path d=M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm48-88a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16h80A8,8,0,0,1,176,128Z></path>
+</svg>
+</div>
+<h2 style=text-align:center>Kurangi Uang Game (UB)</h2>
+<p class=subtitle style=text-align:center;max-width:350px;margin-left:auto;margin-right:auto>Masukkan jumlah UB yang ingin Anda kurangi dari akun game. Tindakan ini tidak akan mengurangi saldo Rupiah Anda.</p>
+<div class=modal-warning style=background-color:rgba(239,68,68,0.1);border-color:var(--accent-red);margin-top:0;margin-bottom:25px>
+<p style=margin:0><strong>Peringatan:</strong> Pastikan jumlah yang dimasukkan benar. Pengurangan UB tidak dapat dibatalkan.</p>
+</div>
+<form id=reduce-ub-form>
+<div class=input-group>
+<input type=number id=reduce-ub-amount class=input-field placeholder="Contoh: 50000" required min=1>
+</div>
+<button type=submit id=confirm-reduce-ub-btn class="action-button btn-red">Konfirmasi & Kurangi UB</button>
+</form>
+</div>
+</div>
+<div id=image-lightbox class=lightbox-overlay>
+<span class=lightbox-close id=close-lightbox-btn>×</span>
+<div class=lightbox-content>
+<img src alt="Tampilan Penuh" id=lightbox-image>
+</div>
+</div>
+<div id=confirmation-modal class=modal-overlay>
+<div class=modal-content style=max-width:450px>
+<span class=modal-close id=confirm-modal-close-btn>×</span>
+<h2 id=confirm-modal-title>Konfirmasi Pembelian</h2>
+<p id=confirm-modal-message class=subtitle style=margin-bottom:25px;line-height:1.6></p>
+<div class=modal-actions style=flex-direction:row;gap:15px>
+<button id=confirm-modal-cancel-btn class="action-button btn-secondary" style=width:50%>Batal</button>
+<button id=confirm-modal-confirm-btn class="action-button btn-green" style=width:50%>Konfirmasi</button>
+</div>
+</div>
+</div>
+<div id=maintenance-modal class=modal-overlay>
+<div class=modal-content>
+<h2>Pemberitahuan Perbaikan</h2>
+<p id=maintenance-modal-message></p>
+<div class=modal-actions style=flex-direction:row;gap:15px>
+<button id=maintenance-cancel-btn class="action-button btn-secondary" style=width:50%>Batal</button>
+<button id=maintenance-admin-btn class="action-button btn-primary" style=width:50%>Topup via Admin</button>
+</div>
+</div>
+</div>
+<div id=admin-price-modal class=modal-overlay>
+<div class=modal-content style=max-width:600px>
+<span class=modal-close id=admin-price-modal-close-btn>×</span>
+<h2 class=text-center>Pilih Paket Topup Anda</h2>
+<div class=current-balance-display style=margin-top:20px>Saldo Anda: <span id=admin-current-saldo>Rp 0</span></div>
+<p class="subtitle text-center" style=margin-bottom:15px>Pilih salah satu untuk melanjutkan</p>
+<form id=admin-price-form novalidate>
+<div id=admin-price-list class=price-option-grid></div>
+<div id=admin-priceError class=error-message style=text-align:center;margin-top:1rem></div>
+<button id=admin-final-submit-btn type=submit class="action-button btn-green" style=margin-top:1.5rem><i class="ph-bold ph-paper-plane-tilt" style=margin-right:8px;vertical-align:middle></i> BELI & KIRIM KE ADMIN</button>
+</form>
+</div>
+</div>
+<div id=admin-final-warning-modal class=modal-overlay>
+<div class="modal-content text-center">
+<h2 style=color:var(--accent-cyan)>PERMINTAAN DIKIRIM</h2>
+<p class=subtitle style=line-height:1.6>Data Anda telah berhasil dikirim ke Admin.<br><strong style=color:white>Mohon jangan tutup halaman ini.</strong><br>Silakan hubungi admin via WhatsApp untuk konfirmasi.</p>
+<div id=admin-countdown-timer style=font-size:2rem;font-weight:700;color:white;margin-top:1rem></div>
+</div>
+</div>
+<div id=offline-modal class=modal-overlay>
+<div class=modal-content>
+<svg xmlns=http://www.w3.org/2000/svg width=64 height=64 fill=var(--accent-red) viewBox="0 0 256 256" style=margin-bottom:20px>
+<path d=M128,24a104,104,0,1,0,232,128,104.11,104.11,0,0,0-128-24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-112a8,8,0,0,1,8-8h0a8,8,0,0,1,8,8v48a8,8,0,0,1-8,8h0a8,8,0,0,1-8-8ZM128,176a12,12,0,1,1,12-12A12,12,0,0,1,128,176Z></path>
+</svg>
+<h2 style=margin-bottom:15px>Koneksi Terputus</h2>
+<p class=subtitle>Anda sedang OFFLINE atau koneksi Internet anda bermasalah, mohon cek koneksi internet anda!!!</p>
+</div>
+</div>
+<div id=subscription-expired-modal class=modal-overlay>
+<div class=modal-content>
+<svg xmlns=http://www.w3.org/2000/svg width=64 height=64 fill=var(--accent-red) viewBox="0 0 256 256" style=margin-bottom:20px>
+<path d=M128,24a104,104,0,1,0,232,128,104.11,104.11,0,0,0-128-24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-112a8,8,0,0,1,8-8h0a8,8,0,0,1,8,8v48a8,8,0,0,1-8,8h0a8,8,0,0,1-8-8ZM128,176a12,12,0,1,1,12-12A12,12,0,0,1,128,176Z></path>
+</svg>
+<h2>Masa Aktif Habis</h2>
+<p class=subtitle style=line-height:1.6;margin-bottom:25px>Masa Aktif Akun Anda Telah Berakhir. Harap hubungi Admin @donitata1717@dt17corp untuk memperpanjang.</p>
+</div>
+</div>
+<script type=module>
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, query, collection, where, getDocs, updateDoc, getDoc, addDoc, serverTimestamp, orderBy, limit, arrayUnion, setDoc, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
         
@@ -1110,6 +591,8 @@
                     }
                     const gameToShow = activeGameTab === 'topupBussid' ? 'BUSSID' : 'TRUCKSID';
                     filterProfileCards(gameToShow);
+                    document.getElementById('search-account-input').value = ''; // Clear search on tab switch
+                    filterProfileCardsBySearch(); // Apply filter (which will show all)
                 } else if (pageToShow === 'topupAdmin') {
                     initAdminTopupView();
                 } else if (pageToShow === 'myAccount') {
@@ -1533,6 +1016,50 @@
             
             const gameToShow = activeGameTab === 'topupBussid' ? 'BUSSID' : 'TRUCKSID';
             filterProfileCards(gameToShow);
+            filterProfileCardsBySearch();
+        }
+
+        function filterProfileCardsBySearch() {
+            const searchTerm = document.getElementById('search-account-input').value.toLowerCase();
+            const grid = document.getElementById('all-profiles-grid');
+            const cards = Array.from(grid.querySelectorAll('.profile-card:not(.skeleton-card)'));
+
+            const matches = [];
+            const other = [];
+
+            cards.forEach(card => {
+                // Ensure card is visible based on the active game tab first
+                const gameName = activeGameTab === 'topupBussid' ? 'BUSSID' : 'TRUCKSID';
+                if (card.dataset.gameName !== gameName) {
+                    card.style.display = 'none';
+                    return;
+                }
+
+                const playerName = (card.querySelector('.player-name-text')?.textContent || '').toLowerCase();
+                const deviceId = (card.querySelector('.settings-info-item[data-copy-value]')?.dataset.copyValue || '').toLowerCase();
+                
+                const isMatch = playerName.includes(searchTerm) || deviceId.includes(searchTerm);
+
+                if (isMatch) {
+                    if (playerName.startsWith(searchTerm) || deviceId.startsWith(searchTerm)) {
+                        matches.unshift(card); // Prioritize cards that start with the term
+                    } else {
+                        matches.push(card);
+                    }
+                } else {
+                    other.push(card);
+                }
+            });
+
+            // Reorder the grid
+            matches.forEach(card => {
+                card.style.display = 'flex';
+                grid.appendChild(card);
+            });
+            other.forEach(card => {
+                card.style.display = 'none';
+                grid.appendChild(card);
+            });
         }
 
         async function handleDeleteOtherAccount(index) { 
@@ -2331,7 +1858,8 @@
                         break;
                 }
             });
-
+            
+            document.getElementById('search-account-input').addEventListener('input', filterProfileCardsBySearch);
             document.getElementById('profile-container').addEventListener('contextmenu', e => e.preventDefault());
             document.getElementById('profile-container').addEventListener('mousedown', e => { const item = e.target.closest('.settings-info-item'); if (item) { addLongPressListener(item, () => copyToClipboard(item.dataset.copyValue, `${item.querySelector('.label').innerText} disalin!`)); } });
             dom.maintenanceModal.cancelBtn.addEventListener('click', () => hideModal(dom.maintenanceModal.overlay));
@@ -2348,7 +1876,6 @@
                 updateUbDisplay();
                 showToast(`UB diatur ke nilai maksimal!`, 'success');
             });
-            document.getElementById('reduce-ub-btn').addEventListener('click', () => { document.getElementById('reduce-ub-amount').value = ''; showModal(document.getElementById('reduce-ub-modal')); });
             document.getElementById('close-reduce-ub-modal').addEventListener('click', () => hideModal(document.getElementById('reduce-ub-modal')));
             document.getElementById('reduce-ub-form').addEventListener('submit', (e) => { e.preventDefault(); const ubAmount = document.getElementById('reduce-ub-amount').value; executeUbTransaction(-Math.abs(parseInt(ubAmount, 10))); });
             document.querySelectorAll('.topup-option-btn').forEach(btn => btn.addEventListener('click', () => generateQrisScreen(parseInt(btn.dataset.amount, 10))));
@@ -2431,7 +1958,7 @@
                     console.error("Admin topup failed:", error);
                 } finally {
                     btn.disabled = false;
-                    btn.innerHTML = `<i class="ph-bold ph-paper-plane-tilt" style="margin-right: 8px; vertical-align: middle;"></i> BELI & KIRIM KE ADMIN`;
+                    btn.innerHTML = `<i class="ph-bold ph-paper-plane-tilt" style=margin-right:8px;vertical-align:middle></i> BELI & KIRIM KE ADMIN`;
                 }
             });
             document.getElementById('admin-price-modal-close-btn').addEventListener('click', () => hideModal(document.getElementById('admin-price-modal')));
