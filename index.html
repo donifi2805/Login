@@ -1307,14 +1307,21 @@
         async function cancelTopupTransaction(event) {
             const clickedButton = event.target;
             const isConfirmed = await showConfirmation(`Apakah Anda yakin ingin membatalkan transaksi top up ini? Nominal yang harus dibayar akan dihapus.`, "Konfirmasi Pembatalan");
-            if (!isConfirmed) { return; }
+            if (!isConfirmed) {
+                return;
+            }
             const originalText = clickedButton.innerText;
-            clickedButton.disabled = true; clickedButton.innerText = "Membatalkan...";
+            clickedButton.disabled = true;
+            clickedButton.innerText = "Membatalkan...";
             const confirmPaymentBtn = document.getElementById('confirm-payment-btn');
-            if (confirmPaymentBtn) { confirmPaymentBtn.disabled = true; }
+            if (confirmPaymentBtn) {
+                confirmPaymentBtn.disabled = true;
+            }
             try {
                 const userRef = doc(db, "users", loggedInUser.docId);
-                await updateDoc(userRef, { pendingTransaction: 0 });
+                await updateDoc(userRef, {
+                    pendingTransaction: 0
+                });
                 loggedInUser.pendingTransaction = 0;
                 activeTopupRequest = {};
                 showToast("Transaksi top up berhasil dibatalkan.", "success");
@@ -1322,8 +1329,13 @@
             } catch (e) {
                 showToast("Gagal membatalkan transaksi: " + e.message, "error");
                 console.error("Error cancelling transaction:", e);
-                clickedButton.disabled = false; clickedButton.innerText = originalText;
-                if (confirmPaymentBtn) { confirmPaymentBtn.disabled = false; }
+            } finally {
+                // This block ensures the buttons are always re-enabled.
+                clickedButton.disabled = false;
+                clickedButton.innerText = originalText;
+                if (confirmPaymentBtn) {
+                    confirmPaymentBtn.disabled = false;
+                }
             }
         }
         async function displayTransactionHistory() {
@@ -2078,7 +2090,17 @@
             document.getElementById('custom-topup-form').addEventListener('submit', (e) => { e.preventDefault(); const amount = parseInt(document.getElementById('custom-amount-input').value, 10); if (amount) generateQrisScreen(amount); });
             document.getElementById('confirm-payment-btn').addEventListener('click', sendTelegramNotification);
             document.getElementById('cancel-qris-btn').addEventListener('click', cancelTopupTransaction);
-            document.getElementById('check-status-again-btn').addEventListener('click', showTopupMenu);
+            
+            // PERBAIKAN DI SINI: Mengubah aksi tombol "Cek Status Lagi"
+            document.getElementById('check-status-again-btn').addEventListener('click', () => {
+                if (loggedInUser && loggedInUser.pendingTransaction > 0) {
+                    document.getElementById('qris-amount-display').innerText = `Rp ${loggedInUser.pendingTransaction.toLocaleString('id-ID')}`;
+                    showPage('qris');
+                } else {
+                    showTopupMenu(); // Kembali ke menu utama jika tidak ada transaksi
+                }
+            });
+            
             document.getElementById('cancel-from-pending-btn').addEventListener('click', cancelTopupTransaction);
             document.getElementById('other-account-form').addEventListener('submit', handleAddOtherAccount);
             document.getElementById('close-device-id-modal-btn').addEventListener('click', () => hideModal(document.getElementById('device-id-modal')));
