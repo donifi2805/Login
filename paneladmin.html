@@ -125,9 +125,9 @@
             flex-shrink: 0;
         }
         .stat-card:nth-child(1) .icon { background: rgba(59, 130, 246, 0.2); color: var(--accent-primary); }
-        .stat-card:nth-child(2) .icon { background: rgba(34, 197, 94, 0.2); color: var(--success-primary); }
-        .stat-card:nth-child(3) .icon { background: rgba(245, 158, 11, 0.2); color: var(--warning-primary); }
-        .stat-card:nth-child(4) .icon { background: rgba(168, 85, 247, 0.2); color: #a855f7; }
+        .stat-card:nth-child(2) .icon { background: rgba(245, 158, 11, 0.2); color: var(--warning-primary); }
+        .stat-card:nth-child(3) .icon { background: rgba(34, 197, 94, 0.2); color: var(--success-primary); }
+        .stat-card:nth-child(4) .icon { background: rgba(168, 85, 247, 0.2); color: #a855f7; } /* Fallback, not used */
         .stat-card .info h3 { margin: 0 0 5px 0; font-size: 1.8em; color: white; }
         .stat-card .info p { margin: 0; color: var(--text-secondary); }
 
@@ -145,7 +145,7 @@
         .search-bar .input-field { padding-left: 40px; width: 100%; max-width: 400px; box-sizing: border-box;}
 
         /* --- KARTU PENGGUNA, TRANSAKSI, & AKUN JUAL --- */
-        #user-card-container, #pending-transaction-container, #account-card-container, #stok-akun-card-container {
+        #user-card-container, #pending-transaction-container, #stok-akun-card-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 20px;
@@ -162,7 +162,7 @@
             padding-bottom: 8px;
         }
 
-        .user-profile-card, .transaction-card, .account-card, .stok-akun-card {
+        .user-profile-card, .transaction-card, .stok-akun-card {
             background: var(--bg-glass);
             border: 1px solid var(--border-color);
             border-radius: 12px;
@@ -171,37 +171,18 @@
             flex-direction: column;
             gap: 15px;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
-            position: relative; /* Diperlukan untuk stempel SOLD */
-            overflow: hidden; /* Mencegah stempel keluar dari kartu */
+            position: relative;
+            overflow: hidden;
         }
-        .user-profile-card:hover, .transaction-card:hover, .account-card:hover, .stok-akun-card:hover {
+        .user-profile-card:hover, .transaction-card:hover, .stok-akun-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
         .transaction-card {
             border-left: 4px solid var(--warning-primary);
         }
-        .account-card {
-             border-left: 4px solid var(--accent-primary);
-        }
         .stok-akun-card {
             border-left: 4px solid var(--subscription-cyan);
-        }
-
-        .sold-stamp {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-15deg);
-            font-size: 5em;
-            font-weight: 800;
-            color: rgba(239, 68, 68, 0.35);
-            border: 4px solid rgba(239, 68, 68, 0.35);
-            padding: 0 15px;
-            border-radius: 10px;
-            z-index: 1;
-            pointer-events: none; /* PENTING: agar tombol di bawahnya bisa diklik */
-            text-transform: uppercase;
         }
 
         .card-header {
@@ -307,22 +288,10 @@
         .status-user { background-color: rgba(100, 116, 139, 0.2); color: #94a3b8; }
         .status-premium { background-color: rgba(251, 191, 36, 0.2); color: var(--premium-gold); }
         .status-langganan { background-color: rgba(6, 182, 212, 0.2); color: var(--subscription-cyan); }
-        .status-available { background-color: rgba(34, 197, 94, 0.2); color: var(--success-primary); }
-        .status-processing { background-color: rgba(245, 158, 11, 0.2); color: var(--warning-primary); }
-        .status-verified { background-color: rgba(59, 130, 246, 0.2); color: var(--accent-primary); }
         
-        .status-select {
-            background-color: var(--bg-secondary); border: 2px solid var(--border-color); color: var(--text-primary);
-            border-radius: 6px; padding: 5px 8px; font-family: 'Poppins', sans-serif; font-weight: 500; transition: all 0.2s ease;
-            width: 100%;
-        }
-        .status-select:focus { outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4); }
-        .status-select.processing { border-color: var(--warning-primary); color: var(--warning-primary); }
-        .status-select.verified { border-color: var(--accent-primary); color: var(--accent-primary); }
-
         /* --- KOMPONEN UMUM --- */
         .form-container {
-            background: var(--bg-secondary); backdrop-filter: blur(15px); border: 1px solid var(--border-color);
+            background: var(--bg-secondary); /* DIHILANGKAN: backdrop-filter: blur(15px); */ border: 1px solid var(--border-color);
             padding: 40px; border-radius: 15px; width: 100%; max-width: 400px;
             box-sizing: border-box; text-align: center;
         }
@@ -359,7 +328,7 @@
         /* --- MODAL --- */
         .modal {
             display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%;
-            overflow: auto; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+            overflow: auto; background-color: rgba(0,0,0,0.7); /* DIHILANGKAN: backdrop-filter: blur(5px); */
             align-items: center; justify-content: center; padding: 15px; box-sizing: border-box;
         }
         .modal-content {
@@ -451,46 +420,45 @@
         .modal-actions { margin-top: 20px; }
         
         .status-badge { padding: 3px 7px; font-size: 0.9em; }
-        .status-select { padding: 3px 5px; font-size: 1em; }
         
-        /* --- [MODIFIKASI SPESIFIK] Perkecil Kartu Akun Jual --- */
-        #account-card-container, #stok-akun-card-container {
+        /* --- [MODIFIKASI SPESIFIK] Perkecil Kartu Stok Akun --- */
+        #stok-akun-card-container {
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 8px;
         }
-        #account-card-container .account-card, #stok-akun-card-container .stok-akun-card {
+        #stok-akun-card-container .stok-akun-card {
             padding: 10px;
             gap: 8px;
         }
-        #account-card-container .card-header, #stok-akun-card-container .card-header {
+        #stok-akun-card-container .card-header {
             padding-bottom: 6px;
             margin-bottom: 8px;
         }
-        #account-card-container .card-header h3, #stok-akun-card-container .card-header h3 {
+        #stok-akun-card-container .card-header h3 {
             font-size: 1.1em;
         }
-        #account-card-container .card-header .info-value, #stok-akun-card-container .card-header .info-value {
+        #stok-akun-card-container .card-header .info-value {
             font-size: 1em;
         }
-        #account-card-container .card-info-grid, #stok-akun-card-container .card-info-grid {
+        #stok-akun-card-container .card-info-grid {
             gap: 8px;
         }
-        #account-card-container .info-label, #stok-akun-card-container .info-label {
+        #stok-akun-card-container .info-label {
             font-size: 0.85em;
         }
-         #account-card-container .info-value, #stok-akun-card-container .info-value {
+         #stok-akun-card-container .info-value {
             font-size: 0.95em;
         }
-        #account-card-container .card-actions, #stok-akun-card-container .card-actions {
+        #stok-akun-card-container .card-actions {
             padding-top: 8px;
             gap: 6px;
         }
-        #account-card-container .action-button, #stok-akun-card-container .action-button {
+        #stok-akun-card-container .action-button {
             padding: 4px 8px;
             font-size: 0.9em;
         }
         
-        /* [MODIFIKASI BARU] Gaya untuk Stok Akun yang Terpakai */
+        /* Gaya untuk Stok Akun yang Terpakai */
         .stok-akun-card.claimed {
             border-left-color: var(--warning-primary);
             background: rgba(30, 30, 46, 0.7);
@@ -503,7 +471,7 @@
         @media (max-width: 768px) {
             .main-content { padding: 5px; }
             .top-header { padding: 5px; }
-            #user-card-container, #pending-transaction-container, #account-card-container, #stok-akun-card-container { grid-template-columns: 1fr; }
+            #user-card-container, #pending-transaction-container, #stok-akun-card-container { grid-template-columns: 1fr; }
             .modal-content { padding: 15px; }
         }
     </style>
@@ -527,7 +495,6 @@
             <nav class="top-nav"> 
                 <a href="#" id="nav-users" class="active"><i class="fas fa-users"></i> User</a> 
                 <a href="#" id="nav-transactions"><i class="fas fa-exchange-alt"></i> Transaction</a>
-                <a href="#" id="nav-accounts"><i class="fas fa-tags"></i> Akun Jual</a>
                 <a href="#" id="nav-stok-akun"><i class="fas fa-archive"></i> Stok Akun</a>
             </nav>
             <div class="header-actions">
@@ -546,7 +513,6 @@
 
                 <div class="stat-cards">
                     <div class="stat-card"> <div class="icon"><i class="fas fa-users"></i></div> <div class="info"> <h3 id="stat-total-users">0</h3> <p>Total Users</p> </div> </div>
-                    <div class="stat-card"> <div class="icon"><i class="fas fa-tags"></i></div> <div class="info"> <h3 id="stat-accounts-for-sale">0</h3> <p>Akun Dijual</p> </div> </div>
                     <div class="stat-card"> <div class="icon"><i class="fas fa-hourglass-half"></i></div> <div class="info"> <h3 id="stat-pending-trx">0</h3> <p>Pending Requests</p> </div> </div>
                     <div class="stat-card"> <div class="icon"><i class="fas fa-cash-register"></i></div> <div class="info"> <h3 id="stat-total-spent">0</h3> <p>Total Dibelanjakan</p> </div> </div>
                 </div>
@@ -582,24 +548,6 @@
                 <div id="pending-transaction-container">
                     </div>
                  <div class="spinner-overlay" id="transaction-spinner" style="display:none;"><div class="spinner"></div></div>
-            </div>
-
-
-            <div id="account-management-view" style="display: none;">
-                 <header class="view-header">
-                    <h1>Manajemen Akun Jual</h1>
-                    <div class="actions">
-                        <button id="add-account-btn" class="action-button btn-success"><i class="fas fa-plus"></i> Tambah Akun</button>
-                    </div>
-                </header>
-                <div class="controls-container">
-                    <div class="controls">
-                         <button id="refresh-accounts-btn" class="action-button btn-primary"> <i class="fas fa-sync-alt"></i> Refresh</button>
-                    </div>
-                </div>
-                <div id="account-card-container">
-                    </div>
-                <div class="spinner-overlay" id="account-spinner" style="display:none;"><div class="spinner"></div></div>
             </div>
             
             <div id="stok-akun-management-view" style="display: none;">
@@ -670,122 +618,6 @@
                 <div class="input-group"> <label for="add-whatsapp">WhatsApp</label> <input type="text" id="add-whatsapp" class="input-field" required> </div>
                 <div class="input-group"> <label for="add-password">Password</label> <div class="password-wrapper"> <input type="password" id="add-password" class="input-field" required> <button type="button" class="password-toggle"><i class="fas fa-eye"></i></button> </div> </div>
                 <div class="modal-actions"> <button type="button" class="action-button btn-secondary cancel-modal-btn">Cancel</button> <button type="submit" class="action-button btn-success"><i class="fas fa-plus"></i> Create</button> </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="edit-account-modal" class="modal">
-        <div class="modal-content">
-            <h2><i class="fas fa-edit"></i> Edit Akun Jual</h2>
-            <form id="edit-account-form">
-                <input type="hidden" id="edit-account-id">
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label for="edit-account-gameType">Jenis Game</label>
-                        <select id="edit-account-gameType" class="input-field" required>
-                            <option value="BUSSID">BUSSID</option>
-                            <option value="TRUCKSID">TRUCKSID</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="edit-account-linkedTo">Kelengkapan Akun</label>
-                        <select id="edit-account-linkedTo" class="input-field" required>
-                            <option value="Google">Google</option>
-                            <option value="Facebook">Facebook</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="edit-account-price">Harga Jual (Rp)</label>
-                        <input type="number" id="edit-account-price" class="input-field" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="edit-account-ubAmount">Jumlah UB</label>
-                        <input type="number" id="edit-account-ubAmount" class="input-field" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="edit-account-leaderboard">Peringkat S. Masa</label>
-                        <input type="number" id="edit-account-leaderboard" class="input-field" placeholder="Contoh: 150">
-                    </div>
-                     <div class="input-group" style="display: none;">
-                        <label for="edit-account-status">Status</label>
-                        <select id="edit-account-status" class="input-field">
-                            <option value="available">Available</option>
-                            <option value="processing">Processing</option>
-                            <option value="verified">Verified</option>
-                        </select>
-                    </div>
-                </div>
-                <hr style="border-color: var(--border-color); margin: 15px 0;">
-                <h3 style="color: var(--text-secondary); font-weight: 500;">Kredensial Akun (Untuk Pembeli)</h3>
-                <div class="input-group">
-                    <label for="edit-account-email">Email / No. HP Akun</label>
-                    <input type="text" id="edit-account-email" class="input-field">
-                </div>
-                <div class="input-group">
-                    <label for="edit-account-password">Password Akun</label>
-                    <input type="text" id="edit-account-password" class="input-field">
-                </div>
-                <div class="input-group">
-                    <label for="edit-account-additionalInfo">Info Tambahan</label>
-                    <textarea id="edit-account-additionalInfo" class="input-field" rows="3"></textarea>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="action-button btn-secondary cancel-modal-btn">Batal</button>
-                    <button type="submit" class="action-button btn-primary"><i class="fas fa-save"></i> Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div id="add-account-modal" class="modal">
-        <div class="modal-content">
-            <h2><i class="fas fa-plus-circle"></i> Tambah Akun untuk Dijual</h2>
-            <form id="add-account-form">
-                 <div class="form-grid">
-                    <div class="input-group">
-                        <label for="add-account-gameType">Jenis Game</label>
-                        <select id="add-account-gameType" class="input-field" required>
-                            <option value="BUSSID">BUSSID</option>
-                            <option value="TRUCKSID">TRUCKSID</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="add-account-linkedTo">Kelengkapan Akun</label>
-                        <select id="add-account-linkedTo" class="input-field" required>
-                            <option value="Google">Google</option>
-                            <option value="Facebook">Facebook</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="add-account-price">Harga Jual (Rp)</label>
-                        <input type="number" id="add-account-price" class="input-field" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="add-account-ubAmount">Jumlah UB</label>
-                        <input type="number" id="add-account-ubAmount" class="input-field" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="add-account-leaderboard">Peringkat S. Masa</label>
-                        <input type="number" id="add-account-leaderboard" class="input-field" placeholder="Contoh: 150">
-                    </div>
-                </div>
-                <hr style="border-color: var(--border-color); margin: 15px 0;">
-                <h3 style="color: var(--text-secondary); font-weight: 500;">Kredensial Akun (Wajib Diisi)</h3>
-                <div class="input-group">
-                    <label for="add-account-email">Email / No. HP Akun</label>
-                    <input type="text" id="add-account-email" class="input-field" required>
-                </div>
-                <div class="input-group">
-                    <label for="add-account-password">Password Akun</label>
-                    <input type="text" id="add-account-password" class="input-field" required>
-                </div>
-                <div class="input-group">
-                    <label for="add-account-additionalInfo">Info Tambahan</label>
-                    <textarea id="add-account-additionalInfo" class="input-field" rows="3"></textarea>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="action-button btn-secondary cancel-modal-btn">Batal</button>
-                    <button type="submit" class="action-button btn-success"><i class="fas fa-plus"></i> Posting</button>
-                </div>
             </form>
         </div>
     </div>
@@ -919,7 +751,7 @@
         const auth = getAuth(app);
 
         // State variables
-        let allUsers = [], displayedUsers = [], currentPage = 1, allAccountsForSale = [], allStokAkun = [];
+        let allUsers = [], displayedUsers = [], currentPage = 1, allStokAkun = [];
         const rowsPerPage = 10;
 
         // DOM element references
@@ -928,30 +760,24 @@
             adminPanel: document.getElementById('admin-panel'), 
             userCardContainer: document.getElementById('user-card-container'),
             pendingTransactionContainer: document.getElementById('pending-transaction-container'),
-            accountCardContainer: document.getElementById('account-card-container'),
             stokAkunCardContainer: document.getElementById('stok-akun-card-container'),
             searchInput: document.getElementById('search-input'),
             userSpinner: document.getElementById('user-spinner'),
             transactionSpinner: document.getElementById('transaction-spinner'),
-            accountSpinner: document.getElementById('account-spinner'),
             stokAkunSpinner: document.getElementById('stok-akun-spinner'),
             editUserModal: document.getElementById('edit-user-modal'), 
             addUserModal: document.getElementById('add-user-modal'), 
-            editAccountModal: document.getElementById('edit-account-modal'),
-            addAccountModal: document.getElementById('add-account-modal'),
             editStokAkunModal: document.getElementById('edit-stok-akun-modal'),
             addStokAkunModal: document.getElementById('add-stok-akun-modal'),
             confirmModal: document.getElementById('confirm-modal'),
             nav: {
                 users: document.getElementById('nav-users'),
                 transactions: document.getElementById('nav-transactions'),
-                accounts: document.getElementById('nav-accounts'),
                 stokAkun: document.getElementById('nav-stok-akun')
             },
             views: {
                 users: document.getElementById('user-management-view'),
                 transactions: document.getElementById('transaction-management-view'),
-                accounts: document.getElementById('account-management-view'),
                 stokAkun: document.getElementById('stok-akun-management-view')
             }
         };
@@ -975,8 +801,6 @@
             
             if (viewName === 'users') {
                 await fetchUsers();
-            } else if (viewName === 'accounts') {
-                await fetchAccountsForSale();
             } else if (viewName === 'transactions') {
                 await fetchAndRenderTransactions();
             } else if (viewName === 'stokAkun') {
@@ -1046,7 +870,7 @@
                 }
                 
                 let pendingIndicatorHTML = '';
-                if ((user.pendingTransaction && user.pendingTransaction > 0) || user.pendingSubscription) {
+                if ((user.pendingTransaction && user.pendingTransaction > 0) || user.pendingSubscription || user.akunJualStatus) {
                     pendingIndicatorHTML = '<i class="fas fa-bell pending-indicator" title="Pending Transaction"></i>';
                 }
 
@@ -1098,9 +922,6 @@
             try {
                 const usersQuery = await getDocs(collection(db, "users"));
                 allUsers = usersQuery.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-                const accountsQuery = await getDocs(collection(db, "accountsForSale"));
-                allAccountsForSale = accountsQuery.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
                 renderTransactionCards();
                 updateStats();
@@ -1115,7 +936,7 @@
         const renderTransactionCards = () => {
             dom.pendingTransactionContainer.innerHTML = '';
             const pendingUsers = allUsers.filter(user => (user.pendingTransaction && user.pendingTransaction > 0) || user.pendingSubscription);
-            const processingAccounts = allAccountsForSale.filter(acc => acc.status === 'processing');
+            const pendingAccountSales = allUsers.filter(user => user.akunJualStatus && user.akunJualStatus.status === 'Di Proses');
 
             let contentRendered = false;
 
@@ -1151,25 +972,30 @@
                         </div>`;
                 });
             }
-
-            if (processingAccounts.length > 0) {
+            
+            if (pendingAccountSales.length > 0) {
                 contentRendered = true;
-                dom.pendingTransactionContainer.innerHTML += `<h2 class="section-heading">Pending Account Sales</h2>`;
-                processingAccounts.forEach(acc => {
+                dom.pendingTransactionContainer.innerHTML += `<h2 class="section-heading">Pending Penjualan Akun</h2>`;
+                pendingAccountSales.forEach(user => {
+                    const saleData = user.akunJualStatus;
+                    const accountListHTML = saleData.accounts.map(acc => `<li>${acc}</li>`).join('');
+
+                    const transactionDetailsHTML = `
+                        <h4>Pending Penjualan Akun</h4>
+                        <div style="font-size:1.1em; text-align:left; max-height: 80px; overflow-y:auto;">
+                           <ul style="padding-left: 20px; margin: 0;">${accountListHTML}</ul>
+                        </div>
+                    `;
+                    const actionButtonsHTML = `
+                        <button class="action-button btn-success" data-action="accept-sale" data-doc-id="${user.id}"><i class="fas fa-check"></i> Terima</button>
+                        <button class="action-button btn-danger" data-action="reject-sale" data-doc-id="${user.id}"><i class="fas fa-times"></i> Tolak</button>
+                    `;
+
                     dom.pendingTransactionContainer.innerHTML += `
                         <div class="transaction-card">
-                            <div class="card-header"><div class="user-title"><h3>Akun ${acc.gameType}</h3><span class="info-value" style="color: var(--success-primary);">Rp ${acc.price.toLocaleString('id-ID')}</span></div></div>
-                            <div class="card-info-grid">
-                                <div class="info-item"><span class="info-label">Pembeli</span><span class="info-value">${acc.soldTo || 'Unknown'}</span></div>
-                                <div class="info-item"><span class="info-label">UB Akun</span><span class="info-value">${acc.ubAmount.toLocaleString('id-ID')}</span></div>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Update Status Penjualan</span>
-                                <select class="status-select processing account-status-select" data-doc-id="${acc.id}">
-                                    <option value="processing" selected>Processing</option>
-                                    <option value="verified">Verified (Selesai)</option>
-                                </select>
-                            </div>
+                            <div class="card-header"><div class="user-title"><h3>${user.username}</h3></div></div>
+                            <div class="transaction-details-section">${transactionDetailsHTML}</div>
+                            <div class="card-actions">${actionButtonsHTML}</div>
                         </div>`;
                 });
             }
@@ -1191,15 +1017,12 @@
         };
         
         const updateStats = () => {
-            if(!allUsers || !allAccountsForSale) return; // Guard clause
+            if(!allUsers) return; // Guard clause
             const totalUsers = allUsers.length;
-            const pendingTrxCount = allUsers.filter(u => (u.pendingTransaction && u.pendingTransaction > 0) || u.pendingSubscription).length;
-            const processingAccountsCount = allAccountsForSale.filter(acc => acc.status === 'processing').length;
+            const pendingTrxCount = allUsers.filter(u => (u.pendingTransaction && u.pendingTransaction > 0) || u.pendingSubscription || (u.akunJualStatus && u.akunJualStatus.status === 'Di Proses')).length;
             
             document.getElementById('stat-total-users').textContent = totalUsers.toLocaleString('id-ID');
-            document.getElementById('stat-pending-trx').textContent = pendingTrxCount + processingAccountsCount;
-            const availableAccountsCount = allAccountsForSale.filter(acc => acc.status === 'available').length;
-            document.getElementById('stat-accounts-for-sale').textContent = availableAccountsCount;
+            document.getElementById('stat-pending-trx').textContent = pendingTrxCount;
         };
 
         const updateTotalSpentStat = async () => {
@@ -1411,6 +1234,57 @@
                 confirmAction
             );
         };
+        
+        const handleAcceptAccountSale = (docId) => {
+            const user = allUsers.find(u => u.id === docId);
+            if (!user || !user.akunJualStatus) return;
+
+            const confirmAction = async () => {
+                try {
+                    await updateDoc(doc(db, "users", docId), {
+                        'akunJualStatus.status': 'Selesai(Terbayar Admin)'
+                    });
+                    showToast(`Penjualan akun dari ${user.username} telah diterima.`, 'success');
+                    await fetchAndRenderTransactions();
+                } catch (error) {
+                    showToast('Gagal menerima penjualan akun.', 'error');
+                    console.error("Error accepting account sale:", error);
+                }
+            };
+
+            showConfirmation(
+                `Konfirmasi pembayaran dan selesaikan transaksi penjualan akun dari ${user.username}?`,
+                'Terima Penjualan Akun',
+                'btn-success',
+                confirmAction
+            );
+        };
+
+        const handleRejectAccountSale = (docId) => {
+            const user = allUsers.find(u => u.id === docId);
+            if (!user || !user.akunJualStatus) return;
+
+            const confirmAction = async () => {
+                try {
+                    await updateDoc(doc(db, "users", docId), {
+                        akunJualStatus: deleteField()
+                    });
+                    showToast(`Penjualan akun dari ${user.username} telah ditolak.`, 'success');
+                    await fetchAndRenderTransactions();
+                } catch (error) {
+                    showToast('Gagal menolak penjualan akun.', 'error');
+                    console.error("Error rejecting account sale:", error);
+                }
+            };
+
+            showConfirmation(
+                `Yakin ingin menolak permintaan penjualan akun dari ${user.username}?`,
+                'Tolak Penjualan Akun',
+                'btn-danger',
+                confirmAction
+            );
+        };
+
 
         const handleDeleteUser = (docId, username) => {
             const confirmAction = async () => {
@@ -1428,180 +1302,6 @@
             const icon = e.currentTarget.querySelector('i');
             if (input.type === 'password') { input.type = 'text'; icon.classList.replace('fa-eye', 'fa-eye-slash'); } 
             else { input.type = 'password'; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
-        };
-        
-        // --- ACCOUNT FOR SALE MANAGEMENT FUNCTIONS ---
-        const fetchAccountsForSale = async () => {
-            dom.accountSpinner.style.display = 'flex';
-            try {
-                const q = query(collection(db, "accountsForSale"));
-                const querySnapshot = await getDocs(q);
-                allAccountsForSale = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderAccountsForSaleCards();
-                updateStats(); 
-            } catch (error) {
-                console.error("Error fetching account posts:", error);
-                showToast('Error fetching account posts.', 'error');
-                dom.accountCardContainer.innerHTML = `<p style="text-align:center; color: var(--danger-primary);">Error fetching data.</p>`;
-            } finally {
-                dom.accountSpinner.style.display = 'none';
-            }
-        };
-
-        const renderAccountsForSaleCards = () => {
-            dom.accountCardContainer.innerHTML = '';
-
-            // Sort accounts: 'verified' (sold) go to the top, then by creation date
-            allAccountsForSale.sort((a, b) => {
-                if (a.status === 'verified' && b.status !== 'verified') return -1;
-                if (a.status !== 'verified' && b.status === 'verified') return 1;
-                const dateA = a.createdAt?.seconds || 0;
-                const dateB = b.createdAt?.seconds || 0;
-                return dateB - dateA;
-            });
-
-            if (allAccountsForSale.length === 0) {
-                dom.accountCardContainer.innerHTML = '<p style="text-align:center; grid-column: 1 / -1;">Belum ada akun yang dijual.</p>';
-                return;
-            }
-
-            allAccountsForSale.forEach(acc => {
-                const status = acc.status || 'available';
-                let soldStampHTML = '';
-                if (status === 'verified') {
-                    soldStampHTML = '<div class="sold-stamp">SOLD</div>';
-                }
-                
-                const cardHTML = `
-                <div class="account-card">
-                    ${soldStampHTML}
-                    <div class="card-header">
-                        <div class="user-title">
-                            <h3>${acc.gameType}</h3>
-                            <span class="info-value" style="color: var(--success-primary);">${acc.price ? 'Rp ' + acc.price.toLocaleString('id-ID') : ''}</span>
-                        </div>
-                    </div>
-                    <div class="card-info-grid">
-                        <div class="info-item">
-                            <span class="info-label">Jumlah UB</span>
-                            <span class="info-value">${(acc.ubAmount || 0).toLocaleString('id-ID')}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Pembeli</span>
-                            <span class="info-value">${acc.soldTo || 'N/A'}</span>
-                        </div>
-                        <div class="info-item" style="grid-column: 1 / -1;">
-                             <span class="info-label">Status</span>
-                             <span class="status-badge status-${status}">${status}</span>
-                        </div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="action-button btn-primary edit-account-btn" data-doc-id="${acc.id}"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="action-button btn-danger delete-account-btn" data-doc-id="${acc.id}" data-game-type="${acc.gameType}"><i class="fas fa-trash"></i> Delete</button>
-                    </div>
-                </div>`;
-                dom.accountCardContainer.innerHTML += cardHTML;
-            });
-            addAccountCardButtonListeners();
-        };
-
-        const handleAccountSaleStatusChange = async (e) => {
-            const select = e.target;
-            const docId = select.dataset.docId;
-            const newStatus = select.value;
-            
-            try {
-                await updateDoc(doc(db, "accountsForSale", docId), { status: newStatus });
-                showToast(`Status penjualan akun diupdate ke ${newStatus}.`, 'success');
-                await fetchAndRenderTransactions();
-            } catch (error) {
-                showToast('Gagal mengupdate status.', 'error');
-                console.error("Error updating account sale status:", error);
-            }
-        };
-
-        const openEditAccountModal = (akunId) => {
-            const akun = allAccountsForSale.find(a => a.id === akunId);
-            if (akun) {
-                document.getElementById('edit-account-id').value = akunId;
-                document.getElementById('edit-account-gameType').value = akun.gameType || 'BUSSID';
-                document.getElementById('edit-account-price').value = akun.price || 0;
-                document.getElementById('edit-account-ubAmount').value = akun.ubAmount || 0;
-                document.getElementById('edit-account-linkedTo').value = akun.linkedTo || 'Google';
-                document.getElementById('edit-account-leaderboard').value = akun.leaderboard?.allTime || '';
-                document.getElementById('edit-account-additionalInfo').value = akun.additionalInfo || '';
-                document.getElementById('edit-account-email').value = akun.accountEmail || '';
-                document.getElementById('edit-account-password').value = akun.accountPassword || '';
-                dom.editAccountModal.style.display = 'flex';
-            }
-        };
-        
-        const handleUpdateAccount = async (event) => {
-            event.preventDefault();
-            const akunId = document.getElementById('edit-account-id').value;
-            if (!akunId) return;
-
-            const updatedData = {
-                gameType: document.getElementById('edit-account-gameType').value,
-                price: Number(document.getElementById('edit-account-price').value),
-                ubAmount: Number(document.getElementById('edit-account-ubAmount').value),
-                linkedTo: document.getElementById('edit-account-linkedTo').value,
-                leaderboard: { allTime: Number(document.getElementById('edit-account-leaderboard').value) || null },
-                additionalInfo: document.getElementById('edit-account-additionalInfo').value,
-                accountEmail: document.getElementById('edit-account-email').value,
-                accountPassword: document.getElementById('edit-account-password').value
-            };
-
-            try {
-                await updateDoc(doc(db, "accountsForSale", akunId), updatedData);
-                showToast('Postingan akun berhasil diperbarui!', 'success');
-                dom.editAccountModal.style.display = 'none';
-                await fetchAccountsForSale();
-            } catch (error) {
-                showToast('Gagal memperbarui postingan.', 'error');
-                console.error(error);
-            }
-        };
-
-        const handleSaveNewAccount = async (event) => {
-            event.preventDefault();
-            const newData = {
-                gameType: document.getElementById('add-account-gameType').value,
-                price: Number(document.getElementById('add-account-price').value),
-                ubAmount: Number(document.getElementById('add-account-ubAmount').value),
-                linkedTo: document.getElementById('add-account-linkedTo').value,
-                leaderboard: { allTime: Number(document.getElementById('add-account-leaderboard').value) || null },
-                additionalInfo: document.getElementById('add-account-additionalInfo').value,
-                accountEmail: document.getElementById('add-account-email').value,
-                accountPassword: document.getElementById('add-account-password').value,
-                status: 'available',
-                soldTo: null,
-                createdAt: serverTimestamp(),
-            };
-            
-            try {
-                await addDoc(collection(db, "accountsForSale"), newData);
-                showToast('Postingan akun berhasil ditambahkan!', 'success');
-                dom.addAccountModal.style.display = 'none';
-                document.getElementById('add-account-form').reset();
-                await fetchAccountsForSale();
-            } catch (error) {
-                showToast('Gagal menambah postingan.', 'error');
-                console.error(error);
-            }
-        };
-
-        const handleDeleteAccount = (akunId, gameType) => {
-            const confirmAction = async () => {
-                try {
-                    await deleteDoc(doc(db, "accountsForSale", akunId));
-                    showToast('Postingan akun berhasil dihapus.', 'success');
-                    await fetchAccountsForSale();
-                } catch (error) {
-                    showToast('Gagal menghapus postingan.', 'error');
-                }
-            };
-            showConfirmation(`Yakin ingin menghapus postingan akun ${gameType} ini?`, 'Hapus Postingan', 'btn-danger', confirmAction);
         };
         
         // --- STOK AKUN MANAGEMENT FUNCTIONS ---
@@ -1782,12 +1482,10 @@
 
             dom.nav.users.addEventListener('click', (e) => { e.preventDefault(); showView('users'); });
             dom.nav.transactions.addEventListener('click', (e) => { e.preventDefault(); showView('transactions'); });
-            dom.nav.accounts.addEventListener('click', (e) => { e.preventDefault(); showView('accounts'); });
             dom.nav.stokAkun.addEventListener('click', (e) => { e.preventDefault(); showView('stokAkun'); });
 
             document.getElementById('refresh-users-btn').addEventListener('click', fetchUsers);
             document.getElementById('refresh-transactions-btn').addEventListener('click', fetchAndRenderTransactions);
-            document.getElementById('refresh-accounts-btn').addEventListener('click', fetchAccountsForSale);
             document.getElementById('refresh-stok-akun-btn').addEventListener('click', fetchStokAkun);
             
             document.getElementById('add-user-btn').addEventListener('click', () => dom.addUserModal.style.display = 'flex');
@@ -1797,10 +1495,6 @@
             document.getElementById('edit-user-form').addEventListener('submit', handleSaveChanges);
             document.getElementById('add-user-form').addEventListener('submit', handleSaveNewUser);
             
-            document.getElementById('add-account-btn').addEventListener('click', () => dom.addAccountModal.style.display = 'flex');
-            document.getElementById('add-account-form').addEventListener('submit', handleSaveNewAccount);
-            document.getElementById('edit-account-form').addEventListener('submit', handleUpdateAccount);
-
             document.getElementById('add-stok-akun-btn').addEventListener('click', () => dom.addStokAkunModal.style.display = 'flex');
             document.getElementById('add-stok-akun-form').addEventListener('submit', handleSaveNewStokAkun);
             document.getElementById('edit-stok-akun-form').addEventListener('submit', handleUpdateStokAkun);
@@ -1864,23 +1558,13 @@
                         case 'reject-topup': handleRejectTransaction(docId); break;
                         case 'accept-sub': handleAcceptSubscription(docId); break;
                         case 'reject-sub': handleRejectSubscription(docId); break;
+                        case 'accept-sale': handleAcceptAccountSale(docId); break;
+                        case 'reject-sale': handleRejectAccountSale(docId); break;
                     }
                 });
             });
-            dom.pendingTransactionContainer.querySelectorAll('.account-status-select').forEach(select => {
-                select.addEventListener('change', handleAccountSaleStatusChange);
-            });
         }
         
-        function addAccountCardButtonListeners() {
-            dom.accountCardContainer.addEventListener('click', (e) => {
-                const editBtn = e.target.closest('.edit-account-btn');
-                const deleteBtn = e.target.closest('.delete-account-btn');
-                if (editBtn) openEditAccountModal(editBtn.dataset.docId);
-                if (deleteBtn) handleDeleteAccount(deleteBtn.dataset.docId, deleteBtn.dataset.gameType);
-            });
-        }
-
         function addStokAkunCardButtonListeners() {
             dom.stokAkunCardContainer.addEventListener('click', (e) => {
                 const editBtn = e.target.closest('.edit-stok-akun-btn');
@@ -1896,10 +1580,16 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
+                // MODIFIKASI: Paksa tampilan desktop setelah login
+                document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=1280');
+                
                 dom.loginPage.style.display = 'none';
                 dom.adminPanel.style.display = 'flex';
                 initializeAdminPanel();
             } else {
+                 // MODIFIKASI: Kembalikan ke tampilan responsif saat logout
+                document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1.0');
+
                 dom.loginPage.style.display = 'flex';
                 dom.adminPanel.style.display = 'none';
             }
