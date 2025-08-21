@@ -291,7 +291,7 @@
         
         /* --- KOMPONEN UMUM --- */
         .form-container {
-            background: var(--bg-secondary); /* DIHILANGKAN: backdrop-filter: blur(15px); */ border: 1px solid var(--border-color);
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
             padding: 40px; border-radius: 15px; width: 100%; max-width: 400px;
             box-sizing: border-box; text-align: center;
         }
@@ -328,7 +328,7 @@
         /* --- MODAL --- */
         .modal {
             display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%;
-            overflow: auto; background-color: rgba(0,0,0,0.7); /* DIHILANGKAN: backdrop-filter: blur(5px); */
+            overflow: auto; background-color: rgba(0,0,0,0.7); 
             align-items: center; justify-content: center; padding: 15px; box-sizing: border-box;
         }
         .modal-content {
@@ -458,7 +458,6 @@
             font-size: 0.9em;
         }
         
-        /* Gaya untuk Stok Akun yang Terpakai */
         .stok-akun-card.claimed {
             border-left-color: var(--warning-primary);
             background: rgba(30, 30, 46, 0.7);
@@ -468,10 +467,86 @@
             font-weight: 700;
         }
 
+        /* --- STYLES FOR SETTINGS VIEW --- */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+        .settings-card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .settings-card h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            color: var(--accent-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toggle-switch span { font-weight: 500; }
+        .toggle-switch input { display: none; }
+        .toggle-switch label {
+            width: 50px; height: 26px; background: #333;
+            border-radius: 13px; position: relative; cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle-switch label::after {
+            content: ''; position: absolute;
+            width: 20px; height: 20px; background: white;
+            border-radius: 50%; top: 3px; left: 4px;
+            transition: transform 0.3s;
+        }
+        .toggle-switch input:checked + label { background: var(--success-primary); }
+        .toggle-switch input:checked + label::after { transform: translateX(23px); }
+
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 15px;
+        }
+        .tab-button {
+            padding: 10px 15px;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1em;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab-button:hover {
+            color: var(--text-primary);
+        }
+        .tab-button.active {
+            color: var(--accent-primary);
+            border-bottom-color: var(--accent-primary);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .time-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .time-input-group .input-group {
+            flex: 1;
+        }
+
+
         @media (max-width: 768px) {
             .main-content { padding: 5px; }
             .top-header { padding: 5px; }
-            #user-card-container, #pending-transaction-container, #stok-akun-card-container { grid-template-columns: 1fr; }
+            #user-card-container, #pending-transaction-container, #stok-akun-card-container, .settings-grid { grid-template-columns: 1fr; }
             .modal-content { padding: 15px; }
         }
     </style>
@@ -487,15 +562,14 @@
                 <button type="submit" class="action-button btn-primary" style="width:100%;"> <i class="fas fa-sign-in-alt"></i> Login </button>
             </form>
         </div>
-    </div>
-
-    <div id="admin-panel" class="dashboard-layout">
+    </div><div id="admin-panel" class="dashboard-layout">
         <header class="top-header">
             <h2 class="header-title"><i class="fas fa-gamepad"></i> Auth Tools</h2>
             <nav class="top-nav"> 
                 <a href="#" id="nav-users" class="active"><i class="fas fa-users"></i> User</a> 
                 <a href="#" id="nav-transactions"><i class="fas fa-exchange-alt"></i> Transaction</a>
                 <a href="#" id="nav-stok-akun"><i class="fas fa-archive"></i> Stok Akun</a>
+                <a href="#" id="nav-settings"><i class="fas fa-cogs"></i> Settings</a>
             </nav>
             <div class="header-actions">
                 <button id="logout-btn" class="action-button btn-danger"><i class="fas fa-sign-out-alt"></i> Logout</button>
@@ -565,6 +639,93 @@
                 <div id="stok-akun-card-container">
                     </div>
                 <div class="spinner-overlay" id="stok-akun-spinner" style="display:none;"><div class="spinner"></div></div>
+            </div>
+
+            <div id="settings-view" style="display: none;">
+                <header class="view-header">
+                    <h1>App Settings</h1>
+                </header>
+                <div class="settings-grid">
+                    <div class="settings-card">
+                        <h2><i class="fas fa-tools"></i> Maintenance Mode</h2>
+                        <div class="input-group">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="maintenance-toggle">
+                                <label for="maintenance-toggle"></label>
+                                <span>Aktifkan Mode Perbaikan</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="maintenance-message">Pesan Perbaikan</label>
+                            <textarea id="maintenance-message" class="input-field" rows="3" placeholder="Contoh: Perbaikan rutin hingga 10:00 WIB"></textarea>
+                        </div>
+                        <button id="save-maintenance-btn" class="action-button btn-primary"><i class="fas fa-save"></i> Simpan Pengaturan Perbaikan</button>
+                    </div>
+                    <div class="settings-card">
+                        <h2><i class="fas fa-comment-dots"></i> Pesan Sambutan</h2>
+                        <div class="settings-tabs">
+                            <button class="tab-button active" data-tab="global">Global</button>
+                            <button class="tab-button" data-tab="newUser">User Baru</button>
+                            <button class="tab-button" data-tab="specific">Spesifik</button>
+                        </div>
+
+                        <div id="tab-content-global" class="tab-content active">
+                            <form id="global-message-form">
+                                <div class="input-group">
+                                    <label for="global-message-title">Judul Pesan</label>
+                                    <input type="text" id="global-message-title" class="input-field" placeholder="Pemberitahuan">
+                                </div>
+                                <div class="input-group">
+                                    <label for="global-message-content">Isi Pesan</label>
+                                    <textarea id="global-message-content" class="input-field" rows="4" placeholder="Fitur baru telah ditambahkan!"></textarea>
+                                </div>
+                                <div class="input-group">
+                                    <label for="global-message-logins">Tampilkan berapa kali (per user)</label>
+                                    <input type="number" id="global-message-logins" class="input-field" value="1" min="1">
+                                </div>
+                                <button type="submit" class="action-button btn-primary"><i class="fas fa-save"></i> Simpan Pesan Global</button>
+                            </form>
+                        </div>
+
+                        <div id="tab-content-newUser" class="tab-content">
+                            <form id="newUser-message-form">
+                                <div class="input-group">
+                                    <label for="newUser-message-title">Judul Pesan</label>
+                                    <input type="text" id="newUser-message-title" class="input-field" placeholder="Selamat Datang!">
+                                </div>
+                                <div class="input-group">
+                                    <label for="newUser-message-content">Isi Pesan</label>
+                                    <textarea id="newUser-message-content" class="input-field" rows="4" placeholder="Terima kasih telah bergabung..."></textarea>
+                                </div>
+                                <button type="submit" class="action-button btn-primary"><i class="fas fa-save"></i> Simpan Pesan User Baru</button>
+                            </form>
+                        </div>
+
+                        <div id="tab-content-specific" class="tab-content">
+                            <form id="specific-message-form">
+                                 <div class="input-group">
+                                    <label for="specific-user-select">Pilih User</label>
+                                    <select id="specific-user-select" class="input-field">
+                                        <option value="">-- Memuat user... --</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label for="specific-message-title">Judul Pesan</label>
+                                    <input type="text" id="specific-message-title" class="input-field" placeholder="Pesan Khusus Untuk Anda">
+                                </div>
+                                <div class="input-group">
+                                    <label for="specific-message-content">Isi Pesan</label>
+                                    <textarea id="specific-message-content" class="input-field" rows="4"></textarea>
+                                </div>
+                                <div class="input-group">
+                                    <label for="specific-message-logins">Tampilkan berapa kali</label>
+                                    <input type="number" id="specific-message-logins" class="input-field" value="1" min="1">
+                                </div>
+                                <button type="submit" class="action-button btn-success"><i class="fas fa-paper-plane"></i> Kirim ke User</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </main>
@@ -730,9 +891,7 @@
             </div>
         </div>
     </div>
-    <div id="toast-container"></div>
-
-    <script type="module">
+    <div id="toast-container"></div><script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, getDoc, deleteField, orderBy, query } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
@@ -753,6 +912,7 @@
         // State variables
         let allUsers = [], displayedUsers = [], currentPage = 1, allStokAkun = [];
         const rowsPerPage = 10;
+        let appSettings = {}; // To store app config
 
         // DOM element references
         const dom = { 
@@ -773,12 +933,14 @@
             nav: {
                 users: document.getElementById('nav-users'),
                 transactions: document.getElementById('nav-transactions'),
-                stokAkun: document.getElementById('nav-stok-akun')
+                stokAkun: document.getElementById('nav-stok-akun'),
+                settings: document.getElementById('nav-settings')
             },
             views: {
                 users: document.getElementById('user-management-view'),
                 transactions: document.getElementById('transaction-management-view'),
-                stokAkun: document.getElementById('stok-akun-management-view')
+                stokAkun: document.getElementById('stok-akun-management-view'),
+                settings: document.getElementById('settings-view')
             }
         };
 
@@ -805,6 +967,8 @@
                 await fetchAndRenderTransactions();
             } else if (viewName === 'stokAkun') {
                 await fetchStokAkun();
+            } else if (viewName === 'settings') {
+                await loadAndDisplaySettings();
             }
         };
 
@@ -1448,6 +1612,127 @@
             };
             showConfirmation(`Yakin ingin menghapus stok akun ${gameType} ini?`, 'Hapus Stok Akun', 'btn-danger', confirmAction);
         };
+        
+        // --- SETTINGS MANAGEMENT FUNCTIONS ---
+        const loadAndDisplaySettings = async () => {
+            try {
+                const docRef = doc(db, "settings", "appConfig");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    appSettings = docSnap.data();
+                } else {
+                    appSettings = {}; // Reset if doc doesn't exist
+                }
+
+                // Populate Maintenance Form
+                document.getElementById('maintenance-toggle').checked = appSettings.maintenance?.isActive || false;
+                document.getElementById('maintenance-message').value = appSettings.maintenance?.message || '';
+
+                // Populate Welcome Message Forms
+                document.getElementById('global-message-title').value = appSettings.welcomeMessages?.global?.title || '';
+                document.getElementById('global-message-content').value = appSettings.welcomeMessages?.global?.content || '';
+                document.getElementById('global-message-logins').value = appSettings.welcomeMessages?.global?.targetLogins || 1;
+
+                document.getElementById('newUser-message-title').value = appSettings.welcomeMessages?.newUser?.title || '';
+                document.getElementById('newUser-message-content').value = appSettings.welcomeMessages?.newUser?.content || '';
+
+                // Populate user dropdown
+                const userSelect = document.getElementById('specific-user-select');
+                userSelect.innerHTML = '<option value="">-- Pilih User --</option>';
+                if (allUsers.length === 0) await fetchUsers(); // Make sure we have the user list
+                allUsers.sort((a,b) => a.username.localeCompare(b.username)).forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.id;
+                    option.textContent = user.username;
+                    userSelect.appendChild(option);
+                });
+
+
+            } catch (error) {
+                console.error("Error loading settings:", error);
+                showToast('Gagal memuat pengaturan aplikasi.', 'error');
+            }
+        };
+
+        const handleSaveMaintenance = async () => {
+            const settings = {
+                maintenance: {
+                    isActive: document.getElementById('maintenance-toggle').checked,
+                    message: document.getElementById('maintenance-message').value
+                }
+            };
+            try {
+                await setDoc(doc(db, "settings", "appConfig"), settings, { merge: true });
+                showToast('Pengaturan perbaikan berhasil disimpan!', 'success');
+            } catch (error) {
+                showToast('Gagal menyimpan pengaturan.', 'error');
+            }
+        };
+
+        const handleSaveWelcomeMessage = async (type) => {
+            let messageData;
+            if (type === 'global') {
+                messageData = {
+                    id: `global_${Date.now()}`, // New ID to force re-show for users
+                    title: document.getElementById('global-message-title').value,
+                    content: document.getElementById('global-message-content').value,
+                    targetLogins: Number(document.getElementById('global-message-logins').value)
+                };
+            } else if (type === 'newUser') {
+                messageData = {
+                    id: `newUser_${Date.now()}`,
+                    title: document.getElementById('newUser-message-title').value,
+                    content: document.getElementById('newUser-message-content').value
+                };
+            }
+
+            try {
+                const key = `welcomeMessages.${type}`;
+                await updateDoc(doc(db, "settings", "appConfig"), { [key]: messageData });
+                showToast(`Pesan ${type} berhasil disimpan!`, 'success');
+            } catch (error) {
+                 // If the document/field doesn't exist, use setDoc with merge
+                try {
+                    const key = `welcomeMessages`;
+                    await setDoc(doc(db, "settings", "appConfig"), { [key]: { [type]: messageData } }, { merge: true });
+                     showToast(`Pesan ${type} berhasil disimpan!`, 'success');
+                } catch (e) {
+                    console.error("Error saving message:", e);
+                    showToast('Gagal menyimpan pesan.', 'error');
+                }
+            }
+        };
+
+        const handleSendSpecificMessage = async (e) => {
+            e.preventDefault();
+            const userId = document.getElementById('specific-user-select').value;
+            if (!userId) {
+                showToast('Silakan pilih user terlebih dahulu.', 'error');
+                return;
+            }
+
+            const messageData = {
+                title: document.getElementById('specific-message-title').value,
+                content: document.getElementById('specific-message-content').value,
+                targetLogins: Number(document.getElementById('specific-message-logins').value),
+                timesShown: 0 // Reset counter for new message
+            };
+
+            if(!messageData.content) {
+                showToast('Isi pesan tidak boleh kosong.', 'error');
+                return;
+            }
+            
+            try {
+                await updateDoc(doc(db, "users", userId), { welcomeMessage: messageData });
+                showToast('Pesan berhasil dikirim ke user!', 'success');
+                e.target.reset(); // Reset form after sending
+            } catch (error) {
+                console.error("Error sending specific message:", error);
+                showToast('Gagal mengirim pesan.', 'error');
+            }
+
+        };
 
 
         // --- UNIVERSAL FUNCTIONS ---
@@ -1480,9 +1765,10 @@
             
             document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
-            dom.nav.users.addEventListener('click', (e) => { e.preventDefault(); showView('users'); });
-            dom.nav.transactions.addEventListener('click', (e) => { e.preventDefault(); showView('transactions'); });
-            dom.nav.stokAkun.addEventListener('click', (e) => { e.preventDefault(); showView('stokAkun'); });
+            Object.values(dom.nav).forEach((navLink, index, arr) => {
+                const viewName = Object.keys(dom.nav)[index];
+                navLink.addEventListener('click', (e) => { e.preventDefault(); showView(viewName); });
+            });
 
             document.getElementById('refresh-users-btn').addEventListener('click', fetchUsers);
             document.getElementById('refresh-transactions-btn').addEventListener('click', fetchAndRenderTransactions);
@@ -1499,6 +1785,22 @@
             document.getElementById('add-stok-akun-form').addEventListener('submit', handleSaveNewStokAkun);
             document.getElementById('edit-stok-akun-form').addEventListener('submit', handleUpdateStokAkun);
             
+            // Settings Listeners
+            document.getElementById('save-maintenance-btn').addEventListener('click', handleSaveMaintenance);
+            document.getElementById('global-message-form').addEventListener('submit', (e) => { e.preventDefault(); handleSaveWelcomeMessage('global'); });
+            document.getElementById('newUser-message-form').addEventListener('submit', (e) => { e.preventDefault(); handleSaveWelcomeMessage('newUser'); });
+            document.getElementById('specific-message-form').addEventListener('submit', handleSendSpecificMessage);
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabName = button.dataset.tab;
+                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    document.getElementById(`tab-content-${tabName}`).classList.add('active');
+                });
+            });
+
+
             document.querySelectorAll('.cancel-modal-btn').forEach(btn => btn.addEventListener('click', () => btn.closest('.modal').style.display = 'none'));
             document.getElementById('confirm-cancel-btn').addEventListener('click', () => {
                 dom.confirmModal.style.display = 'none';
