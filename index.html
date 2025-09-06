@@ -26,7 +26,7 @@
 .nav-item a.active{background:linear-gradient(45deg, var(--accent-blue), #2563eb);color:white;font-weight:700;border-color:var(--accent-blue);box-shadow:0 0 15px rgba(59,130,246,0.4)}
 .nav-icon{font-size:1.5em;transition:all .3s ease}.nav-icon-img{width:22px;height:22px;border-radius:4px;object-fit:cover;transition:all .3s ease}
 .nav-text{display:none!important}
-.header-actions-bar{display:flex;justify-content:space-between;align-items:center;gap:6px;background-color:var(--bg-primary);padding:6px 10px;}
+.header-actions-bar{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 10px;}
 .sidebar-balance-card{display:flex;align-items:center;gap:6px;background-color:var(--bg-secondary);padding:4px 7px;border-radius:8px;border:1px solid var(--border-color);cursor:pointer;transition:all .2s ease;flex-grow:1}
 .sidebar-balance-card:hover{border-color:var(--accent-blue);transform:scale(1.03)}
 .balance-info{text-align:left;flex-grow:1;overflow:hidden;}.sidebar-balance-card .balance-label{display:block;font-size:.7em;color:var(--text-secondary);line-height:1.1}
@@ -103,12 +103,12 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 #stok-akun-grid-bussid, #stok-akun-grid-trucksid {display:grid; grid-template-columns: 1fr; gap:10px}
 #purchased-akun-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:15px}
 
-.stok-akun-card{background:linear-gradient(145deg, #2a3a50, #1c2738);border:1px solid var(--border-color);border-radius:10px;padding:8px;transition:all .3s ease;display:flex;flex-direction:column;gap:6px;font-size:.7em;box-shadow:0 4px 15px rgba(0,0,0,0.4);position:relative;overflow:hidden}
+.stok-akun-card{background: rgba(42, 58, 80, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border:1px solid rgba(75, 85, 99, 0.6);border-radius:10px;padding:8px;transition:all .3s ease;display:flex;flex-direction:column;gap:6px;font-size:.7em;box-shadow:0 4px 15px rgba(0,0,0,0.4);position:relative;overflow:hidden}
 .stok-akun-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px}
 .stok-akun-card.bussid-card::before{background:var(--accent-blue)}
 .stok-akun-card.trucksid-card::before{background:var(--accent-green)}
 .stok-akun-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,0.35);border-color:var(--accent-cyan)}
-.stok-akun-card.owned{border-left:3px solid var(--accent-cyan)}.stok-akun-card .stok-card-header{display:flex;align-items:center;gap:6px;padding-bottom:5px;border-bottom:1px solid var(--border-color)}.stok-akun-card .stok-card-logo{width:20px;height:20px;border-radius:5px}.stok-akun-card h3{font-size:1em;margin:0;color:var(--text-primary)}.stok-akun-card .info-grid{display:grid;grid-template-columns:1fr;gap:4px}.stok-akun-card .info-item{background-color:rgba(0,0,0,0.2);padding:4px;border-radius:4px}.stok-akun-card .info-label{display:flex;align-items:center;gap:3px;font-size:.7em;color:var(--text-secondary);margin-bottom:2px}.stok-akun-card .info-label i{font-size:1.1em}.stok-akun-card .info-value{font-size:.8em;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.stok-akun-card .price .info-value{color:var(--accent-green);font-size:.9em}.stok-akun-card .unlocked-grid{display:flex;flex-direction:column;gap:5px}.stok-akun-card .unlocked-item{display:flex;align-items:center;background-color:var(--bg-tertiary);padding:5px 6px;border-radius:4px}.stok-akun-card .unlocked-label{font-size:.8em;color:var(--text-secondary);flex-basis:50px}.stok-akun-card .unlocked-value{font-family:monospace;font-size:.9em;font-weight:600;flex-grow:1}.stok-akun-card .copy-icon{color:var(--accent-blue);cursor:pointer;margin-left:auto;font-size:1.1em}
+.stok-akun-card.owned{border-left:3px solid var(--accent-cyan)}.stok-akun-card .stok-card-header{display:flex;align-items:center;gap:6px;padding-bottom:5px;border-bottom:1px solid var(--border-color);justify-content: space-between;}.stok-akun-card .stok-card-logo{width:20px;height:20px;border-radius:5px}.stok-akun-card h3{font-size:1em;margin:0;color:var(--text-primary)}.stok-akun-card .info-grid{display:grid;grid-template-columns:1fr;gap:4px}.stok-akun-card .info-item{background-color:rgba(0,0,0,0.2);padding:4px;border-radius:4px}.stok-akun-card .info-label{display:flex;align-items:center;gap:3px;font-size:.7em;color:var(--text-secondary);margin-bottom:2px}.stok-akun-card .info-label i{font-size:1.1em}.stok-akun-card .info-value{font-size:.8em;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.stok-akun-card .price .info-value{color:var(--accent-green);font-size:.9em}.stok-akun-card .unlocked-grid{display:flex;flex-direction:column;gap:5px}.stok-akun-card .unlocked-item{display:flex;align-items:center;background-color:var(--bg-tertiary);padding:5px 6px;border-radius:4px}.stok-akun-card .unlocked-label{font-size:.8em;color:var(--text-secondary);flex-basis:50px}.stok-akun-card .unlocked-value{font-family:monospace;font-size:.9em;font-weight:600;flex-grow:1}.stok-akun-card .copy-icon{color:var(--accent-blue);cursor:pointer;margin-left:auto;font-size:1.1em}
 .stok-akun-card .action-button {font-size: 0.8em; padding: 5px; margin-top: auto;}
 /* --- End: Beli Akun Card Redesign --- */
 
@@ -138,8 +138,8 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 .payment-option-btn{background-color:var(--bg-tertiary);border:1px solid var(--border-color);padding:10px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;color:var(--text-primary)}
 .payment-option-btn.selected{border-color:var(--accent-green);background-color:rgba(34,197,94,0.1)}
 .payment-option-btn img{height:20px}
-.stok-akun-filter-buttons { display: flex; gap: 10px; margin-bottom: 15px; background-color:var(--bg-primary); padding:8px; border-radius:10px;}
-.stok-akun-filter-buttons .filter-btn { flex: 1; padding: 10px; font-size: 0.9em; font-weight: 600; border: none; background-color: transparent; color: var(--text-secondary); border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
+.stok-akun-filter-buttons { display: flex; gap: 5px; background-color:var(--bg-primary); padding:4px; border-radius:8px;}
+.stok-akun-filter-buttons .filter-btn { padding: 5px 10px; font-size: 0.8em; font-weight: 600; border: none; background-color: transparent; color: var(--text-secondary); border-radius: 6px; cursor: pointer; transition: all 0.2s ease; white-space: nowrap; }
 .stok-akun-filter-buttons .filter-btn.active { background-color: var(--accent-blue); color: white; box-shadow: 0 2px 8px rgba(59,130,246,0.3); }
 
 #admin-profile-modal .modal-content, #sell-status-modal .modal-content { text-align: center; }
@@ -459,11 +459,16 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 <div id=stok-akun-container class=content-container>
 <h2>Beli Akun</h2>
 <p class=subtitle>Daftar akun yang tersedia. Beli akun menggunakan saldo Anda.</p>
-<div class="stok-akun-filter-buttons">
-    <button class="filter-btn active" id="show-available-btn">Tersedia</button>
-    <button class="filter-btn" id="show-purchased-btn">Akun Terbeli</button>
+<div class="stok-akun-controls-wrapper" style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
+    <div class="stok-akun-filter-buttons">
+        <button class="filter-btn active" id="show-available-btn">Tersedia</button>
+        <button class="filter-btn" id="show-purchased-btn">Akun Terbeli</button>
+    </div>
+    <div id="stok-akun-sort-controls" class="stok-akun-filter-buttons">
+        <button class="filter-btn active" data-sort="termurah">Termurah</button>
+        <button class="filter-btn" data-sort="termahal">Termahal</button>
+    </div>
 </div>
-
 <div id="beli-akun-wrapper">
     <div class="game-column">
         <h3>BUSSID</h3>
@@ -2322,6 +2327,27 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             }
         }
         
+        function sortStokAkun(sortType = 'termurah') {
+            const bussidGrid = document.getElementById('stok-akun-grid-bussid');
+            const trucksidGrid = document.getElementById('stok-akun-grid-trucksid');
+            
+            const sortGrid = (grid) => {
+                const cards = Array.from(grid.querySelectorAll('.stok-akun-card'));
+                if (cards.length <= 1) return;
+
+                cards.sort((a, b) => {
+                    const priceA = parseFloat(a.dataset.price) || 0;
+                    const priceB = parseFloat(b.dataset.price) || 0;
+                    return sortType === 'termahal' ? priceB - priceA : priceA - priceB;
+                });
+                
+                cards.forEach(card => grid.appendChild(card));
+            };
+
+            sortGrid(bussidGrid);
+            sortGrid(trucksidGrid);
+        }
+
         function setupStokAkunListener() {
             const bussidGrid = document.getElementById('stok-akun-grid-bussid');
             const trucksidGrid = document.getElementById('stok-akun-grid-trucksid');
@@ -2361,6 +2387,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                         const card = document.createElement('div');
                         card.className = `stok-akun-card ${data.gameType.toLowerCase()}-card`;
                         card.id = `stok-akun-${data.id}`;
+                        card.dataset.price = data.price || 0;
                         card.innerHTML = createStokAkunCardHTML(data, false);
                         bussidGrid.appendChild(card);
                         updateStokAkunCardDetails(data.id);
@@ -2375,6 +2402,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                         const card = document.createElement('div');
                         card.className = `stok-akun-card ${data.gameType.toLowerCase()}-card`;
                         card.id = `stok-akun-${data.id}`;
+                        card.dataset.price = data.price || 0;
                         card.innerHTML = createStokAkunCardHTML(data, false);
                         trucksidGrid.appendChild(card);
                         updateStokAkunCardDetails(data.id);
@@ -2394,6 +2422,8 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                         updateStokAkunCardDetails(data.id);
                     });
                 }
+
+                sortStokAkun('termurah');
             });
         }
         function censorDeviceId(deviceId) {
@@ -2466,33 +2496,28 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     </form>
                 `;
             } else {
+                 const headerUsernameHTML = `
+                    <div class="info-item" style="background: transparent; padding: 0; text-align: right;">
+                        <span class="info-label" style="justify-content: flex-end; margin-bottom: 1px;"><i class="ph ph-user"></i> Username</span>
+                        <span class="info-value" id="stok-game-name-${id}" style="font-size: 0.9em;">Memuat...</span>
+                    </div>
+                 `;
                  return `
                     <div class="stok-card-header">
-                        <img src="${gameLogo}" alt="${gameType} Logo" class="stok-card-logo">
-                        <div>
-                            <h3 style="font-size: 1.1em;">${gameType}</h3>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <img src="${gameLogo}" alt="${gameType} Logo" class="stok-card-logo">
+                            <h3 style="font-size: 1.1em; margin: 0;">${gameType}</h3>
                         </div>
+                        ${headerUsernameHTML}
                     </div>
                     <div class="info-grid">
-                        <div class="info-item">
-                            <span class="info-label"><i class="ph ph-user"></i> Username</span>
-                            <span class="info-value" id="stok-game-name-${id}">Memuat...</span>
-                        </div>
                         <div class="info-item">
                             <span class="info-label"><i class="ph ph-coins"></i> Uang Game (UB)</span>
                             <span class="info-value" id="stok-ub-amount-${id}">Memuat...</span>
                         </div>
-                         <div class="info-item">
-                            <span class="info-label"><i class="ph ph-identification-card"></i> Device ID</span>
-                            <span class="info-value">${censorDeviceId(deviceId)}</span>
-                        </div>
                         <div class="info-item price">
                             <span class="info-label"><i class="ph ph-tag"></i> Harga Akun</span>
                             <span class="info-value">Rp ${(data.price || 0).toLocaleString('id-ID')}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label"><i class="ph ph-at"></i> Email</span>
-                            <span class="info-value">${email}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">${loginIcon} Login</span>
@@ -3024,19 +3049,37 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                 const purchasedGrid = document.getElementById('purchased-akun-grid');
                 const purchasedInfo = document.getElementById('purchased-akun-info');
 
-                if (e.target.id === 'show-available-btn') {
-                    availableBtn.classList.add('active');
-                    purchasedBtn.classList.remove('active');
-                    beliAkunWrapper.style.display = 'grid';
-                    purchasedGrid.style.display = 'none';
-                    if(purchasedInfo) purchasedInfo.style.display = 'none';
+                if (e.target.id === 'show-available-btn' || e.target.id === 'show-purchased-btn') {
+                    availableBtn.classList.toggle('active', e.target.id === 'show-available-btn');
+                    purchasedBtn.classList.toggle('active', e.target.id === 'show-purchased-btn');
+                    const isAvailableView = e.target.id === 'show-available-btn';
+                    beliAkunWrapper.style.display = isAvailableView ? 'grid' : 'none';
+                    document.getElementById('stok-akun-sort-controls').style.display = isAvailableView ? 'flex' : 'none';
+                    purchasedGrid.style.display = isAvailableView ? 'none' : 'grid';
+                    if(purchasedInfo) purchasedInfo.style.display = isAvailableView ? 'none' : 'block';
                 }
-                if (e.target.id === 'show-purchased-btn') {
-                    availableBtn.classList.remove('active');
-                    purchasedBtn.classList.add('active');
-                    beliAkunWrapper.style.display = 'none';
-                    purchasedGrid.style.display = 'grid';
-                    if(purchasedInfo) purchasedInfo.style.display = 'block';
+
+                const sortBtn = e.target.closest('[data-sort]');
+                if (sortBtn) {
+                    document.querySelectorAll('#stok-akun-sort-controls .filter-btn').forEach(btn => btn.classList.remove('active'));
+                    sortBtn.classList.add('active');
+                    const sortType = sortBtn.dataset.sort;
+                    sortStokAkun(sortType);
+                }
+
+                const fillBtn = e.target.closest('[data-action="fill-stok-ub"]');
+                if (fillBtn) {
+                    const { id, amount } = fillBtn.dataset;
+                    const usernameInput = document.getElementById(`stok-username-input-${id}`);
+                    handleFillStokUb(id, amount, usernameInput.value);
+                    return;
+                }
+
+                const buyBtn = e.target.closest('[data-action="buy-stok-akun"]');
+                 if (buyBtn) {
+                    const { id } = buyBtn.dataset;
+                    showAkunPurchaseModal(id);
+                    return;
                 }
             });
             
@@ -3066,23 +3109,6 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                         btn.disabled = false;
                         btn.innerText = "Buka";
                     }
-                }
-            });
-
-            document.getElementById('stok-akun-container').addEventListener('click', (e) => {
-                const fillBtn = e.target.closest('[data-action="fill-stok-ub"]');
-                if (fillBtn) {
-                    const { id, amount } = fillBtn.dataset;
-                    const usernameInput = document.getElementById(`stok-username-input-${id}`);
-                    handleFillStokUb(id, amount, usernameInput.value);
-                    return;
-                }
-
-                const buyBtn = e.target.closest('[data-action="buy-stok-akun"]');
-                 if (buyBtn) {
-                    const { id } = buyBtn.dataset;
-                    showAkunPurchaseModal(id);
-                    return;
                 }
             });
 
