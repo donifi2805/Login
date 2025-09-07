@@ -144,6 +144,28 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 .stok-akun-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,0.35);border-color:var(--accent-cyan)}
 .stok-akun-card.owned{border-left:3px solid var(--accent-cyan)}.stok-akun-card .stok-card-header{display:flex;align-items:center;gap:6px;padding-bottom:5px;border-bottom:1px solid var(--border-color);justify-content: space-between;}.stok-akun-card .stok-card-logo{width:20px;height:20px;border-radius:5px}.stok-akun-card h3{font-size:1em;margin:0;color:var(--text-primary)}.stok-akun-card .info-grid{display:grid;grid-template-columns:1fr;gap:4px}.stok-akun-card .info-item{background-color:rgba(0,0,0,0.2);padding:4px;border-radius:4px}.stok-akun-card .info-label{display:flex;align-items:center;gap:3px;font-size:.7em;color:var(--text-secondary);margin-bottom:2px}.stok-akun-card .info-label i{font-size:1.1em}.stok-akun-card .info-value{font-size:.8em;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.stok-akun-card .price .info-value{color:var(--accent-green);font-size:.9em}.stok-akun-card .unlocked-grid{display:flex;flex-direction:column;gap:5px}.stok-akun-card .unlocked-item{display:flex;align-items:center;background-color:var(--bg-tertiary);padding:5px 6px;border-radius:4px}.stok-akun-card .unlocked-label{font-size:.8em;color:var(--text-secondary);flex-basis:50px}.stok-akun-card .unlocked-value{font-family:monospace;font-size:.9em;font-weight:600;flex-grow:1}.stok-akun-card .copy-icon{color:var(--accent-blue);cursor:pointer;margin-left:auto;font-size:1.1em}
 .stok-akun-card .action-button {font-size: 0.8em; padding: 5px; margin-top: auto;}
+/* MODIFIKASI: Style untuk header akun terbeli yang menonjol */
+.purchased-header-info {
+    padding: 8px;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    text-align: center;
+}
+.purchased-username {
+    font-size: 1.3em;
+    font-weight: 800;
+    color: var(--text-primary);
+    display: block;
+    line-height: 1.2;
+}
+.purchased-ub {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: var(--accent-green);
+    display: block;
+}
+/* AKHIR MODIFIKASI */
 .purchased-info-display { margin-top: 5px; border-top: 1px solid var(--border-color); padding-top: 5px; font-size: 0.9em; }
 .purchased-info-row { display: flex; justify-content: space-between; align-items: center; }
 .purchased-info-row .label { color: var(--text-secondary); }
@@ -317,7 +339,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 </ul>
 <p class=switch-link> Belum punya akun? <a href=# id=show-register-link>Buat akun baru</a></p>
 <p class=switch-link><a href=# id=show-forgot-password-link>Lupa kata sandi</a></p>
-<p class="switch-link admin-link">bukan user? <a href=paneladmin.html>Login sebagai admin</a></p>
+<p class="switch-link admin-link">bukan user? <a href=panel.html>Login sebagai admin</a></p>
 </div>
 <div id=register-container>
 <h2>Buat Akun Baru</h2>
@@ -682,8 +704,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 </div>
 </div>
 </main>
-</div>
-<div id=device-id-modal class=modal-overlay>
+</div><div id=device-id-modal class=modal-overlay>
 <div class=modal-content>
 <span class=modal-close id=close-device-id-modal-btn>×</span>
 <h2>Cara Mendapatkan Device ID</h2>
@@ -940,7 +961,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
     </div>
 </div><script type=module>
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, query, collection, where, getDocs, updateDoc, getDoc, addDoc, serverTimestamp, orderBy, limit, setDoc, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, query, collection, where, getDocs, updateDoc, getDoc, addDoc, serverTimestamp, orderBy, limit, setDoc, deleteDoc, Timestamp, writeBatch, runTransaction } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
         
         const firebaseConfig = { apiKey: "AIzaSyB3KJT9eh42V6ytLoY5e4ozzDXY4sHhado", authDomain: "donitata1717-f10f7.firebaseapp.com", projectId: "donitata1717-f10f7", storageBucket: "donitata1717-f10f7.appspot.com", messagingSenderId: "760325542999", appId: "1:760325542999:web:be97c17580f64407e33f12" };
         const app = initializeApp(firebaseConfig);
@@ -1171,8 +1192,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             } else {
                 statusDisplay.style.display = 'none';
             }
-        }
-        function filterProfileCards(gameName) {
+        }function filterProfileCards(gameName) {
             document.querySelectorAll('#all-profiles-grid .profile-card').forEach(card => {
                 card.classList.toggle('hidden', card.dataset.gameName !== gameName);
             });
@@ -2388,48 +2408,6 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             }
         }
         
-        async function updateStokAkunCardDetails(stokAkunId) {
-            try {
-                const docRef = doc(db, "stokAkun", stokAkunId);
-                const docSnap = await getDoc(docRef);
-                if (!docSnap.exists()) return;
-                const stokData = docSnap.data();
-                
-                const gameProfile = await getSingleGameProfile({
-                    ...gameConfigs[stokData.gameType],
-                    deviceId: stokData.deviceId
-                });
-
-                const gameNameEl = document.getElementById(`stok-game-name-${stokAkunId}`);
-                const ubAmountEl = document.getElementById(`stok-ub-amount-${stokAkunId}`);
-                const purchasedGameNameEl = document.getElementById(`purchased-game-name-${stokAkunId}`);
-                const purchasedUbAmountEl = document.getElementById(`purchased-ub-amount-${stokAkunId}`);
-
-                const displayName = gameProfile.profile.PlayerProfile?.DisplayName || 'Belum diatur';
-                const ubAmount = (gameProfile.profile.UserVirtualCurrency?.RP || 0).toLocaleString('id-ID');
-
-                if (gameNameEl) gameNameEl.textContent = displayName;
-                if (ubAmountEl) ubAmountEl.textContent = ubAmount;
-                if (purchasedGameNameEl) purchasedGameNameEl.textContent = displayName;
-                if (purchasedUbAmountEl) purchasedUbAmountEl.textContent = ubAmount;
-
-                const cardElement = document.getElementById(`stok-akun-${stokAkunId}`);
-                if (cardElement) {
-                    cardElement.dataset.currentGameName = displayName;
-                    const usernameInput = cardElement.querySelector('.stok-username-input');
-                    if(usernameInput && !usernameInput.value) {
-                        usernameInput.value = cardElement.dataset.currentGameName;
-                    }
-                }
-            } catch (error) {
-                console.error("Gagal memperbarui detail kartu stok:", error);
-                 const gameNameEl = document.getElementById(`stok-game-name-${stokAkunId}`);
-                 const ubAmountEl = document.getElementById(`stok-ub-amount-${stokAkunId}`);
-                 if(gameNameEl) gameNameEl.textContent = 'Gagal memuat';
-                 if(ubAmountEl) ubAmountEl.textContent = 'Gagal memuat';
-            }
-        }
-        
         function sortStokAkun(sortType = 'termurah') {
             const bussidGrid = document.getElementById('stok-akun-grid-bussid');
             const trucksidGrid = document.getElementById('stok-akun-grid-trucksid');
@@ -2486,233 +2464,90 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                 if (availableBussid.length === 0) {
                      bussidGrid.innerHTML = '<p style="text-align: center; font-size: 0.8em;">Stok kosong.</p>';
                 } else {
-                    availableBussid.forEach(data => {
-                        const card = document.createElement('div');
-                        card.className = `stok-akun-card ${data.gameType.toLowerCase()}-card`;
-                        card.id = `stok-akun-${data.id}`;
-                        card.dataset.price = data.price || 0;
-                        card.innerHTML = createStokAkunCardHTML(data, false);
-                        bussidGrid.appendChild(card);
-                        updateStokAkunCardDetails(data.id);
-                    });
+                    availableBussid.forEach(data => bussidGrid.innerHTML += createStokAkunCardHTML(data, false));
                 }
 
                 trucksidGrid.innerHTML = '';
                 if (availableTrucksid.length === 0) {
                      trucksidGrid.innerHTML = '<p style="text-align: center; font-size: 0.8em;">Stok kosong.</p>';
                 } else {
-                    availableTrucksid.forEach(data => {
-                        const card = document.createElement('div');
-                        card.className = `stok-akun-card ${data.gameType.toLowerCase()}-card`;
-                        card.id = `stok-akun-${data.id}`;
-                        card.dataset.price = data.price || 0;
-                        card.innerHTML = createStokAkunCardHTML(data, false);
-                        trucksidGrid.appendChild(card);
-                        updateStokAkunCardDetails(data.id);
-                    });
+                    availableTrucksid.forEach(data => trucksidGrid.innerHTML += createStokAkunCardHTML(data, false));
                 }
                 
                 purchasedGrid.innerHTML = '';
                 if (purchasedAccountsData.length === 0) {
                     purchasedGrid.innerHTML = '<p style="text-align: center;">Anda belum membeli akun apapun.</p>';
                 } else {
-                    purchasedAccountsData.forEach(data => {
-                        const card = document.createElement('div');
-                        card.className = 'stok-akun-card owned';
-                        card.id = `stok-akun-${data.id}`;
-                        card.innerHTML = createStokAkunCardHTML(data, true);
-                        purchasedGrid.appendChild(card);
-                        updateStokAkunCardDetails(data.id);
-                    });
+                    purchasedAccountsData.forEach(data => purchasedGrid.innerHTML += createStokAkunCardHTML(data, true));
                 }
 
                 sortStokAkun('termurah');
             });
         }
-        function censorDeviceId(deviceId) {
-            if (!deviceId || deviceId.length < 8) return 'Sensor***';
-            return `${deviceId.substring(0, 4)}********${deviceId.substring(deviceId.length - 4)}`;
-        }
-
+        
         function createStokAkunCardHTML(data, isUnlocked = false) {
-            const { id, gameType, loginType, email, deviceId, voucherCode } = data;
+            const { id, gameType, loginType, gameName, ub, price } = data;
             const gameLogo = gameConfigs[gameType]?.profileImage || '';
             const loginIcon = loginType === 'Facebook' ? '<i class="ph-fill ph-facebook-logo" style="color:#1877f2;"></i>' : '<i class="ph-fill ph-google-logo" style="color:#ea4335;"></i>';
             
-            if (isUnlocked && loggedInUser.accountType !== 'Admin') {
+            if (isUnlocked) {
+                 const { email, password, deviceId, provisionedUsername, provisionedUb } = data;
                 return `
-                    <div class="stok-card-header">
-                        <img src="${gameLogo}" alt="${gameType} Logo" class="stok-card-logo">
-                        <h3>${gameType} - Milik Anda</h3>
-                    </div>
-                    <div class="unlocked-grid">
-                        <div class="unlocked-item">
-                            <span class="unlocked-label">Login</span>
-                            <span class="unlocked-value">${loginIcon} ${loginType}</span>
+                    <div class="stok-akun-card owned">
+                         <div class="purchased-header-info">
+                            <span class="purchased-username">${provisionedUsername || 'Nama Akun'}</span>
+                            <span class="purchased-ub">UB: ${(provisionedUb || 0).toLocaleString('id-ID')}</span>
                         </div>
-                        <div class="unlocked-item">
-                            <span class="unlocked-label">Email/HP</span>
-                            <span class="unlocked-value">${email}</span>
-                            <i class="ph ph-copy copy-icon" onclick="copyToClipboard('${email}', 'Email disalin!')" title="Salin"></i>
-                        </div>
-                        <div class="unlocked-item">
-                            <span class="unlocked-label">Sandi</span>
-                            <span class="unlocked-value">${data.password}</span>
-                            <i class="ph ph-copy copy-icon" onclick="copyToClipboard('${data.password}', 'Sandi disalin!')" title="Salin"></i>
-                        </div>
-                        <div class="unlocked-item">
-                            <span class="unlocked-label">Device ID</span>
-                            <span class="unlocked-value">${deviceId}</span>
-                            <i class="ph ph-copy copy-icon" onclick="copyToClipboard('${deviceId}', 'Device ID disalin!')" title="Salin"></i>
-                        </div>
-                    </div>
-                    <div class="purchased-info-display">
-                        <div class="purchased-info-row">
-                            <span class="label">Username:</span>
-                            <span class="value" id="purchased-game-name-${id}">Memuat...</span>
-                        </div>
-                        <div class="purchased-info-row">
-                            <span class="label">UB:</span>
-                            <span class="value" id="purchased-ub-amount-${id}">Memuat...</span>
-                        </div>
-                    </div>
-                `;
-            } else if (isUnlocked && loggedInUser.accountType === 'Admin') {
-                return `
-                    <div class="stok-card-header">
-                        <img src="${gameLogo}" alt="${gameType} Logo" class="stok-card-logo">
-                        <h3>Milik ${data.ownedBy}</h3>
-                    </div>
-                    <div class="ub-fill-section" style="border-top:none; padding-top:0;">
-                        <div class="input-group"><input type="text" id="stok-username-input-${id}" class="input-field stok-username-input" placeholder="Masukkan Username Game" required></div>
-                        <div class="ub-fill-grid">
-                            <button class="ub-fill-btn" data-action="fill-stok-ub" data-amount="10000000" data-id="${id}">10 Jt</button>
-                            <button class="ub-fill-btn" data-action="fill-stok-ub" data-amount="50000000" data-id="${id}">50 Jt</button>
-                            <button class="ub-fill-btn" data-action="fill-stok-ub" data-amount="100000000" data-id="${id}">100 Jt</button>
-                            <button class="ub-fill-btn" data-action="fill-stok-ub" data-amount="1000000000" data-id="${id}">1 M</button>
-                            <button class="ub-fill-btn" data-action="fill-stok-ub" data-amount="2147483647" data-id="${id}">MAX</button>
+                        <div class="unlocked-grid">
+                            <div class="unlocked-item">
+                                <span class="unlocked-label">Login</span>
+                                <span class="unlocked-value">${loginIcon} ${loginType}</span>
+                            </div>
+                            <div class="unlocked-item">
+                                <span class="unlocked-label">Email/HP</span>
+                                <span class="unlocked-value">${email}</span>
+                                <i class="ph ph-copy copy-icon" onclick="copyToClipboard('${email}', 'Email disalin!')" title="Salin"></i>
+                            </div>
+                            <div class="unlocked-item">
+                                <span class="unlocked-label">Sandi</span>
+                                <span class="unlocked-value">${password}</span>
+                                <i class="ph ph-copy copy-icon" onclick="copyToClipboard('${password}', 'Sandi disalin!')" title="Salin"></i>
+                            </div>
+                            <div class="unlocked-item">
+                                <span class="unlocked-label">Device ID</span>
+                                <span class="unlocked-value">${deviceId}</span>
+                                <i class="ph ph-copy copy-icon" onclick="copyToClipboard('${deviceId}', 'Device ID disalin!')" title="Salin"></i>
+                            </div>
                         </div>
                     </div>`;
-            } else if (loggedInUser.accountType === 'Admin') {
-                 return `
-                    <div class="stok-card-header">
-                        <img src="${gameLogo}" alt="${gameType} Logo" class="stok-card-logo">
-                        <h3>${gameType}</h3>
-                    </div>
-                     <div class="unlocked-grid">
-                        <div class="unlocked-item"><span class="unlocked-label">Login</span><span class="unlocked-value">${loginIcon} ${loginType}</span></div>
-                        <div class="unlocked-item"><span class="unlocked-label">Email/HP</span><span class="unlocked-value">${email}</span></div>
-                     </div>
-                    <form class="voucher-form" data-id="${id}" data-voucher="${voucherCode}" style="display:flex; gap: 8px; margin-top: 8px;">
-                        <input type="text" class="input-field" placeholder="Kode Voucher" required style="padding: 6px 10px; font-size: 0.8em; flex-grow: 1;">
-                        <button type="submit" class="action-button btn-primary" style="padding: 6px 10px; font-size: 0.8em; width: auto;">Buka</button>
-                    </form>
-                `;
             } else {
-                 const headerUsernameHTML = `
-                    <div class="info-item" style="background: transparent; padding: 0; text-align: right;">
-                        <span class="info-label" style="justify-content: flex-end; margin-bottom: 1px;"><i class="ph ph-user"></i> Username</span>
-                        <span class="info-value" id="stok-game-name-${id}" style="font-size: 0.9em;">Memuat...</span>
-                    </div>
-                 `;
                  return `
-                    <div class="stok-card-header">
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <img src="${gameLogo}" alt="${gameType} Logo" class="stok-card-logo">
-                            <h3 style="font-size: 1.1em; margin: 0;">${gameType}</h3>
+                    <div class="stok-akun-card ${gameType.toLowerCase()}-card" id="stok-akun-${id}" data-price="${price || 0}">
+                        <div class="stok-card-header">
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <img src="${gameLogo}" alt="${gameType} Logo" class="stok-card-logo">
+                                <h3 style="font-size: 1.1em; margin: 0;">${gameName || gameType}</h3>
+                            </div>
                         </div>
-                        ${headerUsernameHTML}
-                    </div>
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <span class="info-label"><i class="ph ph-coins"></i> Uang Game (UB)</span>
-                            <span class="info-value" id="stok-ub-amount-${id}">Memuat...</span>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label"><i class="ph ph-coins"></i> Uang Game (UB)</span>
+                                <span class="info-value">${(ub || 0).toLocaleString('id-ID')}</span>
+                            </div>
+                            <div class="info-item price">
+                                <span class="info-label"><i class="ph ph-tag"></i> Harga Akun</span>
+                                <span class="info-value">Rp ${(price || 0).toLocaleString('id-ID')}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">${loginIcon} Login via</span>
+                                <span class="info-value">${loginType}</span>
+                            </div>
                         </div>
-                        <div class="info-item price">
-                            <span class="info-label"><i class="ph ph-tag"></i> Harga Akun</span>
-                            <span class="info-value">Rp ${(data.price || 0).toLocaleString('id-ID')}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">${loginIcon} Login</span>
-                            <span class="info-value">${loginType}</span>
-                        </div>
-                    </div>
-                    <button class="action-button btn-green" data-action="buy-stok-akun" data-id="${id}">Beli Akun</button>
-                `;
+                        <button class="action-button btn-green" data-action="buy-stok-akun" data-id="${id}">Beli Akun</button>
+                    </div>`;
             }
         }
 
-        async function handleFillStokUb(stokId, amount, username) {
-            if (!username) {
-                showToast("Harap masukkan username di dalam game.", "error");
-                return;
-            }
-
-            const isConfirmed = await showConfirmation(`Anda akan mengisi UB sebesar <strong>${parseInt(amount).toLocaleString('id-ID')}</strong> ke akun ini. Lanjutkan?`, "Konfirmasi Isi UB");
-            if (!isConfirmed) return;
-
-            const btn = document.querySelector(`.ub-fill-btn[data-id="${stokId}"][data-amount="${amount}"]`);
-            if (btn) {
-                btn.disabled = true;
-                btn.innerText = 'Proses...';
-            }
-
-            try {
-                const docRef = doc(db, "stokAkun", stokId);
-                const docSnap = await getDoc(docRef);
-                if (!docSnap.exists()) throw new Error("Data akun stok tidak ditemukan.");
-                const stokData = docSnap.data();
-                
-                const config = gameConfigs[stokData.gameType];
-                const loginRes = await fetch(`https://${config.host}/Client/LoginWithAndroidDeviceID?sdk=UnitySDK-2.206.241122`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-ReportErrorAsSuccess': 'true' },
-                    body: JSON.stringify({ AndroidDevice: "AndroidPhone", AndroidDeviceId: stokData.deviceId, CreateAccount: false, TitleId: config.titleId })
-                });
-                const loginData = await loginRes.json();
-                if (loginData.code !== 200 || !loginData.data?.SessionTicket) {
-                    throw new Error(loginData.errorMessage || 'Gagal mendapatkan sesi login dari Device ID.');
-                }
-                const sessionTicket = loginData.data.SessionTicket;
-                
-                await fetch(`https://${config.host}/Client/UpdateUserTitleDisplayName?sdk=UnitySDK-2.135.220509`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-Authorization': sessionTicket, 'X-ReportErrorAsSuccess': 'true' },
-                    body: JSON.stringify({ DisplayName: username.trim() })
-                });
-
-                const payload = {
-                    FunctionName: "AddRp",
-                    FunctionParameter: { addValue: parseInt(amount, 10) },
-                    GeneratePlayStreamEvent: false
-                };
-                const execRes = await fetch(`https://${config.host}/Client/ExecuteCloudScript?sdk=UnitySDK-2.135.220509`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-Authorization': sessionTicket, 'X-ReportErrorAsSuccess': 'true' },
-                    body: JSON.stringify(payload)
-                });
-                const execResult = await execRes.json();
-                if (execResult.code !== 200) {
-                    throw new Error(execResult.errorMessage || 'Gagal mengisi UB.');
-                }
-
-                showToast("Pengisian UB berhasil!", "success");
-                await updateStokAkunCardDetails(stokId);
-
-            } catch (error) {
-                console.error("Error saat mengisi UB Stok:", error);
-                showToast(`Gagal: ${error.message}`, "error");
-            } finally {
-                 if (btn) {
-                    btn.disabled = false;
-                    const amountValue = parseInt(amount);
-                     if (amountValue >= 1000000000) { btn.innerText = `${amountValue / 1000000000} M`; }
-                     else if (amountValue >= 1000000) { btn.innerText = `${amountValue / 1000000} Jt`; }
-                     else { btn.innerText = 'MAX'; }
-                }
-            }
-        }
-        
         async function showAkunPurchaseModal(stokId) {
             const modal = dom.akunPurchaseModal;
             modal.form.reset();
@@ -2730,12 +2565,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                 if (!docSnap.exists()) throw new Error("Akun tidak ditemukan.");
                 
                 const data = docSnap.data();
-                
-                const card = document.getElementById(`stok-akun-${stokId}`);
-                if (card && card.dataset.currentGameName) {
-                    modal.usernameInput.value = card.dataset.currentGameName;
-                }
-                
+                modal.usernameInput.value = data.gameName || '';
                 detailsEl.innerHTML = data.detailInfo ? data.detailInfo.replace(/\n/g, '<br>') : 'Tidak ada detail tambahan.';
                 totalEl.textContent = `Rp ${(data.price || 0).toLocaleString('id-ID')}`;
                 
@@ -2758,72 +2588,75 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                 return;
             }
 
-            btn.disabled = true;
-            btn.innerText = "Memproses...";
+            btn.disabled = true; btn.innerText = "Memproses...";
+            let stokData;
 
             try {
-                const stokDocRef = doc(db, "stokAkun", stokId);
-                const stokDocSnap = await getDoc(stokDocRef);
-                if (!stokDocSnap.exists() || stokDocSnap.data().ownedBy) {
-                    throw new Error("Akun ini sudah tidak tersedia atau sudah dibeli.");
-                }
-                const stokData = stokDocSnap.data();
-                const accountPrice = stokData.price || 0;
+                await runTransaction(db, async (transaction) => {
+                    const userRef = doc(db, "users", loggedInUser.docId);
+                    const userDoc = await transaction.get(userRef);
+                    if (!userDoc.exists()) throw new Error("User data not found.");
+                    const currentUserData = userDoc.data();
 
-                if (loggedInUser.saldo < accountPrice) {
-                    throw new Error("Saldo Anda tidak mencukupi untuk pembelian ini.");
-                }
+                    const stokDocRef = doc(db, "stokAkun", stokId);
+                    const stokDocSnap = await transaction.get(stokDocRef);
+                    if (!stokDocSnap.exists() || stokDocSnap.data().ownedBy) throw new Error("Akun ini sudah tidak tersedia.");
+                    
+                    stokData = stokDocSnap.data();
+                    const accountPrice = stokData.price || 0;
 
-                const confirmationMessage = `
-                <div class="invoice-style-confirmation">
-                    <h4>** Struk Pembelian **</h4>
-                    <div class="invoice-row"><span>Pembelian Akun ${stokData.gameType}</span> <span class="price"></span></div>
-                    <div class="invoice-row total"><span>TOTAL</span> <span class="price">Rp ${accountPrice.toLocaleString('id-ID')}</span></div>
-                </div>`;
+                    if (currentUserData.saldo < accountPrice) throw new Error("Saldo Anda tidak mencukupi.");
 
-                const isConfirmed = await showConfirmation(confirmationMessage, "Struk Konfirmasi Pembelian");
-                if (!isConfirmed) {
-                    btn.disabled = false;
-                    btn.innerText = "Beli Akun";
-                    return;
-                }
+                    const confirmationMessage = `<div class="invoice-style-confirmation"><h4>** Struk Pembelian **</h4><div class="invoice-row"><span>Pembelian Akun ${stokData.gameType}</span><span class="price"></span></div><div class="invoice-row total"><span>TOTAL</span> <span class="price">Rp ${accountPrice.toLocaleString('id-ID')}</span></div></div>`;
+                    const isConfirmed = await showConfirmation(confirmationMessage, "Struk Konfirmasi Pembelian");
+                    if (!isConfirmed) throw new Error("Pembelian dibatalkan oleh pengguna.");
+                    
+                    const stokEmailQuery = query(collection(db, "stokEmail"), where("loginType", "==", stokData.loginType), where("isUsed", "==", false), limit(1));
+                    const stokEmailSnapshot = await getDocs(stokEmailQuery);
+                    if (stokEmailSnapshot.empty) throw new Error(`Stok akun dasar ${stokData.loginType} habis. Hubungi admin.`);
 
-                const userRef = doc(db, "users", loggedInUser.docId);
-                const newSaldo = loggedInUser.saldo - accountPrice;
-                await updateDoc(userRef, { saldo: newSaldo });
+                    const baseAccountDoc = stokEmailSnapshot.docs[0];
+                    const baseAccountData = baseAccountDoc.data();
+                    const config = gameConfigs[stokData.gameType];
 
-                const config = gameConfigs[stokData.gameType];
-                const loginRes = await fetch(`https://${config.host}/Client/LoginWithAndroidDeviceID?sdk=UnitySDK-2.206.241122`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-ReportErrorAsSuccess': 'true' }, body: JSON.stringify({ AndroidDevice: "AndroidPhone", AndroidDeviceId: stokData.deviceId, CreateAccount: false, TitleId: config.titleId }) });
-                const loginData = await loginRes.json();
-                if (loginData.code === 200 && loginData.data?.SessionTicket) {
+                    const loginRes = await fetch(`https://${config.host}/Client/LoginWithAndroidDeviceID?sdk=UnitySDK-2.206.241122`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-ReportErrorAsSuccess': 'true' }, body: JSON.stringify({ AndroidDevice: "AndroidPhone", AndroidDeviceId: baseAccountData.deviceId, CreateAccount: false, TitleId: config.titleId }) });
+                    const loginData = await loginRes.json();
+                    if (loginData.code !== 200 || !loginData.data?.SessionTicket) throw new Error("Gagal login ke akun dasar.");
                     const sessionTicket = loginData.data.SessionTicket;
-                    await fetch(`https://${config.host}/Client/UpdateUserTitleDisplayName?sdk=UnitySDK-2.135.220509`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Authorization': sessionTicket, 'X-ReportErrorAsSuccess': 'true' }, body: JSON.stringify({ DisplayName: newUsername }) });
-                }
 
-                await updateDoc(stokDocRef, { ownedBy: loggedInUser.username });
-                
-                await addDoc(collection(db, "purchase_history"), { 
-                    userId: loggedInUser.docId, 
-                    username: loggedInUser.username, 
-                    game: stokData.gameType, 
-                    rpCost: accountPrice, 
-                    ubAmount: `Akun (${stokData.gameType})`, 
-                    status: "Success", 
-                    timestamp: serverTimestamp() 
+                    const profileRes = await fetch(`https://${config.host}/Client/GetPlayerCombinedInfo?sdk=UnitySDK-2.135.220509`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Authorization': sessionTicket }, body: JSON.stringify({ InfoRequestParameters: { GetUserVirtualCurrency: true } }) });
+                    const profileData = await profileRes.json();
+                    const currentUb = profileData.data.InfoResultPayload.UserVirtualCurrency.RP || 0;
+                    const targetUb = stokData.ub;
+                    const ubDifference = targetUb - currentUb;
+
+                    if (ubDifference !== 0) {
+                        const payload = { FunctionName: "AddRp", FunctionParameter: { addValue: ubDifference } };
+                        const execRes = await fetch(`https://${config.host}/Client/ExecuteCloudScript?sdk=UnitySDK-2.135.220509`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Authorization': sessionTicket }, body: JSON.stringify(payload) });
+                        if (!execRes.ok) throw new Error("Gagal menyesuaikan UB akun.");
+                    }
+                    
+                    await fetch(`https://${config.host}/Client/UpdateUserTitleDisplayName?sdk=UnitySDK-2.135.220509`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Authorization': sessionTicket }, body: JSON.stringify({ DisplayName: newUsername }) });
+
+                    transaction.update(userRef, { saldo: currentUserData.saldo - accountPrice });
+                    transaction.update(stokDocRef, {
+                        ownedBy: currentUserData.username,
+                        provisionedUsername: newUsername,
+                        provisionedUb: targetUb,
+                        ...baseAccountData
+                    });
+                    transaction.update(baseAccountDoc.ref, { isUsed: true, usedBy: currentUserData.username, usedAt: serverTimestamp() });
                 });
 
+                await addDoc(collection(db, "purchase_history"), { userId: loggedInUser.docId, username: loggedInUser.username, game: stokData.gameType, rpCost: stokData.price, ubAmount: `Akun (${stokData.gameName})`, status: "Success", timestamp: serverTimestamp() });
                 showToast("Pembelian akun berhasil!", "success", 4000);
                 hideModal(modal.overlay);
                 await displayTransactionHistory();
 
             } catch (error) {
                 showToast(`Gagal: ${error.message}`, "error", 5000);
-                const userRef = doc(db, "users", loggedInUser.docId);
-                const userDoc = await getDoc(userRef);
-                await updateDoc(userRef, { saldo: userDoc.data().saldo + (stokData.price || 0) });
             } finally {
-                btn.disabled = false;
-                btn.innerText = "Beli Akun";
+                btn.disabled = false; btn.innerText = "Beli Akun";
             }
         }
         
@@ -3167,48 +3000,11 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     sortStokAkun(sortType);
                 }
 
-                const fillBtn = e.target.closest('[data-action="fill-stok-ub"]');
-                if (fillBtn) {
-                    const { id, amount } = fillBtn.dataset;
-                    const usernameInput = document.getElementById(`stok-username-input-${id}`);
-                    handleFillStokUb(id, amount, usernameInput.value);
-                    return;
-                }
-
                 const buyBtn = e.target.closest('[data-action="buy-stok-akun"]');
                  if (buyBtn) {
                     const { id } = buyBtn.dataset;
                     showAkunPurchaseModal(id);
                     return;
-                }
-            });
-            
-            document.getElementById('stok-akun-container').addEventListener('submit', async (e) => {
-                const form = e.target.closest('.voucher-form');
-                if(form) {
-                    e.preventDefault();
-                    const btn = form.querySelector('button');
-                    btn.disabled = true;
-                    btn.innerText = "Cek...";
-                    const input = form.querySelector('input');
-                    const correctVoucher = form.dataset.voucher;
-                    const enteredVoucher = input.value.trim();
-
-                    if(enteredVoucher === correctVoucher) {
-                        const cardId = form.dataset.id;
-                        const docRef = doc(db, "stokAkun", cardId);
-                        try {
-                            await updateDoc(docRef, { ownedBy: loggedInUser.username });
-                            showToast("Voucher benar! Akun ini sekarang milik Anda.", "success");
-                        } catch (error) {
-                             showToast("Gagal mengklaim akun. Coba lagi.", "error");
-                        }
-                    } else {
-                        showToast("Kode voucher salah!", "error");
-                        input.value = '';
-                        btn.disabled = false;
-                        btn.innerText = "Buka";
-                    }
                 }
             });
 
@@ -3388,4 +3184,3 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
     </script>
 </body>
 </html>
-
