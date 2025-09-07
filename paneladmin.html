@@ -191,7 +191,18 @@
             align-items: flex-start;
             padding-bottom: 10px;
             border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.3s ease;
         }
+        /* [MODIFIKASI] Latar belakang header kartu stok */
+        .stok-header-available {
+            background: rgba(34, 197, 94, 0.15);
+            border-left: 4px solid var(--success-primary);
+        }
+        .stok-header-sold {
+            background: rgba(239, 68, 68, 0.15);
+            border-left: 4px solid var(--danger-primary);
+        }
+
         .card-header .user-title {
             display: flex;
             flex-direction: column;
@@ -235,6 +246,9 @@
             font-size: 0.95em;
             font-weight: 600;
             word-break: break-all;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .info-value .copy-btn {
             background: none; border: none; color: var(--text-secondary); cursor: pointer;
@@ -367,6 +381,7 @@
         #login-page { display: flex; }
         
         /* --- [MODIFIKASI] TAMPILAN SUPER KOMPAK --- */
+        /* This section remains largely the same as it's already compact */
         :root {
             font-size: 10px;
         }
@@ -393,7 +408,7 @@
         
         #user-card-container, #pending-transaction-container, #stok-akun-card-container { gap: 10px; }
         .user-profile-card, .transaction-card, .stok-akun-card { padding: 12px; border-radius: 8px; gap: 10px; }
-        .card-header { padding-bottom: 8px; margin-bottom: 10px; }
+        .card-header { padding: 8px; margin-bottom: 10px; } /* Adjusted padding */
         .card-header .user-title h3 { font-size: 1.3em; }
         .card-info-grid { gap: 10px; }
         .info-label { font-size: 0.9em; }
@@ -423,16 +438,22 @@
         
         /* --- [MODIFIKASI SPESIFIK] Perkecil Kartu Stok Akun --- */
         #stok-akun-card-container {
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Slightly wider for new button */
             gap: 8px;
         }
         #stok-akun-card-container .stok-akun-card {
-            padding: 10px;
+            padding: 0; /* Padding is now on inner elements */
             gap: 8px;
+            border: 1px solid var(--border-color);
         }
-        #stok-akun-card-container .card-header {
-            padding-bottom: 6px;
-            margin-bottom: 8px;
+        #stok-akun-card-container .stok-akun-card .card-header {
+            padding: 8px;
+            margin-bottom: 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        #stok-akun-card-container .stok-akun-card .card-info-grid, 
+        #stok-akun-card-container .stok-akun-card .card-actions {
+            padding: 0 10px 10px 10px; /* Padding for content */
         }
         #stok-akun-card-container .card-header h3 {
             font-size: 1.1em;
@@ -458,6 +479,15 @@
             font-size: 0.9em;
         }
         
+        /* [MODIFIKASI] Tombol Batal Reset Owner */
+        .reset-owner-btn {
+            padding: 2px 8px !important;
+            font-size: 0.85em !important;
+            flex-grow: 0 !important;
+            background: var(--bg-secondary) !important;
+            border: 1px solid var(--border-color);
+        }
+
         .stok-akun-card.claimed {
             border-left-color: var(--warning-primary);
             background: rgba(30, 30, 46, 0.7);
@@ -545,9 +575,21 @@
 
         @media (max-width: 768px) {
             .main-content { padding: 5px; }
-            .top-header { padding: 5px; }
-            #user-card-container, #pending-transaction-container, #stok-akun-card-container, .settings-grid { grid-template-columns: 1fr; }
+            .top-header {
+                padding: 10px;
+                justify-content: center;
+            }
+            .header-title { text-align: center; width: 100%; margin-bottom: 10px; }
+            #user-card-container, #pending-transaction-container, #stok-akun-card-container, .settings-grid { 
+                grid-template-columns: 1fr; 
+            }
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-bar .input-field { max-width: 100%; }
             .modal-content { padding: 15px; }
+            .form-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -659,8 +701,7 @@
                             <label for="maintenance-message">Pesan Perbaikan</label>
                             <textarea id="maintenance-message" class="input-field" rows="3" placeholder="Contoh: Perbaikan rutin hingga 10:00 WIB"></textarea>
                         </div>
-                        <button id="save-maintenance-btn" class="action-button btn-primary"><i class="fas fa-save"></i> Simpan Pengaturan Perbaikan</button>
-                    </div>
+                        </div>
                     <div class="settings-card">
                         <h2><i class="fas fa-comment-dots"></i> Pesan Sambutan</h2>
                         <div class="settings-tabs">
@@ -745,8 +786,7 @@
                         <option value="Langganan">Langganan</option>
                         <option value="Admin">Admin</option>
                     </select>
-                </div>
-                <div id="subscription-fields">
+                </div><div id="subscription-fields">
                     <div class="input-group">
                         <label for="edit-masaAktifHingga">Masa Aktif Hingga</label>
                         <input type="date" id="edit-masaAktifHingga" class="input-field">
@@ -831,7 +871,7 @@
                 </div>
                 <div class="input-group">
                     <label for="edit-stok-akun-voucherCode">Kode Voucher</label>
-                    <input type="text" id="edit-stok-akun-voucherCode" class="input-field" required>
+                    <input type="text" id="edit-stok-akun-voucherCode" class="input-field" readonly required>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="action-button btn-secondary cancel-modal-btn">Batal</button>
@@ -886,8 +926,8 @@
                     <input type="text" id="add-stok-akun-deviceId" class="input-field" required>
                 </div>
                 <div class="input-group">
-                    <label for="add-stok-akun-voucherCode">Kode Voucher</label>
-                    <input type="text" id="add-stok-akun-voucherCode" class="input-field" required>
+                    <label for="add-stok-akun-voucherCode">Kode Voucher (Otomatis)</label>
+                    <input type="text" id="add-stok-akun-voucherCode" class="input-field" readonly required>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="action-button btn-secondary cancel-modal-btn">Batal</button>
@@ -1065,22 +1105,22 @@
                         <div class="card-info-grid">
                             <div class="info-item">
                                 <span class="info-label">Saldo / Sisa Aktif</span>
-                                <span class="info-value">${saldoOrMasaAktifHTML}</span>
+                                <span class="info-value"><span>${saldoOrMasaAktifHTML}</span></span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">WhatsApp</span>
-                                <span class="info-value">${user.whatsapp || 'N/A'}</span>
+                                <span class="info-value"><span>${user.whatsapp || 'N/A'}</span></span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Device ID</span>
                                 <span class="info-value">
-                                    ${user.device_id || 'N/A'}
+                                    <span>${user.device_id || 'N/A'}</span>
                                     <button class="copy-btn" data-text="${user.device_id || ''}" title="Copy ID"><i class="far fa-copy"></i></button>
                                 </span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Password</span>
-                                <span class="info-value">••••••••</span>
+                                <span class="info-value"><span>••••••••</span></span>
                             </div>
                         </div>
                         <div class="card-actions">
@@ -1146,7 +1186,7 @@
                     dom.pendingTransactionContainer.innerHTML += `
                         <div class="transaction-card">
                             <div class="card-header"><div class="user-title"><h3>${user.username}</h3><span class="status-badge ${statusBadgeClass}">${accountType}</span></div></div>
-                            <div class="card-info-grid"><div class="info-item"><span class="info-label">Email</span><span class="info-value">${user.email || 'N/A'}</span></div><div class="info-item">${statusOrSaldoHTML}</div></div>
+                            <div class="card-info-grid"><div class="info-item"><span class="info-label">Email</span><span class="info-value"><span>${user.email || 'N/A'}</span></span></div><div class="info-item">${statusOrSaldoHTML}</div></div>
                             <div class="transaction-details-section">${transactionDetailsHTML}</div>
                             <div class="card-actions">${actionButtonsHTML}</div>
                         </div>`;
@@ -1508,21 +1548,26 @@
             }
             allStokAkun.forEach(akun => {
                 let claimedByHTML = '';
-                let cardClass = '';
-
+                
+                // [MODIFIKASI] Tambahkan tombol Batal jika akun sudah dimiliki
                 if (akun.ownedBy) {
-                    cardClass = 'claimed';
                     claimedByHTML = `
                         <div class="info-item" style="grid-column: 1 / -1;">
                              <span class="info-label">Telah Terpakai Oleh</span>
-                             <span class="info-value owner">${akun.ownedBy}</span>
+                             <span class="info-value owner">
+                                <span>${akun.ownedBy}</span>
+                                <button class="action-button reset-owner-btn" data-doc-id="${akun.id}" title="Batalkan status terjual"><i class="fas fa-times"></i> Batal</button>
+                             </span>
                         </div>
                     `;
                 }
 
+                // [MODIFIKASI] Tentukan kelas header berdasarkan status 'ownedBy'
+                const headerClass = akun.ownedBy ? 'stok-header-sold' : 'stok-header-available';
+
                 const cardHTML = `
-                <div class="stok-akun-card ${cardClass}">
-                    <div class="card-header">
+                <div class="stok-akun-card">
+                    <div class="card-header ${headerClass}">
                         <div class="user-title">
                             <h3>${akun.gameType} - ${akun.gameName || 'No Name'}</h3>
                         </div>
@@ -1530,20 +1575,20 @@
                     <div class="card-info-grid">
                         <div class="info-item">
                             <span class="info-label">Jenis Login</span>
-                            <span class="info-value">${akun.loginType || 'N/A'}</span>
+                            <span class="info-value"><span>${akun.loginType || 'N/A'}</span></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Harga</span>
-                            <span class="info-value" style="color: var(--success-primary);">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(akun.price || 0)}</span>
+                            <span class="info-value" style="color: var(--success-primary);"><span>${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(akun.price || 0)}</span></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Email / No.HP</span>
-                            <span class="info-value">${akun.email || 'N/A'}</span>
+                            <span class="info-value"><span>${akun.email || 'N/A'}</span></span>
                         </div>
                         ${claimedByHTML}
                         <div class="info-item" style="grid-column: 1 / -1;">
                              <span class="info-label">Kode Voucher</span>
-                             <span class="info-value voucher-code">${akun.voucherCode || 'N/A'}</span>
+                             <span class="info-value voucher-code"><span>${akun.voucherCode || 'N/A'}</span></span>
                         </div>
                     </div>
                     <div class="card-actions">
@@ -1567,7 +1612,6 @@
                 document.getElementById('edit-stok-akun-password').value = akun.password;
                 document.getElementById('edit-stok-akun-deviceId').value = akun.deviceId;
                 document.getElementById('edit-stok-akun-voucherCode').value = akun.voucherCode;
-                // [MODIFIKASI] Populate new fields
                 document.getElementById('edit-stok-akun-price').value = akun.price || 0;
                 document.getElementById('edit-stok-akun-detailInfo').value = akun.detailInfo || '';
                 dom.editStokAkunModal.style.display = 'flex';
@@ -1587,7 +1631,6 @@
                 password: document.getElementById('edit-stok-akun-password').value,
                 deviceId: document.getElementById('edit-stok-akun-deviceId').value,
                 voucherCode: document.getElementById('edit-stok-akun-voucherCode').value,
-                // [MODIFIKASI] Get data from new fields
                 price: Number(document.getElementById('edit-stok-akun-price').value),
                 detailInfo: document.getElementById('edit-stok-akun-detailInfo').value
             };
@@ -1615,7 +1658,7 @@
                 createdAt: serverTimestamp(),
                 price: Number(document.getElementById('add-stok-akun-price').value),
                 detailInfo: document.getElementById('add-stok-akun-detailInfo').value,
-                ownedBy: null // --- TAMBAHKAN BARIS INI ---
+                ownedBy: null
             };
             
             try {
@@ -1640,6 +1683,21 @@
                 }
             };
             showConfirmation(`Yakin ingin menghapus stok akun ${gameType} ini?`, 'Hapus Stok Akun', 'btn-danger', confirmAction);
+        };
+        
+        // [MODIFIKASI] Fungsi untuk mereset status 'ownedBy'
+        const handleResetOwner = (akunId) => {
+            const confirmAction = async () => {
+                try {
+                    await updateDoc(doc(db, "stokAkun", akunId), { ownedBy: null });
+                    showToast('Status penjualan akun berhasil direset.', 'success');
+                    await fetchStokAkun(); // Refresh the view
+                } catch (error) {
+                    showToast('Gagal mereset status penjualan.', 'error');
+                    console.error("Error resetting owner:", error);
+                }
+            };
+            showConfirmation('Yakin ingin membatalkan status terjual untuk akun ini dan mengembalikannya ke stok?', 'Reset Status Akun', 'btn-warning', confirmAction);
         };
         
         // --- SETTINGS MANAGEMENT FUNCTIONS ---
@@ -1683,16 +1741,17 @@
             }
         };
 
+        // [MODIFIKASI] Fungsi simpan maintenance diubah untuk auto-save
         const handleSaveMaintenance = async () => {
+            const isActive = document.getElementById('maintenance-toggle').checked;
+            const message = document.getElementById('maintenance-message').value;
+            
             const settings = {
-                maintenance: {
-                    isActive: document.getElementById('maintenance-toggle').checked,
-                    message: document.getElementById('maintenance-message').value
-                }
+                maintenance: { isActive, message }
             };
             try {
                 await setDoc(doc(db, "settings", "appConfig"), settings, { merge: true });
-                showToast('Pengaturan perbaikan berhasil disimpan!', 'success');
+                showToast(`Mode perbaikan ${isActive ? 'diaktifkan' : 'dinonaktifkan'}.`, 'success');
             } catch (error) {
                 showToast('Gagal menyimpan pengaturan.', 'error');
             }
@@ -1797,9 +1856,7 @@
             Object.values(dom.nav).forEach((navLink, index, arr) => {
                 const viewName = Object.keys(dom.nav)[index];
                 navLink.addEventListener('click', (e) => { e.preventDefault(); showView(viewName); });
-            });
-
-            document.getElementById('refresh-users-btn').addEventListener('click', fetchUsers);
+            });document.getElementById('refresh-users-btn').addEventListener('click', fetchUsers);
             document.getElementById('refresh-transactions-btn').addEventListener('click', fetchAndRenderTransactions);
             document.getElementById('refresh-stok-akun-btn').addEventListener('click', fetchStokAkun);
             
@@ -1810,12 +1867,21 @@
             document.getElementById('edit-user-form').addEventListener('submit', handleSaveChanges);
             document.getElementById('add-user-form').addEventListener('submit', handleSaveNewUser);
             
-            document.getElementById('add-stok-akun-btn').addEventListener('click', () => dom.addStokAkunModal.style.display = 'flex');
+            // [MODIFIKASI] Event listener untuk generate kode voucher otomatis saat modal dibuka
+            document.getElementById('add-stok-akun-btn').addEventListener('click', () => {
+                const randomCode = Math.floor(100000 + Math.random() * 900000);
+                document.getElementById('add-stok-akun-voucherCode').value = randomCode;
+                dom.addStokAkunModal.style.display = 'flex';
+            });
+
             document.getElementById('add-stok-akun-form').addEventListener('submit', handleSaveNewStokAkun);
             document.getElementById('edit-stok-akun-form').addEventListener('submit', handleUpdateStokAkun);
             
-            // Settings Listeners
-            document.getElementById('save-maintenance-btn').addEventListener('click', handleSaveMaintenance);
+            // --- Settings Listeners ---
+            // [MODIFIKASI] Listener diubah ke toggle switch untuk auto-save, tombol simpan dihapus
+            document.getElementById('maintenance-toggle').addEventListener('change', handleSaveMaintenance);
+            document.getElementById('maintenance-message').addEventListener('input', handleSaveMaintenance); // Simpan juga saat pesan diubah
+
             document.getElementById('global-message-form').addEventListener('submit', (e) => { e.preventDefault(); handleSaveWelcomeMessage('global'); });
             document.getElementById('newUser-message-form').addEventListener('submit', (e) => { e.preventDefault(); handleSaveWelcomeMessage('newUser'); });
             document.getElementById('specific-message-form').addEventListener('submit', handleSendSpecificMessage);
@@ -1900,8 +1966,11 @@
             dom.stokAkunCardContainer.addEventListener('click', (e) => {
                 const editBtn = e.target.closest('.edit-stok-akun-btn');
                 const deleteBtn = e.target.closest('.delete-stok-akun-btn');
+                const resetBtn = e.target.closest('.reset-owner-btn'); // [MODIFIKASI] Listener untuk tombol reset
+
                 if (editBtn) openEditStokAkunModal(editBtn.dataset.docId);
                 if (deleteBtn) handleDeleteStokAkun(deleteBtn.dataset.docId, deleteBtn.dataset.gameType);
+                if (resetBtn) handleResetOwner(resetBtn.dataset.docId); // [MODIFIKASI] Panggil fungsi reset
             });
         }
         
@@ -1912,14 +1981,14 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 // MODIFIKASI: Paksa tampilan desktop setelah login
-                document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=1280');
+                // document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=1280');
                 
                 dom.loginPage.style.display = 'none';
                 dom.adminPanel.style.display = 'flex';
                 initializeAdminPanel();
             } else {
                  // MODIFIKASI: Kembalikan ke tampilan responsif saat logout
-                document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1.0');
+                // document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1.0');
 
                 dom.loginPage.style.display = 'flex';
                 dom.adminPanel.style.display = 'none';
