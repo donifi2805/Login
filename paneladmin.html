@@ -1613,9 +1613,9 @@
                 deviceId: document.getElementById('add-stok-akun-deviceId').value,
                 voucherCode: document.getElementById('add-stok-akun-voucherCode').value,
                 createdAt: serverTimestamp(),
-                // [MODIFIKASI] Get data from new fields
                 price: Number(document.getElementById('add-stok-akun-price').value),
                 detailInfo: document.getElementById('add-stok-akun-detailInfo').value,
+                ownedBy: null // --- TAMBAHKAN BARIS INI ---
             };
             
             try {
