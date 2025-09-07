@@ -145,7 +145,7 @@
         .search-bar .input-field { padding-left: 40px; width: 100%; max-width: 400px; box-sizing: border-box;}
 
         /* --- KARTU PENGGUNA, TRANSAKSI, & AKUN JUAL --- */
-        #user-card-container, #pending-transaction-container, #stok-akun-card-container, #stok-email-card-container {
+        #user-card-container, #pending-transaction-container, #stok-akun-card-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 20px;
@@ -162,7 +162,7 @@
             padding-bottom: 8px;
         }
 
-        .user-profile-card, .transaction-card, .stok-akun-card, .stok-email-card {
+        .user-profile-card, .transaction-card, .stok-akun-card {
             background: var(--bg-glass);
             border: 1px solid var(--border-color);
             border-radius: 12px;
@@ -174,7 +174,7 @@
             position: relative;
             overflow: hidden;
         }
-        .user-profile-card:hover, .transaction-card:hover, .stok-akun-card:hover, .stok-email-card:hover {
+        .user-profile-card:hover, .transaction-card:hover, .stok-akun-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
@@ -184,14 +184,6 @@
         .stok-akun-card {
             border-left: 4px solid var(--subscription-cyan);
         }
-         .stok-email-card.available {
-            border-left: 4px solid var(--success-primary);
-        }
-        .stok-email-card.used {
-            border-left: 4px solid var(--danger-primary);
-            background: rgba(30, 30, 46, 0.7);
-        }
-
 
         .card-header {
             display: flex;
@@ -201,6 +193,7 @@
             border-bottom: 1px solid var(--border-color);
             transition: background-color 0.3s ease;
         }
+        /* [MODIFIKASI] Latar belakang header kartu stok */
         .stok-header-available {
             background: rgba(34, 197, 94, 0.15);
             border-left: 4px solid var(--success-primary);
@@ -387,7 +380,8 @@
         #admin-panel { display: none; }
         #login-page { display: flex; }
         
-        /* --- TAMPILAN KOMPAK --- */
+        /* --- [MODIFIKASI] TAMPILAN SUPER KOMPAK --- */
+        /* This section remains largely the same as it's already compact */
         :root {
             font-size: 10px;
         }
@@ -412,9 +406,9 @@
         .controls-container { padding: 10px; margin-bottom: 12px; }
         .controls { gap: 10px; }
         
-        #user-card-container, #pending-transaction-container, #stok-akun-card-container, #stok-email-card-container { gap: 10px; }
-        .user-profile-card, .transaction-card, .stok-akun-card, .stok-email-card { padding: 12px; border-radius: 8px; gap: 10px; }
-        .card-header { padding: 8px; margin-bottom: 10px; }
+        #user-card-container, #pending-transaction-container, #stok-akun-card-container { gap: 10px; }
+        .user-profile-card, .transaction-card, .stok-akun-card { padding: 12px; border-radius: 8px; gap: 10px; }
+        .card-header { padding: 8px; margin-bottom: 10px; } /* Adjusted padding */
         .card-header .user-title h3 { font-size: 1.3em; }
         .card-info-grid { gap: 10px; }
         .info-label { font-size: 0.9em; }
@@ -442,59 +436,50 @@
         
         .status-badge { padding: 3px 7px; font-size: 0.9em; }
         
-        #stok-akun-card-container, #stok-email-card-container {
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        /* --- [MODIFIKASI SPESIFIK] Perkecil Kartu Stok Akun --- */
+        #stok-akun-card-container {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Slightly wider for new button */
             gap: 8px;
         }
-        #stok-akun-card-container .stok-akun-card,
-        #stok-email-card-container .stok-email-card {
-            padding: 0;
+        #stok-akun-card-container .stok-akun-card {
+            padding: 0; /* Padding is now on inner elements */
             gap: 8px;
             border: 1px solid var(--border-color);
         }
-        #stok-akun-card-container .stok-akun-card .card-header,
-        #stok-email-card-container .stok-email-card .card-header {
+        #stok-akun-card-container .stok-akun-card .card-header {
             padding: 8px;
             margin-bottom: 0;
             border-bottom: 1px solid var(--border-color);
         }
         #stok-akun-card-container .stok-akun-card .card-info-grid, 
-        #stok-akun-card-container .stok-akun-card .card-actions,
-        #stok-email-card-container .stok-email-card .card-info-grid,
-        #stok-email-card-container .stok-email-card .card-actions {
-            padding: 0 10px 10px 10px;
+        #stok-akun-card-container .stok-akun-card .card-actions {
+            padding: 0 10px 10px 10px; /* Padding for content */
         }
-        #stok-akun-card-container .card-header h3,
-        #stok-email-card-container .card-header h3 {
+        #stok-akun-card-container .card-header h3 {
             font-size: 1.1em;
         }
-        #stok-akun-card-container .card-header .info-value,
-        #stok-email-card-container .card-header .info-value {
+        #stok-akun-card-container .card-header .info-value {
             font-size: 1em;
         }
-        #stok-akun-card-container .card-info-grid,
-        #stok-email-card-container .card-info-grid {
+        #stok-akun-card-container .card-info-grid {
             gap: 8px;
         }
-        #stok-akun-card-container .info-label,
-        #stok-email-card-container .info-label {
+        #stok-akun-card-container .info-label {
             font-size: 0.85em;
         }
-         #stok-akun-card-container .info-value,
-         #stok-email-card-container .info-value {
+         #stok-akun-card-container .info-value {
             font-size: 0.95em;
         }
-        #stok-akun-card-container .card-actions,
-        #stok-email-card-container .card-actions {
+        #stok-akun-card-container .card-actions {
             padding-top: 8px;
             gap: 6px;
         }
-        #stok-akun-card-container .action-button,
-        #stok-email-card-container .action-button {
+        #stok-akun-card-container .action-button {
             padding: 4px 8px;
             font-size: 0.9em;
         }
         
+        /* [MODIFIKASI] Tombol Batal Reset Owner */
         .reset-owner-btn {
             padding: 2px 8px !important;
             font-size: 0.85em !important;
@@ -595,7 +580,7 @@
                 justify-content: center;
             }
             .header-title { text-align: center; width: 100%; margin-bottom: 10px; }
-            #user-card-container, #pending-transaction-container, #stok-akun-card-container, #stok-email-card-container, .settings-grid { 
+            #user-card-container, #pending-transaction-container, #stok-akun-card-container, .settings-grid { 
                 grid-template-columns: 1fr; 
             }
             .controls {
@@ -619,16 +604,13 @@
                 <button type="submit" class="action-button btn-primary" style="width:100%;"> <i class="fas fa-sign-in-alt"></i> Login </button>
             </form>
         </div>
-    </div>
-    
-    <div id="admin-panel" class="dashboard-layout">
+    </div><div id="admin-panel" class="dashboard-layout">
         <header class="top-header">
             <h2 class="header-title"><i class="fas fa-gamepad"></i> Auth Tools</h2>
             <nav class="top-nav"> 
                 <a href="#" id="nav-users" class="active"><i class="fas fa-users"></i> User</a> 
                 <a href="#" id="nav-transactions"><i class="fas fa-exchange-alt"></i> Transaction</a>
-                <a href="#" id="nav-stok-akun"><i class="fas fa-archive"></i> Stok Produk</a>
-                <a href="#" id="nav-stok-email"><i class="fas fa-envelope-open-text"></i> Stok Email</a>
+                <a href="#" id="nav-stok-akun"><i class="fas fa-archive"></i> Stok Akun</a>
                 <a href="#" id="nav-settings"><i class="fas fa-cogs"></i> Settings</a>
             </nav>
             <div class="header-actions">
@@ -685,10 +667,10 @@
             </div>
             
             <div id="stok-akun-management-view" style="display: none;">
-                <header class="view-header">
-                    <h1>Manajemen Stok Produk</h1>
+                 <header class="view-header">
+                    <h1>Manajemen Stok Akun</h1>
                     <div class="actions">
-                        <button id="add-stok-akun-btn" class="action-button btn-success"><i class="fas fa-plus"></i> Tambah Produk</button>
+                        <button id="add-stok-akun-btn" class="action-button btn-success"><i class="fas fa-plus"></i> Tambah Stok</button>
                     </div>
                 </header>
                 <div class="controls-container">
@@ -697,25 +679,8 @@
                     </div>
                 </div>
                 <div id="stok-akun-card-container">
-                </div>
+                    </div>
                 <div class="spinner-overlay" id="stok-akun-spinner" style="display:none;"><div class="spinner"></div></div>
-            </div>
-
-            <div id="stok-email-management-view" style="display: none;">
-                <header class="view-header">
-                    <h1>Manajemen Stok Email</h1>
-                    <div class="actions">
-                        <button id="add-stok-email-btn" class="action-button btn-success"><i class="fas fa-plus"></i> Tambah Email</button>
-                    </div>
-                </header>
-                <div class="controls-container">
-                    <div class="controls">
-                         <button id="refresh-stok-email-btn" class="action-button btn-primary"> <i class="fas fa-sync-alt"></i> Refresh</button>
-                    </div>
-                </div>
-                <div id="stok-email-card-container">
-                </div>
-                <div class="spinner-overlay" id="stok-email-spinner" style="display:none;"><div class="spinner"></div></div>
             </div>
 
             <div id="settings-view" style="display: none;">
@@ -860,7 +825,7 @@
 
     <div id="edit-stok-akun-modal" class="modal">
         <div class="modal-content">
-            <h2><i class="fas fa-edit"></i> Edit Produk Akun</h2>
+            <h2><i class="fas fa-edit"></i> Edit Stok Akun</h2>
             <form id="edit-stok-akun-form">
                 <input type="hidden" id="edit-stok-akun-id">
                 <div class="form-grid">
@@ -880,20 +845,33 @@
                     </div>
                 </div>
                 <div class="input-group">
-                    <label for="edit-stok-akun-gameName">Nama Produk (Contoh: Akun Sultan)</label>
+                    <label for="edit-stok-akun-gameName">Nama Akun di Game</label>
                     <input type="text" id="edit-stok-akun-gameName" class="input-field" required>
                 </div>
-                 <div class="input-group">
-                    <label for="edit-stok-akun-ub">Jumlah UB yg didapat</label>
-                    <input type="number" id="edit-stok-akun-ub" class="input-field" required placeholder="Contoh: 125000000">
-                </div>
                 <div class="input-group">
-                    <label for="edit-stok-akun-price">Harga Produk (contoh: 10000)</label>
+                    <label for="edit-stok-akun-price">Harga Akun (contoh: 10000)</label>
                     <input type="number" id="edit-stok-akun-price" class="input-field" required placeholder="Masukkan harga tanpa titik/koma">
                 </div>
                 <div class="input-group">
-                    <label for="edit-stok-akun-detailInfo">Detail Info Produk (opsional)</label>
-                    <textarea id="edit-stok-akun-detailInfo" class="input-field" rows="3" placeholder="Info tambahan tentang produk..."></textarea>
+                    <label for="edit-stok-akun-detailInfo">Detail Info Akun (opsional)</label>
+                    <textarea id="edit-stok-akun-detailInfo" class="input-field" rows="3" placeholder="Info tambahan tentang akun..."></textarea>
+                </div>
+                <hr style="border-color: var(--border-color); margin: 15px 0;">
+                <div class="input-group">
+                    <label for="edit-stok-akun-email">Email / No. HP</label>
+                    <input type="text" id="edit-stok-akun-email" class="input-field" required>
+                </div>
+                <div class="input-group">
+                    <label for="edit-stok-akun-password">Password</label>
+                    <input type="text" id="edit-stok-akun-password" class="input-field" required>
+                </div>
+                 <div class="input-group">
+                    <label for="edit-stok-akun-deviceId">Device ID</label>
+                    <input type="text" id="edit-stok-akun-deviceId" class="input-field" required>
+                </div>
+                <div class="input-group">
+                    <label for="edit-stok-akun-voucherCode">Kode Voucher</label>
+                    <input type="text" id="edit-stok-akun-voucherCode" class="input-field" readonly required>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="action-button btn-secondary cancel-modal-btn">Batal</button>
@@ -904,8 +882,8 @@
     </div>
     <div id="add-stok-akun-modal" class="modal">
         <div class="modal-content">
-            <h2><i class="fas fa-plus-circle"></i> Tambah Produk Akun</h2>
-             <form id="add-stok-akun-form">
+            <h2><i class="fas fa-plus-circle"></i> Tambah ke Stok Akun</h2>
+            <form id="add-stok-akun-form">
                  <div class="form-grid">
                     <div class="input-group">
                         <label for="add-stok-akun-gameType">Jenis Game</label>
@@ -923,97 +901,37 @@
                     </div>
                 </div>
                  <div class="input-group">
-                    <label for="add-stok-akun-gameName">Nama Produk (Contoh: Akun Sultan)</label>
+                    <label for="add-stok-akun-gameName">Nama Akun di Game</label>
                     <input type="text" id="add-stok-akun-gameName" class="input-field" required>
                 </div>
-                 <div class="input-group">
-                    <label for="add-stok-akun-ub">Jumlah UB yg didapat</label>
-                    <input type="number" id="add-stok-akun-ub" class="input-field" required placeholder="Contoh: 125000000">
-                </div>
                 <div class="input-group">
-                    <label for="add-stok-akun-price">Harga Produk (contoh: 10000)</label>
+                    <label for="add-stok-akun-price">Harga Akun (contoh: 10000)</label>
                     <input type="number" id="add-stok-akun-price" class="input-field" required placeholder="Masukkan harga tanpa titik/koma">
                 </div>
                 <div class="input-group">
-                    <label for="add-stok-akun-detailInfo">Detail Info Produk (opsional)</label>
-                    <textarea id="add-stok-akun-detailInfo" class="input-field" rows="3" placeholder="Info tambahan tentang produk..."></textarea>
+                    <label for="add-stok-akun-detailInfo">Detail Info Akun (opsional)</label>
+                    <textarea id="add-stok-akun-detailInfo" class="input-field" rows="3" placeholder="Info tambahan tentang akun, misal: level, item, dll. Pisahkan dengan baris baru."></textarea>
+                </div>
+                <hr style="border-color: var(--border-color); margin: 15px 0;">
+                <div class="input-group">
+                    <label for="add-stok-akun-email">Email / No. HP</label>
+                    <input type="text" id="add-stok-akun-email" class="input-field" required>
+                </div>
+                <div class="input-group">
+                    <label for="add-stok-akun-password">Password</label>
+                    <input type="text" id="add-stok-akun-password" class="input-field" required>
+                </div>
+                 <div class="input-group">
+                    <label for="add-stok-akun-deviceId">Device ID</label>
+                    <input type="text" id="add-stok-akun-deviceId" class="input-field" required>
+                </div>
+                <div class="input-group">
+                    <label for="add-stok-akun-voucherCode">Kode Voucher (Otomatis)</label>
+                    <input type="text" id="add-stok-akun-voucherCode" class="input-field" readonly required>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="action-button btn-secondary cancel-modal-btn">Batal</button>
                     <button type="submit" class="action-button btn-success"><i class="fas fa-plus"></i> Tambah ke Stok</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="add-stok-email-modal" class="modal">
-        <div class="modal-content">
-            <h2><i class="fas fa-plus-circle"></i> Tambah ke Stok Email</h2>
-            <form id="add-stok-email-form">
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label for="add-stok-email-loginType">Jenis Login</label>
-                        <select id="add-stok-email-loginType" class="input-field" required>
-                            <option value="Google">Google</option>
-                            <option value="Facebook">Facebook</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label for="add-stok-email-email">Email / No. HP</label>
-                    <input type="text" id="add-stok-email-email" class="input-field" required>
-                </div>
-                <div class="input-group">
-                    <label for="add-stok-email-password">Password</label>
-                    <input type="text" id="add-stok-email-password" class="input-field" required>
-                </div>
-                 <div class="input-group">
-                    <label for="add-stok-email-deviceId">Device ID</label>
-                    <input type="text" id="add-stok-email-deviceId" class="input-field" required>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="action-button btn-secondary cancel-modal-btn">Batal</button>
-                    <button type="submit" class="action-button btn-success"><i class="fas fa-plus"></i> Tambah</button>
-                </div>
-            </form>
-        </div>
-    </div>
-     <div id="edit-stok-email-modal" class="modal">
-        <div class="modal-content">
-            <h2><i class="fas fa-edit"></i> Edit Stok Email</h2>
-            <form id="edit-stok-email-form">
-                <input type="hidden" id="edit-stok-email-id">
-                <div class="form-grid">
-                    <div class="input-group">
-                        <label for="edit-stok-email-loginType">Jenis Login</label>
-                        <select id="edit-stok-email-loginType" class="input-field" required>
-                            <option value="Google">Google</option>
-                            <option value="Facebook">Facebook</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label for="edit-stok-email-email">Email / No. HP</label>
-                    <input type="text" id="edit-stok-email-email" class="input-field" required>
-                </div>
-                <div class="input-group">
-                    <label for="edit-stok-email-password">Password</label>
-                    <input type="text" id="edit-stok-email-password" class="input-field" required>
-                </div>
-                 <div class="input-group">
-                    <label for="edit-stok-email-deviceId">Device ID</label>
-                    <input type="text" id="edit-stok-email-deviceId" class="input-field" required>
-                </div>
-                 <div class="input-group">
-                    <label for="edit-stok-email-isUsed">Status</label>
-                    <select id="edit-stok-email-isUsed" class="input-field">
-                        <option value="false">Tersedia</option>
-                        <option value="true">Terpakai</option>
-                    </select>
-                </div>
-                <div class="modal-actions">
-                    <button type="button" class="action-button btn-secondary cancel-modal-btn">Batal</button>
-                    <button type="submit" class="action-button btn-primary"><i class="fas fa-save"></i> Simpan</button>
                 </div>
             </form>
         </div>
@@ -1029,8 +947,7 @@
             </div>
         </div>
     </div>
-    <div id="toast-container"></div>
-    <script type="module">
+    <div id="toast-container"></div><script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, getDoc, deleteField, orderBy, query } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
@@ -1049,7 +966,7 @@
         const auth = getAuth(app);
 
         // State variables
-        let allUsers = [], displayedUsers = [], currentPage = 1, allStokAkun = [], allStokEmail = [];
+        let allUsers = [], displayedUsers = [], currentPage = 1, allStokAkun = [];
         const rowsPerPage = 10;
         let appSettings = {}; // To store app config
 
@@ -1060,31 +977,25 @@
             userCardContainer: document.getElementById('user-card-container'),
             pendingTransactionContainer: document.getElementById('pending-transaction-container'),
             stokAkunCardContainer: document.getElementById('stok-akun-card-container'),
-            stokEmailCardContainer: document.getElementById('stok-email-card-container'),
             searchInput: document.getElementById('search-input'),
             userSpinner: document.getElementById('user-spinner'),
             transactionSpinner: document.getElementById('transaction-spinner'),
             stokAkunSpinner: document.getElementById('stok-akun-spinner'),
-            stokEmailSpinner: document.getElementById('stok-email-spinner'),
             editUserModal: document.getElementById('edit-user-modal'), 
             addUserModal: document.getElementById('add-user-modal'), 
             editStokAkunModal: document.getElementById('edit-stok-akun-modal'),
             addStokAkunModal: document.getElementById('add-stok-akun-modal'),
-            addStokEmailModal: document.getElementById('add-stok-email-modal'),
-            editStokEmailModal: document.getElementById('edit-stok-email-modal'),
             confirmModal: document.getElementById('confirm-modal'),
             nav: {
                 users: document.getElementById('nav-users'),
                 transactions: document.getElementById('nav-transactions'),
                 stokAkun: document.getElementById('nav-stok-akun'),
-                stokEmail: document.getElementById('nav-stok-email'),
                 settings: document.getElementById('nav-settings')
             },
             views: {
                 users: document.getElementById('user-management-view'),
                 transactions: document.getElementById('transaction-management-view'),
                 stokAkun: document.getElementById('stok-akun-management-view'),
-                stokEmail: document.getElementById('stok-email-management-view'),
                 settings: document.getElementById('settings-view')
             }
         };
@@ -1103,10 +1014,8 @@
             Object.values(dom.views).forEach(view => view.style.display = 'none');
             Object.values(dom.nav).forEach(navLink => navLink.classList.remove('active'));
             
-            if (dom.views[viewName] && dom.nav[viewName]) {
-                dom.views[viewName].style.display = 'block';
-                dom.nav[viewName].classList.add('active');
-            }
+            dom.views[viewName].style.display = 'block';
+            dom.nav[viewName].classList.add('active');
             
             if (viewName === 'users') {
                 await fetchUsers();
@@ -1114,8 +1023,6 @@
                 await fetchAndRenderTransactions();
             } else if (viewName === 'stokAkun') {
                 await fetchStokAkun();
-            } else if (viewName === 'stokEmail') {
-                await fetchStokEmail();
             } else if (viewName === 'settings') {
                 await loadAndDisplaySettings();
             }
@@ -1617,7 +1524,7 @@
             else { input.type = 'password'; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
         };
         
-        // --- STOK AKUN (PRODUK) MANAGEMENT ---
+        // --- STOK AKUN MANAGEMENT FUNCTIONS ---
         const fetchStokAkun = async () => {
             dom.stokAkunSpinner.style.display = 'flex';
             try {
@@ -1626,7 +1533,8 @@
                 allStokAkun = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderStokAkunCards();
             } catch (error) {
-                showToast('Gagal mengambil data stok produk.', 'error');
+                console.error("Error fetching stok akun:", error);
+                showToast('Gagal mengambil data stok akun.', 'error');
             } finally {
                 dom.stokAkunSpinner.style.display = 'none';
             }
@@ -1635,31 +1543,57 @@
         const renderStokAkunCards = () => {
             dom.stokAkunCardContainer.innerHTML = '';
             if (allStokAkun.length === 0) {
-                dom.stokAkunCardContainer.innerHTML = '<p style="text-align:center; grid-column: 1 / -1;">Belum ada produk akun di dalam stok.</p>';
+                dom.stokAkunCardContainer.innerHTML = '<p style="text-align:center; grid-column: 1 / -1;">Belum ada akun di dalam stok.</p>';
                 return;
             }
             allStokAkun.forEach(akun => {
                 let claimedByHTML = '';
+                
+                // [MODIFIKASI] Tambahkan tombol Batal jika akun sudah dimiliki
                 if (akun.ownedBy) {
-                    claimedByHTML = `<div class="info-item" style="grid-column: 1 / -1;"><span class="info-label">Terjual Kepada</span><span class="info-value owner"><span>${akun.ownedBy}</span><button class="action-button reset-owner-btn" data-doc-id="${akun.id}" title="Reset Status"><i class="fas fa-times"></i> Reset</button></span></div>`;
+                    claimedByHTML = `
+                        <div class="info-item" style="grid-column: 1 / -1;">
+                             <span class="info-label">Telah Terpakai Oleh</span>
+                             <span class="info-value owner">
+                                <span>${akun.ownedBy}</span>
+                                <button class="action-button reset-owner-btn" data-doc-id="${akun.id}" title="Batalkan status terjual"><i class="fas fa-times"></i> Batal</button>
+                             </span>
+                        </div>
+                    `;
                 }
+
+                // [MODIFIKASI] Tentukan kelas header berdasarkan status 'ownedBy'
                 const headerClass = akun.ownedBy ? 'stok-header-sold' : 'stok-header-available';
 
                 const cardHTML = `
                 <div class="stok-akun-card">
                     <div class="card-header ${headerClass}">
-                        <div class="user-title"><h3>${akun.gameName || 'Produk Akun'}</h3></div>
+                        <div class="user-title">
+                            <h3>${akun.gameType} - ${akun.gameName || 'No Name'}</h3>
+                        </div>
                     </div>
                     <div class="card-info-grid">
-                        <div class="info-item"><span class="info-label">Jenis Game</span><span class="info-value"><span>${akun.gameType || 'N/A'}</span></span></div>
-                        <div class="info-item"><span class="info-label">Jenis Login</span><span class="info-value"><span>${akun.loginType || 'N/A'}</span></span></div>
-                        <div class="info-item"><span class="info-label">Jumlah UB</span><span class="info-value"><span>${(akun.ub || 0).toLocaleString('id-ID')}</span></span></div>
-                        <div class="info-item"><span class="info-label">Harga</span><span class="info-value" style="color: var(--success-primary);"><span>${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(akun.price || 0)}</span></span></div>
+                        <div class="info-item">
+                            <span class="info-label">Jenis Login</span>
+                            <span class="info-value"><span>${akun.loginType || 'N/A'}</span></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Harga</span>
+                            <span class="info-value" style="color: var(--success-primary);"><span>${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(akun.price || 0)}</span></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Email / No.HP</span>
+                            <span class="info-value"><span>${akun.email || 'N/A'}</span></span>
+                        </div>
                         ${claimedByHTML}
+                        <div class="info-item" style="grid-column: 1 / -1;">
+                             <span class="info-label">Kode Voucher</span>
+                             <span class="info-value voucher-code"><span>${akun.voucherCode || 'N/A'}</span></span>
+                        </div>
                     </div>
                     <div class="card-actions">
                         <button class="action-button btn-primary edit-stok-akun-btn" data-doc-id="${akun.id}"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="action-button btn-danger delete-stok-akun-btn" data-doc-id="${akun.id}" data-game-name="${akun.gameName}"><i class="fas fa-trash"></i> Delete</button>
+                        <button class="action-button btn-danger delete-stok-akun-btn" data-doc-id="${akun.id}" data-game-type="${akun.gameType}"><i class="fas fa-trash"></i> Delete</button>
                     </div>
                 </div>`;
                 dom.stokAkunCardContainer.innerHTML += cardHTML;
@@ -1674,7 +1608,10 @@
                 document.getElementById('edit-stok-akun-gameType').value = akun.gameType;
                 document.getElementById('edit-stok-akun-loginType').value = akun.loginType;
                 document.getElementById('edit-stok-akun-gameName').value = akun.gameName;
-                document.getElementById('edit-stok-akun-ub').value = akun.ub || 0;
+                document.getElementById('edit-stok-akun-email').value = akun.email;
+                document.getElementById('edit-stok-akun-password').value = akun.password;
+                document.getElementById('edit-stok-akun-deviceId').value = akun.deviceId;
+                document.getElementById('edit-stok-akun-voucherCode').value = akun.voucherCode;
                 document.getElementById('edit-stok-akun-price').value = akun.price || 0;
                 document.getElementById('edit-stok-akun-detailInfo').value = akun.detailInfo || '';
                 dom.editStokAkunModal.style.display = 'flex';
@@ -1685,21 +1622,26 @@
             event.preventDefault();
             const akunId = document.getElementById('edit-stok-akun-id').value;
             if (!akunId) return;
+
             const updatedData = {
                 gameType: document.getElementById('edit-stok-akun-gameType').value,
                 loginType: document.getElementById('edit-stok-akun-loginType').value,
                 gameName: document.getElementById('edit-stok-akun-gameName').value,
-                ub: Number(document.getElementById('edit-stok-akun-ub').value),
+                email: document.getElementById('edit-stok-akun-email').value,
+                password: document.getElementById('edit-stok-akun-password').value,
+                deviceId: document.getElementById('edit-stok-akun-deviceId').value,
+                voucherCode: document.getElementById('edit-stok-akun-voucherCode').value,
                 price: Number(document.getElementById('edit-stok-akun-price').value),
                 detailInfo: document.getElementById('edit-stok-akun-detailInfo').value
             };
+
             try {
                 await updateDoc(doc(db, "stokAkun", akunId), updatedData);
-                showToast('Stok produk berhasil diperbarui!', 'success');
+                showToast('Stok akun berhasil diperbarui!', 'success');
                 dom.editStokAkunModal.style.display = 'none';
                 await fetchStokAkun();
             } catch (error) {
-                showToast('Gagal memperbarui stok produk.', 'error');
+                showToast('Gagal memperbarui stok akun.', 'error');
             }
         };
         
@@ -1709,164 +1651,53 @@
                 gameType: document.getElementById('add-stok-akun-gameType').value,
                 loginType: document.getElementById('add-stok-akun-loginType').value,
                 gameName: document.getElementById('add-stok-akun-gameName').value,
-                ub: Number(document.getElementById('add-stok-akun-ub').value),
+                email: document.getElementById('add-stok-akun-email').value,
+                password: document.getElementById('add-stok-akun-password').value,
+                deviceId: document.getElementById('add-stok-akun-deviceId').value,
+                voucherCode: document.getElementById('add-stok-akun-voucherCode').value,
+                createdAt: serverTimestamp(),
                 price: Number(document.getElementById('add-stok-akun-price').value),
                 detailInfo: document.getElementById('add-stok-akun-detailInfo').value,
-                createdAt: serverTimestamp(),
                 ownedBy: null
             };
+            
             try {
                 await addDoc(collection(db, "stokAkun"), newData);
-                showToast('Produk berhasil ditambahkan ke stok!', 'success');
+                showToast('Akun berhasil ditambahkan ke stok!', 'success');
                 dom.addStokAkunModal.style.display = 'none';
                 document.getElementById('add-stok-akun-form').reset();
                 await fetchStokAkun();
             } catch (error) {
-                showToast('Gagal menambah produk.', 'error');
+                showToast('Gagal menambah ke stok.', 'error');
             }
         };
         
-        const handleDeleteStokAkun = (akunId, gameName) => {
+        const handleDeleteStokAkun = (akunId, gameType) => {
             const confirmAction = async () => {
                 try {
                     await deleteDoc(doc(db, "stokAkun", akunId));
-                    showToast('Stok produk berhasil dihapus.', 'success');
+                    showToast('Stok akun berhasil dihapus.', 'success');
                     await fetchStokAkun();
                 } catch (error) {
-                    showToast('Gagal menghapus stok produk.', 'error');
+                    showToast('Gagal menghapus stok akun.', 'error');
                 }
             };
-            showConfirmation(`Yakin ingin menghapus produk: ${gameName}?`, 'Hapus Stok Produk', 'btn-danger', confirmAction);
+            showConfirmation(`Yakin ingin menghapus stok akun ${gameType} ini?`, 'Hapus Stok Akun', 'btn-danger', confirmAction);
         };
         
+        // [MODIFIKASI] Fungsi untuk mereset status 'ownedBy'
         const handleResetOwner = (akunId) => {
             const confirmAction = async () => {
                 try {
-                    await updateDoc(doc(db, "stokAkun", akunId), { ownedBy: null, provisionedUsername: deleteField(), provisionedUb: deleteField(), email: deleteField(), password: deleteField(), deviceId: deleteField() });
-                    showToast('Status penjualan produk berhasil direset.', 'success');
-                    await fetchStokAkun();
+                    await updateDoc(doc(db, "stokAkun", akunId), { ownedBy: null });
+                    showToast('Status penjualan akun berhasil direset.', 'success');
+                    await fetchStokAkun(); // Refresh the view
                 } catch (error) {
                     showToast('Gagal mereset status penjualan.', 'error');
+                    console.error("Error resetting owner:", error);
                 }
             };
-            showConfirmation('Yakin ingin membatalkan status terjual untuk produk ini?', 'Reset Status Produk', 'btn-warning', confirmAction);
-        };
-
-        // --- STOK EMAIL MANAGEMENT ---
-        const fetchStokEmail = async () => {
-            dom.stokEmailSpinner.style.display = 'flex';
-            try {
-                const q = query(collection(db, "stokEmail"), orderBy("isUsed", "asc"));
-                const querySnapshot = await getDocs(q);
-                allStokEmail = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderStokEmailCards();
-            } catch (error) {
-                console.error("Error fetching email stock:", error);
-                showToast('Gagal mengambil data stok email.', 'error');
-            } finally {
-                dom.stokEmailSpinner.style.display = 'none';
-            }
-        };
-
-        const renderStokEmailCards = () => {
-            dom.stokEmailCardContainer.innerHTML = '';
-            if (allStokEmail.length === 0) {
-                dom.stokEmailCardContainer.innerHTML = '<p style="text-align:center; grid-column: 1 / -1;">Belum ada email di dalam stok.</p>';
-                return;
-            }
-            allStokEmail.forEach(akun => {
-                const statusClass = akun.isUsed ? 'used' : 'available';
-                const statusText = akun.isUsed ? `Terpakai oleh ${akun.usedBy || 'Seseorang'}` : 'Tersedia';
-                const cardHTML = `
-                <div class="stok-email-card ${statusClass}">
-                    <div class="card-header">
-                        <div class="user-title"><h3>${akun.email}</h3><span class="status-badge ${akun.isUsed ? 'status-user' : 'status-premium'}" style="background-color: ${akun.isUsed ? 'var(--danger-primary)' : 'var(--success-primary)'}; color: white;">${statusText}</span></div>
-                    </div>
-                    <div class="card-info-grid">
-                        <div class="info-item"><span class="info-label">Password</span><span class="info-value"><span>${akun.password || 'N/A'}</span></span></div>
-                        <div class="info-item"><span class="info-label">Jenis Login</span><span class="info-value"><span>${akun.loginType || 'N/A'}</span></span></div>
-                        <div class="info-item" style="grid-column: 1 / -1;"><span class="info-label">Device ID</span><span class="info-value"><span>${akun.deviceId || 'N/A'}</span></span></div>
-                    </div>
-                    <div class="card-actions">
-                        <button class="action-button btn-primary edit-stok-email-btn" data-doc-id="${akun.id}"><i class="fas fa-edit"></i> Edit</button>
-                        <button class="action-button btn-danger delete-stok-email-btn" data-doc-id="${akun.id}" data-email="${akun.email}"><i class="fas fa-trash"></i> Delete</button>
-                    </div>
-                </div>`;
-                dom.stokEmailCardContainer.innerHTML += cardHTML;
-            });
-            addStokEmailCardButtonListeners();
-        };
-
-        const openEditStokEmailModal = (emailId) => {
-            const akun = allStokEmail.find(a => a.id === emailId);
-            if (akun) {
-                document.getElementById('edit-stok-email-id').value = emailId;
-                document.getElementById('edit-stok-email-loginType').value = akun.loginType;
-                document.getElementById('edit-stok-email-email').value = akun.email;
-                document.getElementById('edit-stok-email-password').value = akun.password;
-                document.getElementById('edit-stok-email-deviceId').value = akun.deviceId;
-                document.getElementById('edit-stok-email-isUsed').value = String(akun.isUsed || false);
-                dom.editStokEmailModal.style.display = 'flex';
-            }
-        };
-
-        const handleSaveNewStokEmail = async (event) => {
-            event.preventDefault();
-            const newData = {
-                loginType: document.getElementById('add-stok-email-loginType').value,
-                email: document.getElementById('add-stok-email-email').value,
-                password: document.getElementById('add-stok-email-password').value,
-                deviceId: document.getElementById('add-stok-email-deviceId').value,
-                isUsed: false,
-                createdAt: serverTimestamp()
-            };
-            try {
-                await addDoc(collection(db, "stokEmail"), newData);
-                showToast('Email berhasil ditambahkan ke stok!', 'success');
-                dom.addStokEmailModal.style.display = 'none';
-                event.target.reset();
-                await fetchStokEmail();
-            } catch (error) {
-                showToast('Gagal menambah email ke stok.', 'error');
-            }
-        };
-
-        const handleUpdateStokEmail = async (event) => {
-            event.preventDefault();
-            const emailId = document.getElementById('edit-stok-email-id').value;
-            if (!emailId) return;
-            const updatedData = {
-                loginType: document.getElementById('edit-stok-email-loginType').value,
-                email: document.getElementById('edit-stok-email-email').value,
-                password: document.getElementById('edit-stok-email-password').value,
-                deviceId: document.getElementById('edit-stok-email-deviceId').value,
-                isUsed: document.getElementById('edit-stok-email-isUsed').value === 'true'
-            };
-             if (!updatedData.isUsed) {
-                updatedData.usedBy = deleteField();
-                updatedData.usedAt = deleteField();
-            }
-            try {
-                await updateDoc(doc(db, "stokEmail", emailId), updatedData);
-                showToast('Stok email berhasil diperbarui!', 'success');
-                dom.editStokEmailModal.style.display = 'none';
-                await fetchStokEmail();
-            } catch (error) {
-                showToast('Gagal memperbarui stok email.', 'error');
-            }
-        };
-
-        const handleDeleteStokEmail = (emailId, emailName) => {
-            const confirmAction = async () => {
-                try {
-                    await deleteDoc(doc(db, "stokEmail", emailId));
-                    showToast('Stok email berhasil dihapus.', 'success');
-                    await fetchStokEmail();
-                } catch (error) {
-                    showToast('Gagal menghapus stok email.', 'error');
-                }
-            };
-            showConfirmation(`Yakin ingin menghapus email: ${emailName}?`, 'Hapus Stok Email', 'btn-danger', confirmAction);
+            showConfirmation('Yakin ingin membatalkan status terjual untuk akun ini dan mengembalikannya ke stok?', 'Reset Status Akun', 'btn-warning', confirmAction);
         };
         
         // --- SETTINGS MANAGEMENT FUNCTIONS ---
@@ -1910,6 +1741,7 @@
             }
         };
 
+        // [MODIFIKASI] Fungsi simpan maintenance diubah untuk auto-save
         const handleSaveMaintenance = async () => {
             const isActive = document.getElementById('maintenance-toggle').checked;
             const message = document.getElementById('maintenance-message').value;
@@ -2021,16 +1853,12 @@
             
             document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
-            Object.values(dom.nav).forEach((navLink) => {
-                // FIX: Convert kebab-case id to camelCase for viewName
-                const viewNameKebab = navLink.id.replace('nav-', '');
-                const viewName = viewNameKebab.replace(/-([a-z])/g, g => g[1].toUpperCase());
+            Object.values(dom.nav).forEach((navLink, index, arr) => {
+                const viewName = Object.keys(dom.nav)[index];
                 navLink.addEventListener('click', (e) => { e.preventDefault(); showView(viewName); });
-            });
-            document.getElementById('refresh-users-btn').addEventListener('click', fetchUsers);
+            });document.getElementById('refresh-users-btn').addEventListener('click', fetchUsers);
             document.getElementById('refresh-transactions-btn').addEventListener('click', fetchAndRenderTransactions);
             document.getElementById('refresh-stok-akun-btn').addEventListener('click', fetchStokAkun);
-            document.getElementById('refresh-stok-email-btn').addEventListener('click', fetchStokEmail);
             
             document.getElementById('add-user-btn').addEventListener('click', () => dom.addUserModal.style.display = 'flex');
             dom.searchInput.addEventListener('input', () => { currentPage = 1; filterAndDisplayUsers(); });
@@ -2039,17 +1867,20 @@
             document.getElementById('edit-user-form').addEventListener('submit', handleSaveChanges);
             document.getElementById('add-user-form').addEventListener('submit', handleSaveNewUser);
             
-            document.getElementById('add-stok-akun-btn').addEventListener('click', () => dom.addStokAkunModal.style.display = 'flex');
+            // [MODIFIKASI] Event listener untuk generate kode voucher otomatis saat modal dibuka
+            document.getElementById('add-stok-akun-btn').addEventListener('click', () => {
+                const randomCode = Math.floor(100000 + Math.random() * 900000);
+                document.getElementById('add-stok-akun-voucherCode').value = randomCode;
+                dom.addStokAkunModal.style.display = 'flex';
+            });
+
             document.getElementById('add-stok-akun-form').addEventListener('submit', handleSaveNewStokAkun);
             document.getElementById('edit-stok-akun-form').addEventListener('submit', handleUpdateStokAkun);
-
-            document.getElementById('add-stok-email-btn').addEventListener('click', () => dom.addStokEmailModal.style.display = 'flex');
-            document.getElementById('add-stok-email-form').addEventListener('submit', handleSaveNewStokEmail);
-            document.getElementById('edit-stok-email-form').addEventListener('submit', handleUpdateStokEmail);
             
             // --- Settings Listeners ---
+            // [MODIFIKASI] Listener diubah ke toggle switch untuk auto-save, tombol simpan dihapus
             document.getElementById('maintenance-toggle').addEventListener('change', handleSaveMaintenance);
-            document.getElementById('maintenance-message').addEventListener('input', handleSaveMaintenance);
+            document.getElementById('maintenance-message').addEventListener('input', handleSaveMaintenance); // Simpan juga saat pesan diubah
 
             document.getElementById('global-message-form').addEventListener('submit', (e) => { e.preventDefault(); handleSaveWelcomeMessage('global'); });
             document.getElementById('newUser-message-form').addEventListener('submit', (e) => { e.preventDefault(); handleSaveWelcomeMessage('newUser'); });
@@ -2135,20 +1966,11 @@
             dom.stokAkunCardContainer.addEventListener('click', (e) => {
                 const editBtn = e.target.closest('.edit-stok-akun-btn');
                 const deleteBtn = e.target.closest('.delete-stok-akun-btn');
-                const resetBtn = e.target.closest('.reset-owner-btn');
+                const resetBtn = e.target.closest('.reset-owner-btn'); // [MODIFIKASI] Listener untuk tombol reset
 
                 if (editBtn) openEditStokAkunModal(editBtn.dataset.docId);
-                if (deleteBtn) handleDeleteStokAkun(deleteBtn.dataset.docId, deleteBtn.dataset.gameName);
-                if (resetBtn) handleResetOwner(resetBtn.dataset.docId);
-            });
-        }
-        
-        function addStokEmailCardButtonListeners() {
-            dom.stokEmailCardContainer.addEventListener('click', (e) => {
-                const editBtn = e.target.closest('.edit-stok-email-btn');
-                const deleteBtn = e.target.closest('.delete-stok-email-btn');
-                if (editBtn) openEditStokEmailModal(editBtn.dataset.docId);
-                if (deleteBtn) handleDeleteStokEmail(deleteBtn.dataset.docId, deleteBtn.dataset.email);
+                if (deleteBtn) handleDeleteStokAkun(deleteBtn.dataset.docId, deleteBtn.dataset.gameType);
+                if (resetBtn) handleResetOwner(resetBtn.dataset.docId); // [MODIFIKASI] Panggil fungsi reset
             });
         }
         
@@ -2158,10 +1980,16 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
+                // MODIFIKASI: Paksa tampilan desktop setelah login
+                // document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=1280');
+                
                 dom.loginPage.style.display = 'none';
                 dom.adminPanel.style.display = 'flex';
                 initializeAdminPanel();
             } else {
+                 // MODIFIKASI: Kembalikan ke tampilan responsif saat logout
+                // document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1.0');
+
                 dom.loginPage.style.display = 'flex';
                 dom.adminPanel.style.display = 'none';
             }
