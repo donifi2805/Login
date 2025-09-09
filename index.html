@@ -1357,6 +1357,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                 });
                 if (f) {
                     showToast("Login Berhasil! Memuat data...", "success");
+                    new Audio('sambutan.wav').play(); // Memutar suara sambutan
                     sendTelegramMessage(`✅ *Login Berhasil*\n*Username:* \`${loggedInUser.username}\``, userActionBotToken);
                     
                     const newLoginCount = (loggedInUser.loginCount || 0) + 1;
@@ -2634,6 +2635,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     return;
                 }
                 
+                new Audio('proses.wav').play(); // Memutar suara proses
                 showPurchaseLoading("Memvalidasi Pembelian");
                 await executeServersidePurchase(offeringId, newUsername, updatePurchaseLoading);
                 
@@ -3301,9 +3303,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 
             dom.akunPurchaseModal.closeBtn.addEventListener('click', () => hideModal(dom.akunPurchaseModal.overlay));
             dom.akunPurchaseModal.overlay.addEventListener('click', e => { if (e.target === dom.akunPurchaseModal.overlay) hideModal(dom.akunPurchaseModal.overlay); });
-            dom.akunPurchaseModal.form.addEventListener('submit', handleExecuteAkunPurchase);
-
-            document.getElementById('close-device-id-modal-btn').addEventListener('click', () => hideModal(document.getElementById('device-id-modal')));
+            dom.akunPurchaseModal.form.addEventListener('submit', handleExecuteAkunPurchase);document.getElementById('close-device-id-modal-btn').addEventListener('click', () => hideModal(document.getElementById('device-id-modal')));
             document.getElementById('device-id-modal').addEventListener('click', (e) => { if (e.target.id === 'device-id-modal') hideModal(e.target); });
             document.getElementById('change-password-btn').addEventListener('click', () => showModal(document.getElementById('change-password-modal')));
             document.getElementById('close-password-modal').addEventListener('click', () => hideModal(document.getElementById('change-password-modal')));
