@@ -12,36 +12,50 @@
 <style>
 :root{--bg-primary:#111827;--bg-secondary:#1f2937;--bg-tertiary:#374151;--border-color:#4b5563;--text-primary:#f9fafb;--text-secondary:#d1d5db;--accent-blue:#3b82f6;--accent-green:#22c55e;--accent-red:#ef4444;--accent-cyan:#06b6d4;--premium-gold:#fbbf24}*{margin:0;padding:0;box-sizing:border-box}html,body{font-family:'Inter',sans-serif;background-color:var(--bg-primary);color:var(--text-primary);-webkit-user-select:none;user-select:none;font-size:10px}#app-layout{display:none;flex-direction:column;min-height:100vh;width:100%}
 
-/* --- Start: Rombak Header (-20% size) --- */
+/* --- Start: Pre-loader --- */
+#preloader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-primary); z-index: 20000; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease-out; }
+#preloader-overlay.hidden { opacity: 0; pointer-events: none; }
+.loader-square { width: 120px; height: 120px; border: 4px solid var(--border-color); border-top-color: var(--accent-cyan); border-radius: 10px; display: flex; align-items: center; justify-content: center; animation: spin 1.5s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+#loading-percentage { font-size: 1.8em; font-weight: 600; color: var(--text-primary); animation: none; transform: rotate(0); }
+/* --- End: Pre-loader --- */
+
+/* --- Start: Header Modifications --- */
 #top-navbar{display:flex;flex-direction:column;background-color:var(--bg-secondary);position:sticky;top:0;z-index:1001;box-shadow:0 4px 12px rgba(0,0,0,0.4);border-bottom:1px solid var(--border-color);}
-.header-brand{padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-color)}
-.header-brand h1{font-size:1.4em;font-weight:900;line-height:1;color:transparent;background:linear-gradient(45deg,#3b82f6,#06b6d4,#22c55e);-webkit-background-clip:text;background-clip:text;text-shadow:0 2px 8px rgba(0,0,0,0.3)}
-.subtitle-brand{display:block;font-size:.4em;font-weight:500;color:var(--text-secondary);margin-top:2px}
-#page-title-header{font-size:1em;font-weight:700;color:var(--text-primary);text-align:center;padding:6px 12px;background-color:var(--bg-primary);}
-#top-navbar nav{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:6px 10px;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color)}
+.header-brand{padding:6px 10px;text-align:center;border-bottom:1px solid var(--border-color); display: flex; justify-content: center; align-items: center;}
+.brand-container { display: flex; justify-content: center; align-items: center; gap: 10px; }
+.brand-logo { height: 18px; width: auto; object-fit: contain; }
+.header-brand h1{font-size:1.7em;font-weight:900;line-height:1;color:transparent;background:linear-gradient(45deg,#3b82f6,#06b6d4,#22c55e);-webkit-background-clip:text;background-clip:text;text-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.subtitle-brand{display:block;font-size:.35em;font-weight:500;color:var(--text-secondary);margin-top:2px}
+#top-navbar nav{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:5px 8px;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color)}
 #top-navbar nav::-webkit-scrollbar{display:none}
-.sidebar-nav{display:flex;justify-content:space-around;gap:5px;list-style:none;padding:0;flex-wrap:nowrap}
-.nav-item a{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px;border-radius:6px;color:var(--text-secondary);text-decoration:none;font-weight:600;font-size:.8em;white-space:nowrap;transition:all .3s ease-in-out;background-color:var(--bg-tertiary);border:1px solid var(--border-color);width:48px;height:42px}
+.sidebar-nav{display:flex;justify-content:center;gap:6px;list-style:none;padding:0;flex-wrap:nowrap;align-items:center;}
+.nav-item a{display:flex;flex-direction:row;align-items:center;justify-content:center;padding:6px;border-radius:6px;color:var(--text-secondary);text-decoration:none;font-weight:600;font-size:.8em;white-space:nowrap;transition:all .3s ease-in-out;background-color:var(--bg-tertiary);border:1px solid var(--border-color);min-width:38px;height:34px}
+#nav-topup{display: none !important;}
 .nav-item a:hover{color:var(--text-primary);border-color:var(--accent-blue);transform:translateY(-2px);}
 .nav-item a.active{background:linear-gradient(45deg, var(--accent-blue), #2563eb);color:white;font-weight:700;border-color:var(--accent-blue);box-shadow:0 0 15px rgba(59,130,246,0.4)}
-.nav-icon{font-size:1.5em;transition:all .3s ease}.nav-icon-img{width:22px;height:22px;border-radius:4px;object-fit:cover;transition:all .3s ease}
-.nav-text{display:none!important}
-.header-actions-bar{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 10px;}
-.sidebar-balance-card{display:flex;align-items:center;gap:6px;background-color:var(--bg-secondary);padding:4px 7px;border-radius:8px;border:1px solid var(--border-color);cursor:pointer;transition:all .2s ease;flex-grow:1}
-.sidebar-balance-card:hover{border-color:var(--accent-blue);transform:scale(1.03)}
+.nav-icon{font-size:1.5em;transition:all .3s ease}.nav-icon-img{width:20px;height:20px;border-radius:4px;object-fit:cover;transition:all .3s ease}
+.nav-text { display: inline-block; font-size: 0.9em; font-weight: 700; white-space: nowrap; overflow: hidden; width: 0; opacity: 0; transition: width 0.4s ease, opacity 0.3s ease, margin-left 0.4s ease; margin-left: 0; }
+.nav-item a.active .nav-text { width: auto; opacity: 1; margin-left: 8px; }
+
+.header-actions-bar{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 8px;}
+.sidebar-balance-card{flex-grow: 1; display:flex;align-items:center;gap:8px;background:linear-gradient(45deg, var(--bg-tertiary), var(--bg-secondary));padding:5px 8px;border-radius:8px;border:1px solid var(--border-color);cursor:pointer;transition:all .2s ease;box-shadow: 0 4px 15px rgba(0,0,0,0.2);}
+.sidebar-balance-card:hover{border-color:var(--accent-green);transform:scale(1.02); box-shadow: 0 0 15px rgba(34, 197, 94, 0.3);}
 .balance-info{text-align:left;flex-grow:1;overflow:hidden;}.sidebar-balance-card .balance-label{display:block;font-size:.7em;color:var(--text-secondary);line-height:1.1}
-.sidebar-balance-card .balance-amount{display:block;font-size:.8em;font-weight:700;color:var(--accent-green);line-height:1.2}
-.sidebar-balance-card .balance-username{display:block;font-size:.75em;font-weight:600;color:var(--text-primary);line-height:1.1;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;margin-bottom:2px}
-.sidebar-balance-card .balance-amount.premium,.sidebar-balance-card .balance-amount.subscription,.sidebar-balance-card .balance-amount.admin{color:var(--premium-gold);font-size:.75em}
-.add-balance-icon{font-size:1.4em;color:var(--accent-green);cursor:pointer;transition:transform .2s;display:flex;align-items:center;justify-content:center}
+.sidebar-balance-card .balance-amount{display:block;font-size:1em;font-weight:700;color:var(--accent-green);line-height:1.2}
+.sidebar-balance-card .balance-username{display:block;font-size:.8em;font-weight:600;color:var(--text-primary);line-height:1.1;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;margin-bottom:2px}
+.sidebar-balance-card .balance-amount.premium,.sidebar-balance-card .balance-amount.subscription,.sidebar-balance-card .balance-amount.admin{color:var(--premium-gold);font-size:.8em}
+.add-balance-icon{font-size:1.6em;color:var(--accent-green);cursor:pointer;transition:transform .2s;display:flex;align-items:center;justify-content:center}
 .add-balance-icon:hover{transform:scale(1.1)}
 .header-actions{display:flex;align-items:center;gap:6px}
 #cs-admin-btn, #header-my-account-btn, #logout-btn{display:flex;align-items:center;justify-content:center;padding:0!important;font-size:1.3em!important;line-height:1;background-color:var(--bg-tertiary);width:32px;height:32px;border-radius:6px;border:1px solid var(--border-color)}
 #cs-admin-btn{color:var(--accent-cyan)}#cs-admin-btn:hover{background-color:var(--accent-cyan);color:white}
-#header-my-account-btn:hover{background-color:var(--accent-blue)}#logout-btn:hover{background-color:var(--accent-red)}
+#header-my-account-btn:hover{background-color:var(--accent-blue)}
+#logout-btn { background-color: var(--accent-red); color: white; }
+#logout-btn:hover{background-color:#dc2626;}
 #logout-btn i{font-size:1em!important}
 .logout-text{display:none!important}
-/* --- End: Rombak Header --- */
+/* --- End: Header Modifications --- */
 
 .main-content{padding:10px;min-height:100vh;background-image:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhI8j1iJeFgIagFemTu0q3_yxUph06s4T6K03apxFf11HmQagnDM-PkaUNlV-VK0k2O-Mj93P4cnVZSWjf6jbmt1imTeAP_woH6aUMEsp9YgyMzCdHNoixyuWtvUf9pmhXlYIvwVt1Tb9CuSFi-Jk6D3pB6-ggMzhKMGkpoJD9ZT-d5T3LcJkW4d_mfGLA/s1600/1750238969835.jpg');background-size:cover;background-repeat:no-repeat;background-attachment:fixed;background-position:center}.content-container{max-width:1200px;margin:0 auto}.content-card{max-width:600px;margin:0 auto;background-color:var(--bg-secondary);padding:12px 15px;border-radius:12px;border:1px solid var(--border-color)}
 
@@ -60,7 +74,24 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 .profile-card{background-color:#2d2e33;border-radius:8px;border:1px solid var(--border-color);position:relative;overflow:hidden;transition:transform .3s ease,box-shadow .3s ease;perspective:1000px;display:flex;flex-direction:column;width:100%;max-width:350px;margin:0 auto}
 .profile-card.hidden{display:none}.profile-card:hover{transform:translateY(-3px);box-shadow:0 6px 12px rgba(0,0,0,0.2)}.profile-card-main-view,.profile-card-settings-view{padding:10px;display:flex;flex-direction:column;backface-visibility:hidden;transition:transform .6s ease;width:100%;flex-grow:1}.profile-card-main-view{transform:rotateY(0deg)}.profile-card-settings-view{position:absolute;top:0;left:0;right:0;bottom:0;background-color:var(--bg-secondary);transform:rotateY(180deg)}.profile-card.settings-active .profile-card-main-view{transform:rotateY(-180deg)}.profile-card.settings-active .profile-card-settings-view{transform:rotateY(0deg)}.profile-card-settings-view h3{font-size:.75em;margin-bottom:6px}.settings-info-item{padding:1px 5px;margin-bottom:2px}.settings-info-item .label{font-size:.55em;line-height:1.1}.settings-info-item .value{font-size:.65em;line-height:1.1}.settings-actions{margin-top:8px}.settings-actions .action-button{padding:4px;font-size:.65em}.player-display-container{margin:6px 0 8px 0;display:flex;flex-direction:column;gap:5px}
 .player-name-plate,.player-ub-plate{background-size:100% 100%;background-repeat:no-repeat;background-position:center;height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;width:78%;margin:0 auto;border-radius:6px}
-.player-name-plate{background-image:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiy8bkfRaz2UWiO9tnX8IDy9OJwti__IkaN5CBSsybGTzWG7_sSqWTmOBRj0X3NEQQv1cW1thZcmPSjVcpS2JSamwsCN4_u_QQqzdYa7BhyfM8QwQAsPMVeokL1rUfxRAZx_s_46Gb27M1u40kP55xVpyjBgBcuDGs-CD9t0B4IgnkyS9DS228u_sgdkc4/s1600/IMG_20250812_161453.jpg')}.player-ub-plate{background-image:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhJhoq7BI37iRAjcjRibzR3_-YgzMDy00OkGH_omg-c8FC1K2OmJdgyhiw8ARhhbLa7Bnip1h9_nBk2bdPJ3lhsdjgi9NTL43KQSH8Z4g8pT7RQLnUzdqqZc8Sn1ZZJm_3zJ-WwEhnWGCyW8cIAE_u8HewZspCCvr7l-EHkq8ln3pAXe_MkVVOx-9WA5UM/s1600/IMG_20250812_161504.jpg')}.player-name-text,.player-ub-text{color:#fff;font-weight:700;font-size:.765em;text-shadow:1px 1px 2px rgba(0,0,0,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-grow:1;text-align:center}.plate-icon{font-size:1.2em;color:white;cursor:pointer;opacity:.8;transition:opacity .2s,transform .2s;flex-shrink:0}.plate-icon:hover{opacity:1;transform:scale(1.1)}.plate-icon-placeholder{width:1.2em;flex-shrink:0}.info-banner{border:1px solid var(--accent-green);color:var(--text-primary);background-color:rgba(34,197,94,0.1);padding:10px 12px;border-radius:6px;text-align:center;font-weight:500;margin-bottom:15px;font-size:.8em}.current-balance-display{color:var(--text-secondary);background-color:var(--bg-primary);padding:8px 10px;border-radius:6px;margin-bottom:12px;text-align:center;font-size:.9em}.current-balance-display span{font-weight:700;color:var(--accent-green);font-size:1em}.ub-store-display{background:var(--bg-tertiary);border-radius:8px;padding:12px;margin-bottom:12px;border:1px solid var(--border-color)}.display-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.display-label{font-weight:600;color:var(--text-secondary);font-size:.85em}.display-value{font-weight:700;font-size:1.1em}.display-value.rp{color:#f59e0b}.display-value.ub{color:var(--accent-green)}#ub-slider{width:100%;margin:6px 0}.buy-ub-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.buy-ub-extra-actions{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:10px}.hasil-text.error{background-color:#991b1b;color:#fee2e2;margin-top:12px;padding:8px;border-radius:6px;font-weight:600;display:block;font-size:.85em}.topup-options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}.topup-option-btn{background-color:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-primary);padding:12px 8px;border-radius:8px;cursor:pointer;font-weight:600;font-size:.9em;transition:all .2s ease}.topup-option-btn:hover{background-color:var(--bg-primary);border-color:var(--accent-blue)}#qris-display-container img,#subscription-qris-container img{width:100%;max-width:200px;border-radius:8px;margin-bottom:12px;background:white;cursor:pointer}.important-notice{background-color:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.5);padding:10px;border-radius:6px;margin-bottom:15px}.important-notice .notice-title{font-weight:700;color:#f59e0b;display:block;margin-bottom:4px;font-size:.9em}.important-notice .notice-amount{font-weight:700;color:#fff;font-size:1.2em;letter-spacing:1px}.history-section{margin-top:25px;padding-top:20px;border-top:1px solid var(--border-color)}.history-section h3{font-size:1.2em;margin-bottom:12px;text-align:center}.history-tables-container{display:grid;grid-template-columns:1fr;gap:20px}.history-table h4{font-size:.9em;margin-bottom:10px;color:var(--text-secondary)}.history-list{list-style:none;max-height:300px;overflow-y:auto;padding-right:6px;border:1px solid var(--border-color);border-radius:6px;padding:6px}.history-list li{background-color:var(--bg-tertiary);padding:10px;border-radius:6px;margin-bottom:6px;border-left:3px solid var(--border-color)}.history-list li.topup{border-left-color:var(--accent-green)}.history-list li.purchase{border-left-color:var(--accent-red)}.history-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.history-item-header .amount{font-size:1em;font-weight:700}.history-item-header .amount.topup{color:var(--accent-green)}.history-item-header .amount.purchase{color:var(--accent-red)}.history-item-footer{font-size:.7em;color:var(--text-secondary)}.history-list .no-history{text-align:center;padding:12px;color:var(--text-secondary);background:0;border:0}#toast-container{position:fixed;top:15px;right:15px;z-index:10005;display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none}.toast{background:rgba(55,65,81,0.9);color:#fff;padding:10px 15px;border-radius:6px;box-shadow:0 6px 25px rgba(0,0,0,0.3);min-width:220px;max-width:320px;text-align:center;font-size:.9em;font-weight:600;border-left-width:4px;border-left-style:solid;border-left-color:var(--border-color);pointer-events:all;opacity:0;transform:translateX(100%);transition:all .3s ease-in-out}.toast.show{opacity:1;transform:translateX(0)}.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:10002;display:none;padding:16px}.modal-content{background-color:var(--bg-secondary);padding:20px;border-radius:10px;width:100%;max-width:450px;position:relative;border:1px solid var(--border-color)}.modal-close{position:absolute;top:10px;right:12px;font-size:2em;color:var(--text-secondary);cursor:pointer;line-height:1}.modal-warning{background-color:rgba(239,68,68,0.1);border:1px solid var(--accent-red);padding:10px;border-radius:6px;margin-top:12px;margin-bottom:15px;color:var(--text-primary)}.modal-warning p{margin-bottom:6px;line-height:1.5;font-size:.85em}.modal-actions{display:flex;flex-direction:column;gap:10px}.modal-actions .action-button{text-align:center;text-decoration:none;padding:8px;font-size:.9em}.account-info-details{margin-top:20px;margin-bottom:25px;border-top:1px solid var(--border-color);padding-top:12px}.info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 6px;border-bottom:1px solid var(--border-color);flex-wrap:wrap;gap:5px}.info-row:last-child{border-bottom:0}.info-label{font-weight:500;color:var(--text-secondary);font-size:.9em}.info-value{font-weight:600;font-size:.95em;text-align:right}.info-value.accent-green{color:var(--accent-green)}.info-value.premium,.info-value.subscription,.info-value.admin{color:var(--premium-gold)}.info-value.small-text{font-size:.8em;font-family:monospace;word-break:break-all;cursor:pointer}.account-actions{display:flex;flex-direction:column;gap:10px}#akun-showcase-grid{display:grid;grid-template-columns:1fr;gap:15px;margin-top:20px}.akun-card{background-color:var(--bg-secondary);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;padding:15px;font-size:.8em;transition:all .3s ease}.akun-card:hover{transform:translateY(-5px);box-shadow:0 8px 20px rgba(0,0,0,0.25);border-color:var(--accent-cyan)}.akun-card-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border-color)}.akun-card-logo{width:40px;height:40px;border-radius:8px}.akun-card h3{font-size:1.6em;margin-bottom:0;color:var(--text-primary)}.akun-card .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 10px;margin-bottom:12px}.akun-card .info-item{background-color:var(--bg-tertiary);padding:6px 8px;border-radius:6px}.akun-card .info-label{display:block;font-size:.9em;color:var(--text-secondary);margin-bottom:3px}.akun-card .info-value{font-size:1.2em;font-weight:700}.akun-card .info-value.price{color:var(--accent-green);font-size:1.5em}.akun-card .info-additional{margin-top:12px;padding-top:10px;border-top:1px solid var(--border-color)}.akun-card .info-additional .info-label{margin-bottom:4px}.akun-card .info-additional .info-value{font-size:1em;font-weight:400;white-space:pre-wrap;color:var(--text-primary)}.akun-card-footer{margin-top:15px}.lightbox-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.85);display:none;justify-content:center;align-items:center;z-index:10004}.lightbox-content{position:relative;max-width:90vw;max-height:90vh}.lightbox-content img{width:100%;height:100%;object-fit:contain;border-radius:8px}.lightbox-close{position:absolute;top:-35px;right:0;font-size:2.5em;color:#fff;cursor:pointer;line-height:1;font-weight:700}.skeleton-card{background-color:var(--bg-secondary);padding:12px;border-radius:10px;border:1px solid var(--border-color)}.skeleton{animation:skeleton-loading 1s linear infinite alternate;opacity:.7;background-color:var(--bg-tertiary)}@keyframes skeleton-loading{0%{background-color:var(--bg-tertiary)}100%{background-color:#4b5563}}.skeleton-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}.skeleton-avatar{width:40px;height:40px;border-radius:50%}.skeleton-text-group{flex-grow:1}.skeleton-text{height:14px;border-radius:4px;margin-bottom:6px}.skeleton-text.short{width:50%}.skeleton-line{height:8px;border-radius:4px;margin-bottom:8px}.skeleton-button{height:34px;border-radius:6px;margin-top:12px}
+.player-name-plate{background-image:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiy8bkfRaz2UWiO9tnX8IDy9OJwti__IkaN5CBSsybGTzWG7_sSqWTmOBRj0X3NEQQv1cW1thZcmPSjVcpS2JSamwsCN4_u_QQqzdYa7BhyfM8QwQAsPMVeokL1rUfxRAZx_s_46Gb27M1u40kP55xVpyjBgBcuDGs-CD9t0B4IgnkyS9DS228u_sgdkc4/s1600/IMG_20250812_161453.jpg')}.player-ub-plate{background-image:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhJhoq7BI37iRAjcjRibzR3_-YgzMDy00OkGH_omg-c8FC1K2OmJdgyhiw8ARhhbLa7Bnip1h9_nBk2bdPJ3lhsdjgi9NTL43KQSH8Z4g8pT7RQLnUzdqqZc8Sn1ZZJm_3zJ-WwEhnWGCyW8cIAE_u8HewZspCCvr7l-EHkq8ln3pAXe_MkVVOx-9WA5UM/s1600/IMG_20250812_161504.jpg')}.player-name-text,.player-ub-text{color:#fff;font-weight:700;font-size:.765em;text-shadow:1px 1px 2px rgba(0,0,0,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-grow:1;text-align:center}.plate-icon{font-size:1.2em;color:white;cursor:pointer;opacity:.8;transition:opacity .2s,transform .2s;flex-shrink:0}.plate-icon:hover{opacity:1;transform:scale(1.1)}.plate-icon-placeholder{width:1.2em;flex-shrink:0}.info-banner{border:1px solid var(--accent-green);color:var(--text-primary);background-color:rgba(34,197,94,0.1);padding:10px 12px;border-radius:6px;text-align:center;font-weight:500;margin-bottom:15px;font-size:.8em}.current-balance-display{color:var(--text-secondary);background-color:var(--bg-primary);padding:8px 10px;border-radius:6px;margin-bottom:12px;text-align:center;font-size:.9em}.current-balance-display span{font-weight:700;color:var(--accent-green);font-size:1em}.ub-store-display{background:var(--bg-tertiary);border-radius:8px;padding:12px;margin-bottom:12px;border:1px solid var(--border-color)}.display-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.display-label{font-weight:600;color:var(--text-secondary);font-size:.85em}.display-value{font-weight:700;font-size:1.1em}.display-value.rp{color:#f59e0b}.display-value.ub{color:var(--accent-green)}#ub-slider{width:100%;margin:6px 0}.buy-ub-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.buy-ub-extra-actions{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:10px}.hasil-text.error{background-color:#991b1b;color:#fee2e2;margin-top:12px;padding:8px;border-radius:6px;font-weight:600;display:block;font-size:.85em}.topup-options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}.topup-option-btn{background-color:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-primary);padding:12px 8px;border-radius:8px;cursor:pointer;font-weight:600;font-size:.9em;transition:all .2s ease}.topup-option-btn:hover{background-color:var(--bg-primary);border-color:var(--accent-blue)}#qris-display-container img,#subscription-qris-container img{width:100%;max-width:200px;border-radius:8px;margin-bottom:12px;background:white;cursor:pointer}.important-notice{background-color:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.5);padding:10px;border-radius:6px;margin-bottom:15px}.important-notice .notice-title{font-weight:700;color:#f59e0b;display:block;margin-bottom:4px;font-size:.9em}.important-notice .notice-amount{font-weight:700;color:#fff;font-size:1.2em;letter-spacing:1px}.history-section{margin-top:25px;padding-top:20px;border-top:1px solid var(--border-color)}.history-section h3{font-size:1.2em;margin-bottom:12px;text-align:center}.history-tables-container{display:grid;grid-template-columns:1fr;gap:20px}.history-table h4{font-size:.9em;margin-bottom:10px;color:var(--text-secondary)}.history-list{list-style:none;max-height:300px;overflow-y:auto;padding-right:6px;border:1px solid var(--border-color);border-radius:6px;padding:6px}.history-list li{background-color:var(--bg-tertiary);padding:10px;border-radius:6px;margin-bottom:6px;border-left:3px solid var(--border-color)}.history-list li.topup{border-left-color:var(--accent-green)}.history-list li.purchase{border-left-color:var(--accent-red)}.history-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.history-item-header .amount{font-size:1em;font-weight:700}.history-item-header .amount.topup{color:var(--accent-green)}.history-item-header .amount.purchase{color:var(--accent-red)}.history-item-footer{font-size:.7em;color:var(--text-secondary)}.history-list .no-history{text-align:center;padding:12px;color:var(--text-secondary);background:0;border:0}#toast-container{position:fixed;top:15px;right:15px;z-index:10005;display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none}.toast{background:rgba(55,65,81,0.9);color:#fff;padding:10px 15px;border-radius:6px;box-shadow:0 6px 25px rgba(0,0,0,0.3);min-width:220px;max-width:320px;text-align:center;font-size:.9em;font-weight:600;border-left-width:4px;border-left-style:solid;border-left-color:var(--border-color);pointer-events:all;opacity:0;transform:translateX(100%);transition:all .3s ease-in-out}.toast.show{opacity:1;transform:translateX(0)}.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:10002;display:none;padding:16px}.modal-content{background-color:var(--bg-secondary);padding:20px;border-radius:10px;width:100%;max-width:450px;position:relative;border:1px solid var(--border-color)}.modal-close{position:absolute;top:10px;right:12px;font-size:2em;color:var(--text-secondary);cursor:pointer;line-height:1}.modal-warning{background-color:rgba(239,68,68,0.1);border:1px solid var(--accent-red);padding:10px;border-radius:6px;margin-top:12px;margin-bottom:15px;color:var(--text-primary)}.modal-warning p{margin-bottom:6px;line-height:1.5;font-size:.85em}.modal-actions{display:flex;flex-direction:column;gap:10px}.modal-actions .action-button{text-align:center;text-decoration:none;padding:8px;font-size:.9em}
+
+/* --- Start: My Account Page Redesign --- */
+#my-account-container h2 { text-align: center; font-size: 1.5em; margin-bottom: 20px; }
+.account-info-details{ display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; }
+.account-info-item{ background-color: var(--bg-tertiary); border: 1px solid var(--border-color); border-left: 3px solid var(--accent-blue); padding: 12px 15px; border-radius: 8px; display: flex; align-items: center; gap: 15px; }
+.account-info-item .info-icon { font-size: 1.8em; color: var(--accent-cyan); }
+.account-info-item .info-text-wrapper { flex-grow: 1; }
+.account-info-item .info-label { display: block; font-size: 0.8em; color: var(--text-secondary); margin-bottom: 2px; }
+.account-info-item .info-value { display: block; font-size: 1em; font-weight: 600; color: var(--text-primary); word-break: break-all; }
+.account-info-item .info-value.accent-green{ color: var(--accent-green); }
+.account-info-item .info-value.premium,.account-info-item .info-value.subscription,.account-info-item .info-value.admin{ color: var(--premium-gold); }
+.account-info-item .info-value.small-text { font-family: monospace; cursor: pointer; }
+.account-actions{display:flex;flex-direction:column;gap:10px}
+/* --- End: My Account Page Redesign --- */
+
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 6px;border-bottom:1px solid var(--border-color);flex-wrap:wrap;gap:5px}.info-row:last-child{border-bottom:0}
+#akun-showcase-grid{display:grid;grid-template-columns:1fr;gap:15px;margin-top:20px}.akun-card{background-color:var(--bg-secondary);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;padding:15px;font-size:.8em;transition:all .3s ease}.akun-card:hover{transform:translateY(-5px);box-shadow:0 8px 20px rgba(0,0,0,0.25);border-color:var(--accent-cyan)}.akun-card-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border-color)}.akun-card-logo{width:40px;height:40px;border-radius:8px}.akun-card h3{font-size:1.6em;margin-bottom:0;color:var(--text-primary)}.akun-card .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 10px;margin-bottom:12px}.akun-card .info-item{background-color:var(--bg-tertiary);padding:6px 8px;border-radius:6px}.akun-card .info-label{display:block;font-size:.9em;color:var(--text-secondary);margin-bottom:3px}.akun-card .info-value{font-size:1.2em;font-weight:700}.akun-card .info-value.price{color:var(--accent-green);font-size:1.5em}.akun-card .info-additional{margin-top:12px;padding-top:10px;border-top:1px solid var(--border-color)}.akun-card .info-additional .info-label{margin-bottom:4px}.akun-card .info-additional .info-value{font-size:1em;font-weight:400;white-space:pre-wrap;color:var(--text-primary)}.akun-card-footer{margin-top:15px}.lightbox-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.85);display:none;justify-content:center;align-items:center;z-index:10004}.lightbox-content{position:relative;max-width:90vw;max-height:90vh}.lightbox-content img{width:100%;height:100%;object-fit:contain;border-radius:8px}.lightbox-close{position:absolute;top:-35px;right:0;font-size:2.5em;color:#fff;cursor:pointer;line-height:1;font-weight:700}.skeleton-card{background-color:var(--bg-secondary);padding:12px;border-radius:10px;border:1px solid var(--border-color)}.skeleton{animation:skeleton-loading 1s linear infinite alternate;opacity:.7;background-color:var(--bg-tertiary)}@keyframes skeleton-loading{0%{background-color:var(--bg-tertiary)}100%{background-color:#4b5563}}.skeleton-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}.skeleton-avatar{width:40px;height:40px;border-radius:50%}.skeleton-text-group{flex-grow:1}.skeleton-text{height:14px;border-radius:4px;margin-bottom:6px}.skeleton-text.short{width:50%}.skeleton-line{height:8px;border-radius:4px;margin-bottom:8px}.skeleton-button{height:34px;border-radius:6px;margin-top:12px}
 #maintenance-modal .modal-content{text-align:center;max-width:400px;background-color:var(--bg-primary);border: 1px solid var(--premium-gold);}
 #maintenance-modal i {font-size: 3em;color: var(--premium-gold);margin-bottom: 15px;}
 #maintenance-modal-message{font-size:1em;line-height:1.6;color:var(--text-secondary);margin-bottom:0}
@@ -82,7 +113,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 .ph-spin { animation: ph-spin 1s linear infinite; }
 @media screen and (min-width:768px){
 .logout-text{display:inline-block}
-.nav-text{display:inline-block;margin-left:8px;font-size: 0.95em;}
+.nav-text{font-size: 0.95em;}
 .nav-icon-img{display:inline-block!important;vertical-align:middle}.history-tables-container{grid-template-columns:1fr 1fr}.price-option-grid{grid-template-columns:repeat(3,1fr)}.admin-choice-grid{grid-template-columns:1fr 1fr}.subscription-grid{grid-template-columns:repeat(3,1fr)}
 #akun-showcase-grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
 #all-profiles-grid{grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap: 20px;}
@@ -108,13 +139,15 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 #stok-akun-grid-bussid, #stok-akun-grid-trucksid {display:grid; grid-template-columns: 1fr; gap:10px}
 #purchased-akun-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:15px}
 
-.stok-akun-card{background-color:var(--bg-secondary);border:1px solid rgba(75,85,99,0.6);border-radius:10px;padding:6px;transition:all .3s ease;display:flex;flex-direction:column;gap:4px;font-size:.7em;box-shadow:0 4px 15px rgba(0,0,0,0.4);position:relative;overflow:hidden}
+.stok-akun-card{background-color:var(--bg-secondary);border:1px solid rgba(75,85,99,0.6);border-radius:10px;padding:8px;transition:all .3s ease;display:flex;flex-direction:column;gap:6px;font-size:.75em;box-shadow:0 4px 15px rgba(0,0,0,0.4);position:relative;overflow:hidden}
 .stok-akun-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px}
 .stok-akun-card.bussid-card::before{background:var(--accent-blue)}
 .stok-akun-card.trucksid-card::before{background:var(--accent-green)}
 .stok-akun-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,0.35);border-color:var(--accent-cyan)}
-.stok-akun-card.owned{border-left:3px solid var(--accent-cyan)}.stok-akun-card .stok-card-header{display:flex;align-items:center;gap:6px;padding-bottom:4px;border-bottom:1px solid var(--border-color);justify-content:space-between;}.stok-akun-card .stok-card-logo{width:20px;height:20px;border-radius:5px}.stok-akun-card h3{font-size:1em;margin:0;color:var(--text-primary)}.stok-akun-card .info-grid{display:grid;grid-template-columns:1fr;gap:3px}.stok-akun-card .info-item{background-color:rgba(0,0,0,0.2);padding:3px 5px;border-radius:4px}.stok-akun-card .info-label{display:flex;align-items:center;gap:3px;font-size:.65em;color:var(--text-secondary);margin-bottom:2px}.stok-akun-card .info-label i{font-size:1.1em}.stok-akun-card .info-value{font-size:.75em;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.stok-akun-card .price .info-value{color:var(--accent-green);font-size:.85em}.stok-akun-card .unlocked-grid{display:flex;flex-direction:column;gap:5px}.stok-akun-card .unlocked-item{display:flex;align-items:center;background-color:var(--bg-tertiary);padding:5px 6px;border-radius:4px}.stok-akun-card .unlocked-label{font-size:.8em;color:var(--text-secondary);flex-basis:50px}.stok-akun-card .unlocked-value{font-family:monospace;font-size:.9em;font-weight:600;flex-grow:1}.stok-akun-card .copy-icon{color:var(--accent-blue);cursor:pointer;margin-left:auto;font-size:1.1em}
-.stok-akun-card .action-button {font-size: 0.75em; padding: 4px; margin-top: auto;}
+.stok-akun-card.owned{border-left:3px solid var(--accent-cyan)}.stok-akun-card .stok-card-header{display:flex;align-items:center;gap:6px;padding-bottom:5px;border-bottom:1px solid var(--border-color);justify-content:space-between;}.stok-akun-card .stok-card-logo{width:22px;height:22px;border-radius:5px}.stok-akun-card h3{font-size:1.1em;margin:0;color:var(--text-primary)}.stok-akun-card .info-grid{display:grid;grid-template-columns:1fr;gap:4px}.stok-akun-card .info-item{background-color:rgba(0,0,0,0.2);padding:4px 6px;border-radius:4px}.stok-akun-card .info-label{display:flex;align-items:center;gap:4px;font-size:.7em;color:var(--text-secondary);margin-bottom:2px}.stok-akun-card .info-label i{font-size:1.2em}.stok-akun-card .info-value{font-size:.8em;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.stok-akun-card .price .info-value{color:var(--accent-green);font-size:1.1em}.stok-akun-card .unlocked-grid{display:flex;flex-direction:column;gap:5px}.stok-akun-card .unlocked-item{display:flex;align-items:center;background-color:var(--bg-tertiary);padding:5px 6px;border-radius:4px}.stok-akun-card .unlocked-label{font-size:.8em;color:var(--text-secondary);flex-basis:50px}.stok-akun-card .unlocked-value{font-family:monospace;font-size:.9em;font-weight:600;flex-grow:1}.stok-akun-card .copy-icon{color:var(--accent-blue);cursor:pointer;margin-left:auto;font-size:1.1em}
+.stok-akun-card .action-button {font-size: 0.8em; padding: 5px; margin-top: auto;}
+.stok-akun-card .package-info { font-size: 0.8em; color: var(--text-secondary); background-color: rgba(0,0,0,0.2); padding: 5px 6px; border-radius: 4px; line-height: 1.4; }
+.stok-akun-card .detail-info { font-size: 0.8em; color: var(--text-primary); background-color: rgba(6, 182, 212, 0.1); border-left: 2px solid var(--accent-cyan); padding: 5px 8px; border-radius: 4px; line-height: 1.4; margin-top: 4px; }
 .purchased-info-grid { display: flex; flex-direction: column; gap: 4px; background-color: var(--bg-primary); padding: 6px; border-radius: 5px; margin-bottom: 5px; }
 .purchased-info-item { display: flex; justify-content: space-between; align-items: center; font-size: 0.9em; }
 .purchased-info-item .info-label { color: var(--text-secondary); font-weight: 500; }
@@ -253,7 +286,12 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 }
 </style>
 </head>
-<body style="visibility:hidden;opacity:0;transition:opacity .5s">
+<body>
+<div id="preloader-overlay">
+    <div class="loader-square">
+        <span id="loading-percentage">0%</span>
+    </div>
+</div>
 <div id=toast-container></div>
 <div id=auth-wrapper>
 <div id="maintenance-notice">
@@ -355,20 +393,25 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 <div id=app-layout>
 <header id=top-navbar>
     <div class="header-brand">
-        <h1>Bussid&Trucksid SHOP<span class=subtitle-brand>by@donitata1717®</span></h1>
+        <div class="brand-container">
+            <img src="https://bussimulator.id/wp-content/uploads/2017/03/logo-wide-super-small.png" alt="BUSSID Logo" class="brand-logo">
+            <h1>Bussid&Trucksid SHOP<span class=subtitle-brand>by@donitata1717®</span></h1>
+            <img src="https://trucksimulator.id/wp-content/uploads/2024/12/logo.png" alt="TRUCKSID Logo" class="brand-logo">
+        </div>
     </div>
-    <h2 id="page-title-header"></h2>
+    
     <nav>
         <ul class=sidebar-nav>
             <li class="nav-item"><a href=# id=nav-stok-akun><i class="ph-bold ph-shopping-bag-open nav-icon"></i><span class=nav-text>Beli Akun</span></a></li>
             <li class="nav-item"><a href=# id=nav-jual-akun><i class="ph-bold ph-tag nav-icon"></i><span class=nav-text>Jual Akun</span></a></li>
             <li class=nav-item><a href=# id=nav-topupBussid><img src=https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjyQYodaXJAK1A9Bi0YOIU2BhQubEYchhFx-2PZYB8hOIopqXIQ1FXK_goAxP0GPaXyXk6L5jnO3aOL6EuzkEgGxa2tohs7YJazYrVPZ8czUi8BSjWWkrTKVCTwk7wmhEZRWFPP1U2S-FjXUwDbi9duZ9ejBNm0xTLBFblyee8yY_Jk2MLtQj6v3E_bePI/s1600/Bussid.png class=nav-icon-img alt="BUSSID Icon"><span class=nav-text>Topup BUSSID</span></a></li>
             <li class=nav-item><a href=# id=nav-topupTrucksid><img src=https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj4Q0wYqZDSD7VH-0QlvsqTDi4xnKg5NfRDLJHt92A-4qMcVNMXHpZPkGOQARhJWeZXr0VCCbMCUXJn2iAL-xbCOGELYZQqEgnJXD-VneGmLKQgjO5C9XhyphenhypheneMWD0RBl_bv3VKAGfhYxDzKLPhFjujKFMy7ITYuvLyiW-aDEp3AkM_Tn-jEAPuZXmPqarJY/s1600/images__1_-removebg-preview.png class=nav-icon-img alt="TRUCKSID Icon"><span class=nav-text>Topup TRUCKSID</span></a></li>
-            <li class="nav-item user-only"><a href=# id=nav-topup><i class="ph-bold ph-wallet nav-icon"></i><span class=nav-text>Topup Saldo</span></a></li>
+            <li class="nav-item user-only" style="display:none;"><a href=# id=nav-topup><i class="ph-bold ph-wallet nav-icon"></i><span class=nav-text>Topup Saldo</span></a></li>
             <li class="nav-item user-only"><a href=# id=nav-subscription><i class="ph-bold ph-crown nav-icon"></i><span class=nav-text>Langganan</span></a></li>
         </ul>
     </nav>
     <div class="header-actions-bar">
+        
         <div class=sidebar-balance-card>
             <div class=balance-info>
                 <span class="balance-username" id="sidebar-username"></span>
@@ -394,27 +437,42 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 <div id=my-account-container class=content-card>
 <h2>Informasi Akun Saya</h2>
 <div class=account-info-details>
-<div class=info-row>
-<span class=info-label>Username</span>
-<span id=account-username class=info-value></span>
-</div><div class=info-row>
-<span class=info-label id=account-saldo-label>Status & Saldo</span>
-<span id=account-saldo class="info-value accent-green"></span>
-</div>
-<div class=info-row>
-<span class=info-label>Device ID</span>
-<span id=account-device-id class="info-value small-text" title="Tahan untuk menyalin"></span>
-</div>
-<div class=info-row>
-<span class=info-label>Email Terdaftar</span>
-<span id=account-email class=info-value></span>
-</div>
-<div class=info-row>
-<span class=info-label>WhatsApp Terdaftar</span>
-<span id=account-whatsapp class=info-value></span>
-</div>
-</div>
-<div class=account-actions>
+    <div class="account-info-item">
+        <i class="ph-bold ph-user-circle info-icon"></i>
+        <div class="info-text-wrapper">
+            <span class=info-label>Username</span>
+            <span id=account-username class=info-value></span>
+        </div>
+    </div>
+    <div class="account-info-item">
+        <i class="ph-bold ph-wallet info-icon"></i>
+        <div class="info-text-wrapper">
+            <span class=info-label id=account-saldo-label>Status & Saldo</span>
+            <span id=account-saldo class="info-value accent-green"></span>
+        </div>
+    </div>
+    <div class="account-info-item">
+        <i class="ph-bold ph-device-mobile info-icon"></i>
+        <div class="info-text-wrapper">
+            <span class=info-label>Device ID</span>
+            <span id=account-device-id class="info-value small-text" title="Tahan untuk menyalin"></span>
+        </div>
+    </div>
+    <div class="account-info-item">
+        <i class="ph-bold ph-at info-icon"></i>
+        <div class="info-text-wrapper">
+            <span class=info-label>Email Terdaftar</span>
+            <span id=account-email class=info-value></span>
+        </div>
+    </div>
+    <div class="account-info-item">
+        <i class="ph-bold ph-whatsapp-logo info-icon"></i>
+        <div class="info-text-wrapper">
+            <span class=info-label>WhatsApp Terdaftar</span>
+            <span id=account-whatsapp class=info-value></span>
+        </div>
+    </div>
+</div><div class=account-actions>
 <button id=change-device-id-btn class="action-button btn-secondary">Ganti Device ID</button>
 <button id=change-password-btn class="action-button btn-secondary">Ubah Sandi</button>
 <button id=account-logout-btn class="action-button btn-red">Logout</button>
@@ -888,9 +946,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             </a>
         </div>
     </div>
-</div>
-
-<div id="sell-status-modal" class="modal-overlay">
+</div><div id="sell-status-modal" class="modal-overlay">
     <div class="modal-content">
         <span class="modal-close" id="close-sell-status-modal-btn">×</span>
         <h2>Status Penjualan Akun</h2>
@@ -942,7 +998,6 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
         const dom = {
             authWrapper: document.getElementById('auth-wrapper'),
             appLayout: document.getElementById('app-layout'),
-            pageTitleHeader: document.getElementById('page-title-header'),
             content: {
                 myAccount: document.getElementById('my-account-container'),
                 profile: document.getElementById("profile-container"),
@@ -1071,18 +1126,6 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             if (!checkSubscriptionStatus()) return;
 
             const pageToShow = (pageName === 'topupBussid' || pageName === 'topupTrucksid') ? 'profile' : pageName;
-            const pageTitles = {
-                stokAkun: "Beli Akun",
-                jualAkun: "Jual Akun",
-                topupBussid: "Top Up BUSSID",
-                topupTrucksid: "Top Up TRUCKSID",
-                topup: "Top Up Saldo",
-                subscription: "Langganan Premium",
-                myAccount: "Akun Saya",
-                buyUb: "Toko UB",
-                qris: "Pembayaran QRIS"
-            };
-            dom.pageTitleHeader.textContent = pageTitles[pageName] || "Bussid&Trucksid SHOP";
             
             Object.values(dom.content).forEach(container => {
                 if(container) container.style.display = 'none';
@@ -1126,7 +1169,13 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
         
         function manageNavVisibility() {
             const isAdmin = loggedInUser.accountType === 'Admin';
-            document.querySelectorAll('.user-only').forEach(el => el.style.display = isAdmin ? 'none' : 'list-item');
+            document.querySelectorAll('.user-only').forEach(el => {
+                if (el.querySelector('#nav-topup')) {
+                    el.style.display = 'none';
+                } else {
+                    el.style.display = isAdmin ? 'none' : 'list-item';
+                }
+            });
             document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? 'list-item' : 'none');
         }
 
@@ -1210,7 +1259,6 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                 dom.nav.topup.parentElement.style.display = 'list-item';
             }
         }
-
         function setupRealtimeBalanceListener() {
             if (!loggedInUser?.docId) return;
             if (balanceListenerUnsubscribe) balanceListenerUnsubscribe();
@@ -2397,7 +2445,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
         }
         
         function createStokAkunCardHTML(data, isPurchased = false) {
-            const { id, gameType, loginType, email, password, deviceId, usernameTampilan, jumlahUB, price } = data;
+            const { id, gameType, loginType, email, password, deviceId, usernameTampilan, jumlahUB, price, detailInfo } = data;
             const gameLogo = gameConfigs[gameType]?.profileImage || '';
             const loginIcon = loginType === 'Facebook' ? `<i class="ph-fill ph-facebook-logo" style="color:#1877f2;"></i>` : `<i class="ph-fill ph-google-logo" style="color:#ea4335;"></i>`;
             
@@ -2441,25 +2489,30 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                         </div>
                     </div>`;
             } else {
+                const detailInfoHTML = detailInfo ? `<div class="detail-info">${detailInfo}</div>` : '';
+                const packageInfoHTML = `<div class="package-info">Anda akan mendapatkan Paket Akun ${gameType} + Akun ${loginType} + ${(jumlahUB || 0).toLocaleString('id-ID')} UB seharga:</div>`;
+
                  return `
                     <div class="stok-akun-card ${gameType.toLowerCase()}-card" id="stok-akun-${id}" data-price="${price || 0}">
                         <div class="stok-card-header">
                             <img src="${gameLogo}" alt="${gameType} Logo" class="stok-card-logo">
-                            <h3 style="font-size: 1.1em; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${usernameTampilan || gameType}">${usernameTampilan || gameType}</h3>
+                            <h3 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${usernameTampilan || gameType}">${usernameTampilan || gameType}</h3>
                         </div>
                         <div class="info-grid">
                             <div class="info-item">
                                 <span class="info-label"><i class="ph ph-coins"></i> Uang Game (UB)</span>
                                 <span class="info-value">${(jumlahUB || 0).toLocaleString('id-ID')}</span>
                             </div>
-                            <div class="info-item price">
-                                <span class="info-label"><i class="ph ph-tag"></i> Harga Akun</span>
-                                <span class="info-value">Rp ${(price || 0).toLocaleString('id-ID')}</span>
-                            </div>
                             <div class="info-item">
                                 <span class="info-label">${loginIcon} Login via</span>
                                 <span class="info-value">${loginType}</span>
                             </div>
+                        </div>
+                        ${detailInfoHTML}
+                        ${packageInfoHTML}
+                        <div class="info-item price" style="margin-top: 4px;">
+                            <span class="info-label"><i class="ph ph-tag"></i> Harga Akun</span>
+                            <span class="info-value">Rp ${(price || 0).toLocaleString('id-ID')}</span>
                         </div>
                         <button class="action-button btn-green" data-action="buy-stok-akun" data-id="${id}">Beli Akun</button>
                     </div>`;
@@ -2925,6 +2978,32 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
+            const preloader = document.getElementById('preloader-overlay');
+            const percentageText = document.getElementById('loading-percentage');
+            let currentPercent = 0;
+            const interval = setInterval(() => {
+                if (currentPercent < 99) {
+                    currentPercent++;
+                    percentageText.textContent = `${currentPercent}%`;
+                }
+            }, 20); // Simulates loading progress
+
+            window.onload = () => {
+                clearInterval(interval);
+                percentageText.textContent = '100%';
+                setTimeout(() => {
+                    preloader.classList.add('hidden');
+                    setTimeout(() => {
+                        preloader.style.display = 'none';
+                    }, 500);
+                }, 300);
+
+                // Initialize the rest of the app after preloader is done
+                initializeAppLogic();
+            };
+        });
+
+        function initializeAppLogic() {
             window.copyToClipboard = copyToClipboard;
             
             setupRealtimeAppSettings();
@@ -3204,7 +3283,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 
             document.body.style.visibility = 'visible';
             document.body.style.opacity = 1;
-        });
+        }
     </script>
 </body>
 </html>
