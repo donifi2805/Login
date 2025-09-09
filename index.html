@@ -285,17 +285,14 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 }
 </style>
 
-    <!-- PWA Tags -->
     <meta name="theme-color" content="#000000">
     <link rel="manifest" href="manifest.json">
     
-    <!-- Apple iOS Support -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Bussid & Trucksid SHOP">
     <link rel="apple-touch-icon" href="icon-192.png">
     
-    <!-- Service Worker Registration -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -977,8 +974,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, query, collection, where, getDocs, updateDoc, getDoc, addDoc, serverTimestamp, orderBy, limit, setDoc, deleteDoc, Timestamp, runTransaction } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
         
-        const firebaseConfig = { apiKey: "AIzaSyB3KJT9eh42V6ytLoY5e4ozzDXY4sHhado", authDomain: "donitata1717-f10f7.firebaseapp.com", projectId: "donitata1717-f10f7", storageBucket: "donitata1717-f10f7.appspot.com", messagingSenderId: "760325542999", appId: "1:760325542999:web:be97c17580f64407e33f12" };
-        const app = initializeApp(firebaseConfig);
+        const firebaseConfig = { apiKey: "AIzaSyB3KJT9eh42V6ytLoY5e4ozzDXY4sHhado", authDomain: "donitata1717-f10f7.firebaseapp.com", projectId: "donitata1717-f10f7", storageBucket: "donitata1717-f10f7.appspot.com", messagingSenderId: "760325542999", appId: "1:760325542999:web:be97c17580f64407e33f12" };const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
         const TELEGRAM_BOT_TOKEN = "7899731117:AAEpxfFIMiTR_Y-L8ad-VRR5qBF1y5kg4t4"; // Token untuk notif pembayaran, jual akun, dll.
@@ -1299,15 +1295,29 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     } else if (!initialContentLoaded) {
                         await showAppLayout();
                     }
+                    
+                    // --- START: REAL-TIME QRIS UPDATE ---
+                    // Cek perubahan pada transaksi saldo
+                    if (oldData.pendingTransaction > 0 && !newData.pendingTransaction) {
+                        const balanceIncreased = newData.saldo > oldData.saldo;
+                        showToast(balanceIncreased ? `Top up Rp ${oldData.pendingTransaction.toLocaleString('id-ID')} berhasil!` : "Transaksi top up dibatalkan/ditolak.", balanceIncreased ? 'success' : 'error');
+                        if (dom.content.qris.style.display === 'block') {
+                            showTopupMenu();
+                        }
+                    }
 
+                    // Cek perubahan pada transaksi langganan
                     if (oldData.pendingSubscription && !newData.pendingSubscription) {
                         if (newData.accountType !== oldData.accountType) {
                            showToast(`Selamat! Akun Anda telah di-upgrade ke ${newData.accountType}.`, 'success', 5000);
+                        } else {
+                           showToast("Transaksi langganan dibatalkan/ditolak.", 'error');
                         }
-                        if (dom.content.subscription.style.display === 'block' || dom.content.subscriptionQris.style.display === 'block') {
+                        if (dom.content.subscriptionQris.style.display === 'block') {
                             showPage('subscription');
                         }
                     }
+                    // --- END: REAL-TIME QRIS UPDATE ---
                     
                      // Cek status penjualan akun
                     if (newData.akunJualStatus && newData.akunJualStatus.status) {
@@ -2641,7 +2651,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             }
         }
         
-        async function executeServersidePurchase(offeringId, newUsername, updateStatusCallback) {
+        async function executeServersidePurchase(offeringId, originalUsername, updateStatusCallback) {
              try {
                 await runTransaction(db, async (transaction) => {
                     updateStatusCallback("Mencari penawaran...");
@@ -2664,30 +2674,15 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     }
                     
                     updateStatusCallback("Menyiapkan kredensial akun...");
-
-                    // MODIFICATION START: Two-step query for credentials
                     let kredensialDoc = null;
-
-                    // 1. Primary search: specific gameType
-                    const primaryKredensialQuery = query(
-                        collection(db, "stokKredensial"), 
-                        where("gameType", "==", gameType),
-                        where("ownedBy", "==", null),
-                        limit(1)
-                    );
+                    const primaryKredensialQuery = query(collection(db, "stokKredensial"), where("gameType", "==", gameType), where("ownedBy", "==", null), limit(1));
                     const primarySnapshot = await getDocs(primaryKredensialQuery);
                     
                     if (!primarySnapshot.empty) {
                         kredensialDoc = primarySnapshot.docs[0];
                     } else {
-                        // 2. Fallback search: universal gameType
                         updateStatusCallback("Mencari kredensial universal...");
-                        const fallbackKredensialQuery = query(
-                            collection(db, "stokKredensial"), 
-                            where("gameType", "==", "BUSSID/TRUCKSID"),
-                            where("ownedBy", "==", null),
-                            limit(1)
-                        );
+                        const fallbackKredensialQuery = query(collection(db, "stokKredensial"), where("gameType", "==", "BUSSID/TRUCKSID"), where("ownedBy", "==", null), limit(1));
                         const fallbackSnapshot = await getDocs(fallbackKredensialQuery);
                         if (!fallbackSnapshot.empty) {
                             kredensialDoc = fallbackSnapshot.docs[0];
@@ -2695,15 +2690,13 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     }
 
                     if (!kredensialDoc) {
-                        throw new Error("Maaf, stok akun universal sedang habis. Silakan hubungi admin.");
+                        throw new Error("Maaf, stok akun untuk game ini sedang habis. Silakan hubungi admin.");
                     }
-                    // MODIFICATION END
-
                     const kredensialData = kredensialDoc.data();
                     const kredensialDocRef = kredensialDoc.ref;
                     
                     updateStatusCallback("Login ke akun game...");
-                    const config = gameConfigs[gameType]; // Use gameType from offering, not credential
+                    const config = gameConfigs[gameType];
                     const loginRes = await fetch(`https://${config.host}/Client/LoginWithAndroidDeviceID?sdk=UnitySDK-2.206.241122`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-ReportErrorAsSuccess': 'true' }, body: JSON.stringify({ AndroidDevice: "AndroidPhone", AndroidDeviceId: kredensialData.deviceId, CreateAccount: false, TitleId: config.titleId }) });
                     const loginData = await loginRes.json();
                     if (loginData.code !== 200 || !loginData.data?.SessionTicket) throw new Error('Gagal login ke akun game untuk penyesuaian.');
@@ -2722,17 +2715,39 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                         if (execResult.code !== 200) throw new Error('Gagal menyesuaikan UB akun.');
                     }
 
+                    // --- START: USERNAME CHANGE RETRY LOGIC ---
                     updateStatusCallback("Mengganti nama player...");
-                    const nameRes = await fetch(`https://${config.host}/Client/UpdateUserTitleDisplayName?sdk=UnitySDK-2.135.220509`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Authorization': sessionTicket, 'X-ReportErrorAsSuccess': 'true' }, body: JSON.stringify({ DisplayName: newUsername.trim() }) });
-                    if ((await nameRes.json()).code !== 200) throw new Error('Gagal mengganti nama akun game.');
+                    let nameChanged = false;
+                    let currentUsernameAttempt = originalUsername.trim();
+                    const maxRetries = 5;
+
+                    for (let i = 0; i < maxRetries; i++) {
+                        if (i > 0) {
+                            updateStatusCallback(`Nama sudah ada, mencoba nama baru... (${i}/${maxRetries-1})`);
+                            const randomSuffix = Math.floor(10 + Math.random() * 990); // 2-3 digit random
+                            currentUsernameAttempt = `${originalUsername.trim()}${randomSuffix}`;
+                        }
+                        
+                        const nameRes = await fetch(`https://${config.host}/Client/UpdateUserTitleDisplayName?sdk=UnitySDK-2.135.220509`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Authorization': sessionTicket, 'X-ReportErrorAsSuccess': 'true' }, body: JSON.stringify({ DisplayName: currentUsernameAttempt }) });
+                        const nameResult = await nameRes.json();
+
+                        if (nameResult.code === 200) {
+                            nameChanged = true;
+                            break; 
+                        }
+                    }
+
+                    if (!nameChanged) {
+                        throw new Error('Gagal mengganti nama akun game setelah beberapa kali percobaan. Silakan coba nama lain.');
+                    }
+                    // --- END: USERNAME CHANGE RETRY LOGIC ---
                     
                     updateStatusCallback("Menyelesaikan transaksi...");
                     transaction.update(userRef, { saldo: currentUserSaldo - accountPrice });
                     transaction.update(kredensialDocRef, { 
                         ownedBy: loggedInUser.username, 
-                        usernameTampilan: newUsername, 
+                        usernameTampilan: currentUsernameAttempt, 
                         jumlahUB: targetUB,
-                        // Assign the specific game type to the credential after it's used
                         gameType: gameType 
                     });
                     
