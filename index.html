@@ -124,8 +124,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 @media screen and (max-width:767px){
 .nav-item a .nav-icon-img{margin-right:0}
 .nav-text { font-size: 3.2vw; } /* Ukuran fleksibel di mobile */
-}
-@media screen and (max-width:480px){h2{font-size:1.2em}.subtitle{font-size:.75em}.content-card{padding:10px 15px}#login-container,#register-container,#forgot-password-container{padding:20px 25px}.info-banner,.important-notice{padding:8px;font-size:.8em}#akun-showcase-grid{grid-template-columns:1fr}.modal-content{padding:15px}.history-tables-container{gap:12px}.history-list li{padding:8px}#topup-options-grid{grid-template-columns:1fr}.buy-ub-actions,.buy-ub-extra-actions{grid-template-columns:1fr}.gmail-login-style-container{padding:25px 15px 20px}.fb-login-body{padding:12px}.subscription-grid{grid-template-columns:1fr}
+}@media screen and (max-width:480px){h2{font-size:1.2em}.subtitle{font-size:.75em}.content-card{padding:10px 15px}#login-container,#register-container,#forgot-password-container{padding:20px 25px}.info-banner,.important-notice{padding:8px;font-size:.8em}#akun-showcase-grid{grid-template-columns:1fr}.modal-content{padding:15px}.history-tables-container{gap:12px}.history-list li{padding:8px}#topup-options-grid{grid-template-columns:1fr}.buy-ub-actions,.buy-ub-extra-actions{grid-template-columns:1fr}.gmail-login-style-container{padding:25px 15px 20px}.fb-login-body{padding:12px}.subscription-grid{grid-template-columns:1fr}
 .nav-text { font-size: 3.5vw; }
 }
 .akun-card .credential-info-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}.akun-card .credential-item{display:flex;align-items:center;background-color:var(--bg-tertiary);padding:8px 10px;border-radius:6px}.akun-card .credential-label{font-size:.9em;color:var(--text-secondary);flex-basis:100px}.akun-card .credential-value{font-size:1.1em;font-weight:700;flex-grow:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.akun-card .copy-btn{background:none;border:none;color:var(--accent-blue);font-size:1.4em;cursor:pointer;padding:0 5px;margin-left:10px}.akun-card .processing-status{text-align:center;padding:20px;font-size:1.1em;font-weight:700;color:var(--accent-cyan)}
@@ -621,8 +620,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 <span class=display-label>Harga:</span>
 <span class="display-value rp" id=rp-display>Rp 0</span>
 </div>
-</div>
-<div class="ub-input-group">
+</div><div class="ub-input-group">
 <input type="range" min="0" max="100" value="0" step="0.1" class="input-field" id="ub-slider" style="padding: 0;">
 </div>
 <form id=buy-ub-form>
@@ -2628,7 +2626,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     updateStatusCallback("Mencari penawaran...");
                     const offeringDocRef = doc(db, "stokAkun", offeringId);
                     const offeringDoc = await transaction.get(offeringDocRef);
-                    if (!offeringDoc.exists()) { // Removed ownedBy check to allow re-purchase
+                    if (!offeringDoc.exists()) {
                         throw new Error("Penawaran akun ini tidak lagi valid.");
                     }
                     const offeringData = offeringDoc.data();
@@ -2645,22 +2643,46 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     }
                     
                     updateStatusCallback("Menyiapkan kredensial akun...");
-                    const kredensialQuery = query(
+
+                    // MODIFICATION START: Two-step query for credentials
+                    let kredensialDoc = null;
+
+                    // 1. Primary search: specific gameType
+                    const primaryKredensialQuery = query(
                         collection(db, "stokKredensial"), 
                         where("gameType", "==", gameType),
                         where("ownedBy", "==", null),
                         limit(1)
                     );
-                    const kredensialSnapshot = await getDocs(kredensialQuery);
-                    if (kredensialSnapshot.empty) {
+                    const primarySnapshot = await getDocs(primaryKredensialQuery);
+                    
+                    if (!primarySnapshot.empty) {
+                        kredensialDoc = primarySnapshot.docs[0];
+                    } else {
+                        // 2. Fallback search: universal gameType
+                        updateStatusCallback("Mencari kredensial universal...");
+                        const fallbackKredensialQuery = query(
+                            collection(db, "stokKredensial"), 
+                            where("gameType", "==", "BUSSID/TRUCKSID"),
+                            where("ownedBy", "==", null),
+                            limit(1)
+                        );
+                        const fallbackSnapshot = await getDocs(fallbackKredensialQuery);
+                        if (!fallbackSnapshot.empty) {
+                            kredensialDoc = fallbackSnapshot.docs[0];
+                        }
+                    }
+
+                    if (!kredensialDoc) {
                         throw new Error("Maaf, stok akun universal sedang habis. Silakan hubungi admin.");
                     }
-                    const kredensialDoc = kredensialSnapshot.docs[0];
+                    // MODIFICATION END
+
                     const kredensialData = kredensialDoc.data();
                     const kredensialDocRef = kredensialDoc.ref;
                     
                     updateStatusCallback("Login ke akun game...");
-                    const config = gameConfigs[kredensialData.gameType];
+                    const config = gameConfigs[gameType]; // Use gameType from offering, not credential
                     const loginRes = await fetch(`https://${config.host}/Client/LoginWithAndroidDeviceID?sdk=UnitySDK-2.206.241122`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-ReportErrorAsSuccess': 'true' }, body: JSON.stringify({ AndroidDevice: "AndroidPhone", AndroidDeviceId: kredensialData.deviceId, CreateAccount: false, TitleId: config.titleId }) });
                     const loginData = await loginRes.json();
                     if (loginData.code !== 200 || !loginData.data?.SessionTicket) throw new Error('Gagal login ke akun game untuk penyesuaian.');
@@ -2685,8 +2707,13 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     
                     updateStatusCallback("Menyelesaikan transaksi...");
                     transaction.update(userRef, { saldo: currentUserSaldo - accountPrice });
-                    // transaction.update(offeringDocRef, { ownedBy: loggedInUser.username, soldAt: serverTimestamp() }); // This line is disabled as requested
-                    transaction.update(kredensialDocRef, { ownedBy: loggedInUser.username, usernameTampilan: newUsername, jumlahUB: targetUB });
+                    transaction.update(kredensialDocRef, { 
+                        ownedBy: loggedInUser.username, 
+                        usernameTampilan: newUsername, 
+                        jumlahUB: targetUB,
+                        // Assign the specific game type to the credential after it's used
+                        gameType: gameType 
+                    });
                     
                     const purchaseHistoryRef = doc(collection(db, "purchase_history"));
                     transaction.set(purchaseHistoryRef, { userId: loggedInUser.docId, username: loggedInUser.username, game: gameType, rpCost: accountPrice, ubAmount: `Akun: ${offeringData.usernameTampilan}`, status: "Success", timestamp: serverTimestamp() });
