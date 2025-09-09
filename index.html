@@ -2640,6 +2640,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                 await executeServersidePurchase(offeringId, newUsername, updatePurchaseLoading);
                 
                 showToast("Pembelian berhasil! Akun Anda telah ditambahkan.", "success", 4000);
+                new Audio('sukses.wav').play(); // Memutar suara sukses
                 hideModal(modal.overlay);
                 await displayTransactionHistory();
                 document.getElementById('show-purchased-btn').click(); 
