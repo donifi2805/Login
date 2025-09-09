@@ -70,20 +70,6 @@
             font-weight: 600;
         }
         .header-title i { color: var(--accent-primary); }
-        .top-nav { display: flex; gap: 10px; flex-wrap: wrap; }
-        .top-nav a {
-            padding: 10px 20px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            border-radius: 8px;
-            transition: background 0.3s, color 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-        }
-        .top-nav a:hover { background-color: var(--bg-primary); color: white; }
-        .top-nav a.active { background: var(--accent-primary); color: white; font-weight: 600; }
         .header-actions { display: flex; gap: 10px; }
 
 
@@ -96,7 +82,84 @@
         .view-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px;}
         .view-header h1 { margin: 0; text-shadow: 0 0 12px rgba(59, 130, 246, 0.5); }
         .view-header .actions { display: flex; gap: 10px; }
+        
+        /* --- REVISED MENU GRID --- */
+        .menu-grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: minmax(140px, auto);
+            gap: 3px; /* Jarak sangat dekat */
+        }
 
+        .menu-grid-button {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0; /* Tanpa sudut melengkung */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1em;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            text-decoration: none;
+            position: relative; /* Diperlukan untuk notifikasi */
+        }
+
+        .menu-grid-button:hover {
+            background-color: var(--bg-glass);
+        }
+
+        .menu-grid-button i {
+            font-size: 2.5em;
+            color: var(--accent-primary);
+        }
+        
+        /* Specific sizes for irregular layout */
+        .menu-users {
+            grid-column: span 2; /* Tombol ini memakan 2 kolom */
+        }
+        .menu-stok-penawaran {
+            grid-column: span 2; /* Tombol ini memakan 2 kolom */
+        }
+        .menu-settings {
+            grid-column: span 3; /* Tombol ini memakan 3 kolom */
+        }
+
+        /* Style untuk Notifikasi Badge */
+        .notification-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--danger-primary);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            font-weight: 700;
+            border: 2px solid var(--bg-secondary);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transform: scale(1);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        /* Kontainer untuk toggle maintenance di menu utama */
+        .quick-settings-container {
+            margin-top: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
         /* --- KARTU STATISTIK --- */
         .stat-cards {
@@ -380,8 +443,7 @@
         .main-content { padding: 8px; }
         .top-header { padding: 4px 10px; gap: 8px; }
         .header-title { font-size: 1.2em; }
-        .top-nav { gap: 5px; }
-        .top-nav a { padding: 4px 8px; font-size: 1em; gap: 4px; }
+        
         .header-actions { gap: 5px; }
         .header-actions .action-button { padding: 4px 8px; font-size: 1em; }
         .view-header { margin-bottom: 12px; gap: 10px; }
@@ -512,6 +574,17 @@
             .search-bar .input-field { max-width: 100%; }
             .modal-content { padding: 15px; }
             .form-grid { grid-template-columns: 1fr; }
+            .menu-grid-container { 
+                grid-template-columns: repeat(2, 1fr);
+                grid-auto-rows: minmax(120px, auto);
+            }
+            /* On mobile, reset all spans to be more uniform */
+            .menu-users, .menu-stok-penawaran, .menu-settings {
+                grid-column: span 1;
+            }
+            .menu-settings {
+                grid-column: span 2;
+            }
         }
     </style>
 </head>
@@ -526,24 +599,52 @@
                 <button type="submit" class="action-button btn-primary" style="width:100%;"> <i class="fas fa-sign-in-alt"></i> Login </button>
             </form>
         </div>
-    </div><div id="admin-panel" class="dashboard-layout">
+    </div>
+    
+    <div id="admin-panel" class="dashboard-layout">
         <header class="top-header">
             <h2 class="header-title"><i class="fas fa-gamepad"></i> Auth Tools</h2>
-            <nav class="top-nav"> 
-                <a href="#" id="nav-users" class="active"><i class="fas fa-users"></i> User</a> 
-                <a href="#" id="nav-transactions"><i class="fas fa-exchange-alt"></i> Transaction</a>
-                <a href="#" id="nav-stok-akun"><i class="fas fa-archive"></i> Stok Penawaran</a>
-                <a href="#" id="nav-stok-kredensial"><i class="fas fa-key"></i> Stok Kredensial</a>
-                <a href="#" id="nav-settings"><i class="fas fa-cogs"></i> Settings</a>
-            </nav>
             <div class="header-actions">
                 <button id="logout-btn" class="action-button btn-danger"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
         </header>
 
         <main class="main-content">
-            <div id="user-management-view">
+            <div id="main-menu-view">
+                 <header class="view-header">
+                    <h1>Admin Dashboard</h1>
+                    <div class="actions">
+                        <button id="quick-add-credential-btn" class="action-button btn-success"><i class="fas fa-plus-circle"></i> Add Credential</button>
+                    </div>
+                </header>
+                <div class="menu-grid-container">
+                    <button class="menu-grid-button menu-users" data-view="users"> <i class="fas fa-users"></i> <span>Users</span> </button>
+                    <button class="menu-grid-button menu-transactions" data-view="transactions">
+                        <span class="notification-badge" id="pending-trx-badge" style="display: none;">0</span>
+                        <i class="fas fa-exchange-alt"></i> 
+                        <span>Transactions</span> 
+                    </button>
+                    <button class="menu-grid-button menu-stok-penawaran" data-view="stokAkun"> <i class="fas fa-archive"></i> <span>Stok Penawaran</span> </button>
+                    <button class="menu-grid-button menu-stok-kredensial" data-view="stokKredensial"> <i class="fas fa-key"></i> <span>Stok Kredensial</span> </button>
+                    <button class="menu-grid-button menu-settings" data-view="settings"> <i class="fas fa-cogs"></i> <span>Settings</span> </button>
+                </div>
+                 <div class="quick-settings-container">
+                    <div class="settings-card">
+                        <h2><i class="fas fa-tools"></i> Maintenance Mode</h2>
+                        <div class="input-group" style="margin-bottom: 0;">
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="main-menu-maintenance-toggle">
+                                <label for="main-menu-maintenance-toggle"></label>
+                                <span>Aktifkan Mode Perbaikan (Global)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="user-management-view" style="display: none;">
                 <header class="view-header">
+                     <button class="action-button btn-secondary back-to-menu-btn"><i class="fas fa-arrow-left"></i> Menu</button>
                     <h1>User Management</h1>
                     <div class="actions">
                         <button id="add-user-btn" class="action-button btn-success"><i class="fas fa-plus"></i> Add User</button>
@@ -579,6 +680,7 @@
 
             <div id="transaction-management-view" style="display: none;">
                 <header class="view-header">
+                    <button class="action-button btn-secondary back-to-menu-btn"><i class="fas fa-arrow-left"></i> Menu</button>
                     <h1>Pending Transactions</h1>
                      <div class="actions">
                         <button id="refresh-transactions-btn" class="action-button btn-primary"> <i class="fas fa-sync-alt"></i> Refresh</button>
@@ -591,6 +693,7 @@
             
             <div id="stok-akun-management-view" style="display: none;">
                  <header class="view-header">
+                    <button class="action-button btn-secondary back-to-menu-btn"><i class="fas fa-arrow-left"></i> Menu</button>
                     <h1>Manajemen Stok Penawaran</h1>
                     <div class="actions">
                         <button id="add-stok-akun-btn" class="action-button btn-success"><i class="fas fa-plus"></i> Tambah Penawaran</button>
@@ -608,6 +711,7 @@
             
             <div id="stok-kredensial-management-view" style="display: none;">
                  <header class="view-header">
+                    <button class="action-button btn-secondary back-to-menu-btn"><i class="fas fa-arrow-left"></i> Menu</button>
                     <h1>Manajemen Stok Kredensial</h1>
                     <div class="actions">
                         <button id="add-stok-kredensial-btn" class="action-button btn-success"><i class="fas fa-plus"></i> Tambah Kredensial</button>
@@ -625,6 +729,7 @@
 
             <div id="settings-view" style="display: none;">
                 <header class="view-header">
+                    <button class="action-button btn-secondary back-to-menu-btn"><i class="fas fa-arrow-left"></i> Menu</button>
                     <h1>App Settings</h1>
                 </header>
                 <div class="settings-grid">
@@ -866,6 +971,7 @@
                         <select id="edit-stok-kredensial-gameType" class="input-field" required>
                             <option value="BUSSID">BUSSID</option>
                             <option value="TRUCKSID">TRUCKSID</option>
+                            <option value="BUSSID/TRUCKSID">BUSSID/TRUCKSID</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -905,6 +1011,7 @@
                         <select id="add-stok-kredensial-gameType" class="input-field" required>
                             <option value="BUSSID">BUSSID</option>
                             <option value="TRUCKSID">TRUCKSID</option>
+                            <option value="BUSSID/TRUCKSID">BUSSID/TRUCKSID</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -945,9 +1052,11 @@
             </div>
         </div>
     </div>
-    <div id="toast-container"></div><script type="module">
+    <div id="toast-container"></div>
+    
+<script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, getDoc, deleteField, orderBy, query } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, getDoc, deleteField, orderBy, query, onSnapshot } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -967,11 +1076,13 @@
         let allUsers = [], displayedUsers = [], currentPage = 1, allStokAkun = [], allStokKredensial = [];
         const rowsPerPage = 10;
         let appSettings = {};
+        let unsubscribeListeners = []; // Untuk menyimpan semua listener realtime
 
         // DOM element references
         const dom = { 
             loginPage: document.getElementById('login-page'), 
             adminPanel: document.getElementById('admin-panel'), 
+            mainMenuView: document.getElementById('main-menu-view'),
             userCardContainer: document.getElementById('user-card-container'),
             pendingTransactionContainer: document.getElementById('pending-transaction-container'),
             stokAkunCardContainer: document.getElementById('stok-akun-card-container'),
@@ -988,13 +1099,6 @@
             editStokKredensialModal: document.getElementById('edit-stok-kredensial-modal'),
             addStokKredensialModal: document.getElementById('add-stok-kredensial-modal'),
             confirmModal: document.getElementById('confirm-modal'),
-            nav: {
-                users: document.getElementById('nav-users'),
-                transactions: document.getElementById('nav-transactions'),
-                stokAkun: document.getElementById('nav-stok-akun'),
-                stokKredensial: document.getElementById('nav-stok-kredensial'),
-                settings: document.getElementById('nav-settings')
-            },
             views: {
                 users: document.getElementById('user-management-view'),
                 transactions: document.getElementById('transaction-management-view'),
@@ -1014,18 +1118,72 @@
         };
 
         // --- VIEW MANAGEMENT ---
+        const showMainMenu = () => {
+            Object.values(dom.views).forEach(view => view.style.display = 'none');
+            dom.mainMenuView.style.display = 'block';
+            document.querySelector('.header-title').innerHTML = '<i class="fas fa-gamepad"></i> Auth Tools';
+        };
+
         const showView = async (viewName) => {
             Object.values(dom.views).forEach(view => view.style.display = 'none');
-            Object.values(dom.nav).forEach(navLink => navLink.classList.remove('active'));
+            dom.mainMenuView.style.display = 'none';
             
             dom.views[viewName].style.display = 'block';
-            dom.nav[viewName].classList.add('active');
+
+            const viewTitle = dom.views[viewName].querySelector('h1').textContent;
+            document.querySelector('.header-title').innerHTML = `<i class="fas fa-bars"></i> ${viewTitle}`;
             
             if (viewName === 'users') await fetchUsers();
             else if (viewName === 'transactions') await fetchAndRenderTransactions();
             else if (viewName === 'stokAkun') await fetchStokAkun();
             else if (viewName === 'stokKredensial') await fetchStokKredensial();
             else if (viewName === 'settings') await loadAndDisplaySettings();
+        };
+
+        // --- REALTIME LISTENERS ---
+        const setupRealtimeListeners = () => {
+            // Listener untuk Notifikasi Transaksi Pending
+            const usersRef = collection(db, "users");
+            const unsubscribeUsers = onSnapshot(usersRef, (querySnapshot) => {
+                const pendingCount = querySnapshot.docs.reduce((count, doc) => {
+                    const user = doc.data();
+                    if ((user.pendingTransaction && user.pendingTransaction > 0) || user.pendingSubscription || (user.akunJualStatus && user.akunJualStatus.status === 'Di Proses')) {
+                        return count + 1;
+                    }
+                    return count;
+                }, 0);
+
+                const badge = document.getElementById('pending-trx-badge');
+                if (pendingCount > 0) {
+                    badge.textContent = pendingCount;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            });
+            unsubscribeListeners.push(unsubscribeUsers);
+
+            // Listener untuk Status Maintenance
+            const settingsRef = doc(db, "settings", "appConfig");
+            const unsubscribeSettings = onSnapshot(settingsRef, (docSnap) => {
+                appSettings = docSnap.exists() ? docSnap.data() : {};
+                const isActive = appSettings.maintenance?.isActive || false;
+                
+                // Update UI untuk kedua toggle
+                document.getElementById('maintenance-toggle').checked = isActive;
+                document.getElementById('main-menu-maintenance-toggle').checked = isActive;
+                
+                // Update pesan di halaman settings jika ada
+                if(document.getElementById('maintenance-message')) {
+                    document.getElementById('maintenance-message').value = appSettings.maintenance?.message || '';
+                }
+            });
+            unsubscribeListeners.push(unsubscribeSettings);
+        };
+
+        const cleanupListeners = () => {
+            unsubscribeListeners.forEach(unsubscribe => unsubscribe());
+            unsubscribeListeners = [];
         };
 
         // --- USER MANAGEMENT FUNCTIONS ---
@@ -1758,15 +1916,19 @@
         };
         
         // --- SETTINGS MANAGEMENT FUNCTIONS ---
+        const updateMaintenanceStatusInFirestore = async (isActive) => {
+             const message = document.getElementById('maintenance-message')?.value || appSettings.maintenance?.message || '';
+            try {
+                await setDoc(doc(db, "settings", "appConfig"), { maintenance: { isActive, message } }, { merge: true });
+                showToast(`Mode perbaikan ${isActive ? 'diaktifkan' : 'dinonaktifkan'}.`, 'success');
+            } catch (error) { 
+                showToast('Gagal menyimpan pengaturan maintenance.', 'error');
+            }
+        };
+
         const loadAndDisplaySettings = async () => {
             try {
-                const docRef = doc(db, "settings", "appConfig");
-                const docSnap = await getDoc(docRef);
-                appSettings = docSnap.exists() ? docSnap.data() : {};
-
-                document.getElementById('maintenance-toggle').checked = appSettings.maintenance?.isActive || false;
-                document.getElementById('maintenance-message').value = appSettings.maintenance?.message || '';
-
+                // Data sudah diambil oleh listener realtime, tinggal update UI
                 document.getElementById('global-message-title').value = appSettings.welcomeMessages?.global?.title || '';
                 document.getElementById('global-message-content').value = appSettings.welcomeMessages?.global?.content || '';
                 document.getElementById('global-message-logins').value = appSettings.welcomeMessages?.global?.targetLogins || 1;
@@ -1782,16 +1944,7 @@
                     option.textContent = user.username;
                     userSelect.appendChild(option);
                 });
-            } catch (error) { showToast('Gagal memuat pengaturan.', 'error'); }
-        };
-
-        const handleSaveMaintenance = async () => {
-            const isActive = document.getElementById('maintenance-toggle').checked;
-            const message = document.getElementById('maintenance-message').value;
-            try {
-                await setDoc(doc(db, "settings", "appConfig"), { maintenance: { isActive, message } }, { merge: true });
-                showToast(`Mode perbaikan ${isActive ? 'diaktifkan' : 'dinonaktifkan'}.`, 'success');
-            } catch (error) { showToast('Gagal menyimpan pengaturan.', 'error'); }
+            } catch (error) { showToast('Gagal memuat pengaturan pesan.', 'error'); }
         };
 
         const handleSaveWelcomeMessage = async (type) => {
@@ -1867,8 +2020,15 @@
             
             document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
-            Object.keys(dom.nav).forEach((viewName) => {
-                dom.nav[viewName].addEventListener('click', (e) => { e.preventDefault(); showView(viewName); });
+            document.querySelectorAll('.menu-grid-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const viewName = e.currentTarget.dataset.view;
+                    showView(viewName);
+                });
+            });
+
+            document.querySelectorAll('.back-to-menu-btn').forEach(button => {
+                button.addEventListener('click', showMainMenu);
             });
             
             document.getElementById('refresh-users-btn').addEventListener('click', fetchUsers);
@@ -1891,8 +2051,15 @@
             document.getElementById('add-stok-kredensial-form').addEventListener('submit', handleSaveNewStokKredensial);
             document.getElementById('edit-stok-kredensial-form').addEventListener('submit', handleUpdateStokKredensial);
             
-            document.getElementById('maintenance-toggle').addEventListener('change', handleSaveMaintenance);
-            document.getElementById('maintenance-message').addEventListener('input', handleSaveMaintenance);
+            // Listener baru
+            document.getElementById('quick-add-credential-btn').addEventListener('click', () => dom.addStokKredensialModal.style.display = 'flex');
+            document.getElementById('main-menu-maintenance-toggle').addEventListener('change', (e) => updateMaintenanceStatusInFirestore(e.target.checked));
+            document.getElementById('maintenance-toggle').addEventListener('change', (e) => updateMaintenanceStatusInFirestore(e.target.checked));
+            document.getElementById('maintenance-message').addEventListener('input', () => {
+                const isActive = document.getElementById('maintenance-toggle').checked;
+                updateMaintenanceStatusInFirestore(isActive);
+            });
+
             document.getElementById('global-message-form').addEventListener('submit', (e) => { e.preventDefault(); handleSaveWelcomeMessage('global'); });
             document.getElementById('newUser-message-form').addEventListener('submit', (e) => { e.preventDefault(); handleSaveWelcomeMessage('newUser'); });
             document.getElementById('specific-message-form').addEventListener('submit', handleSendSpecificMessage);
@@ -1991,10 +2158,13 @@
             if (user) {
                 dom.loginPage.style.display = 'none';
                 dom.adminPanel.style.display = 'flex';
-                showView('users');
+                cleanupListeners(); // Hapus listener lama jika ada (untuk mencegah duplikasi)
+                setupRealtimeListeners(); // Siapkan listener baru
+                showMainMenu();
             } else {
                 dom.loginPage.style.display = 'flex';
                 dom.adminPanel.style.display = 'none';
+                cleanupListeners(); // Hapus listener saat logout
             }
         });
 
