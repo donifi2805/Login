@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel=stylesheet>
 <script src=https://unpkg.com/@phosphor-icons/web></script>
 <style>
-:root{--bg-primary:#111827;--bg-secondary:#1f2937;--bg-tertiary:#374151;--border-color:#4b5563;--text-primary:#f9fafb;--text-secondary:#d1d5db;--accent-blue:#3b82f6;--accent-green:#22c55e;--accent-red:#ef4444;--accent-cyan:#06b6d4;--premium-gold:#fbbf24}*{margin:0;padding:0;box-sizing:border-box}html,body{font-family:'Inter',sans-serif;background-color:var(--bg-primary);color:var(--text-primary);-webkit-user-select:none;user-select:none;font-size:10px}#app-layout{display:none;flex-direction:column;min-height:100vh;width:100%}
+:root{--bg-primary:#111827;--bg-secondary:#1f2937;--bg-tertiary:#374151;--border-color:#4b5563;--text-primary:#f9fafb;--text-secondary:#d1d5db;--accent-blue:#3b82f6;--accent-green:#22c55e;--accent-red:#ef4444;--accent-cyan:#06b6d4;--premium-gold:#fbbf24}*{margin:0;padding:0;box-sizing:border-box}html,body{font-family:'Inter',sans-serif;background-color:var(--bg-primary);color:var(--text-primary);-webkit-user-select:none;user-select:none;font-size:10px}#app-layout{display:none;flex-direction:column;min-height:100vh;width:100%; transition: filter 0.3s ease-in-out;}
 
 /* --- Start: Pre-loader --- */
 #preloader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-primary); z-index: 20000; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease-out; }
@@ -68,13 +68,19 @@
 /* --- End: Login Page Redesign --- */
 
 #register-container,#forgot-password-container{display:none}
-#app-layout,#profile-container,#topup-container,#buy-ub-container,#qris-display-container,#my-account-container,#subscription-container,#subscription-qris-container,#stok-akun-container,#jual-akun-container{display:none}
+#app-layout,#profile-container,#topup-container,#buy-ub-container,#qris-display-container,#my-account-container,#subscription-container,#stok-akun-container,#jual-akun-container{display:none}
 h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.subtitle{font-size:.8em;color:var(--text-secondary);margin-bottom:15px}.input-group{margin-bottom:12px;position:relative}.input-group .input-icon{position:absolute;top:50%;left:13px;transform:translateY(-50%);color:var(--text-secondary);font-size:1.1em}.input-field{width:100%;padding:10px 12px 10px 40px;background-color:var(--bg-primary);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:.9em}.input-field.password-input{padding-right:40px}.password-toggle{position:absolute;top:50%;right:10px;transform:translateY(-50%);cursor:pointer;color:var(--text-secondary);width:20px;height:20px}.input-field:focus{outline:0;border-color:var(--accent-blue);box-shadow:0 0 0 3px rgba(59,130,246,0.2)}.action-button{width:100%;padding:10px;border-radius:8px;color:white;font-size:1em;font-weight:600;cursor:pointer;border:0;transition:all .2s ease}.action-button:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 4px 15px rgba(0,0,0,0.2)}.action-button:disabled{background-color:var(--bg-tertiary);cursor:not-allowed;opacity:.7}.btn-green{background-color:var(--accent-green)}.btn-primary{background:linear-gradient(45deg,var(--accent-blue),#2563eb)}.btn-red{background-color:var(--accent-red)}.btn-secondary{background-color:var(--bg-tertiary)}.btn-cyan{background-color:var(--accent-cyan)}.switch-link{margin-top:15px;font-size:.85em;color:var(--text-secondary);text-align:center}.switch-link a{color:var(--accent-blue);text-decoration:none;font-weight:600}.switch-link a:hover{text-decoration:underline}.switch-link.admin-link{margin-top:8px;font-size:0.75em}#other-account-form-container{padding:8px 12px;max-width:300px;margin:0 auto}#other-account-form-container .subtitle{font-size:.7em;margin-bottom:8px;line-height:1.3}
 #all-profiles-grid{display:grid;grid-template-columns:1fr;gap:12px}
 .profile-card{background-color:#2d2e33;border-radius:8px;border:1px solid var(--border-color);position:relative;overflow:hidden;transition:transform .3s ease,box-shadow .3s ease;perspective:1000px;display:flex;flex-direction:column;width:100%;max-width:350px;margin:0 auto}
 .profile-card.hidden{display:none}.profile-card:hover{transform:translateY(-3px);box-shadow:0 6px 12px rgba(0,0,0,0.2)}.profile-card-main-view,.profile-card-settings-view{padding:10px;display:flex;flex-direction:column;backface-visibility:hidden;transition:transform .6s ease;width:100%;flex-grow:1}.profile-card-main-view{transform:rotateY(0deg)}.profile-card-settings-view{position:absolute;top:0;left:0;right:0;bottom:0;background-color:var(--bg-secondary);transform:rotateY(180deg)}.profile-card.settings-active .profile-card-main-view{transform:rotateY(-180deg)}.profile-card.settings-active .profile-card-settings-view{transform:rotateY(0deg)}.profile-card-settings-view h3{font-size:.75em;margin-bottom:6px}.settings-info-item{padding:1px 5px;margin-bottom:2px}.settings-info-item .label{font-size:.55em;line-height:1.1}.settings-info-item .value{font-size:.65em;line-height:1.1}.settings-actions{margin-top:8px}.settings-actions .action-button{padding:4px;font-size:.65em}.player-display-container{margin:6px 0 8px 0;display:flex;flex-direction:column;gap:5px}
 .player-name-plate,.player-ub-plate{background-size:100% 100%;background-repeat:no-repeat;background-position:center;height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;width:78%;margin:0 auto;border-radius:6px}
-.player-name-plate{background-image:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiy8bkfRaz2UWiO9tnX8IDy9OJwti__IkaN5CBSsybGTzWG7_sSqWTmOBRj0X3NEQQv1cW1thZcmPSjVcpS2JSamwsCN4_u_QQqzdYa7BhyfM8QwQAsPMVeokL1rUfxRAZx_s_46Gb27M1u40kP55xVpyjBgBcuDGs-CD9t0B4IgnkyS9DS228u_sgdkc4/s1600/IMG_20250812_161453.jpg')}.player-ub-plate{background-image:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhJhoq7BI37iRAjcjRibzR3_-YgzMDy00OkGH_omg-c8FC1K2OmJdgyhiw8ARhhbLa7Bnip1h9_nBk2bdPJ3lhsdjgi9NTL43KQSH8Z4g8pT7RQLnUzdqqZc8Sn1ZZJm_3zJ-WwEhnWGCyW8cIAE_u8HewZspCCvr7l-EHkq8ln3pAXe_MkVVOx-9WA5UM/s1600/IMG_20250812_161504.jpg')}.player-name-text,.player-ub-text{color:#fff;font-weight:700;font-size:.765em;text-shadow:1px 1px 2px rgba(0,0,0,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-grow:1;text-align:center}.plate-icon{font-size:1.2em;color:white;cursor:pointer;opacity:.8;transition:opacity .2s,transform .2s;flex-shrink:0}.plate-icon:hover{opacity:1;transform:scale(1.1)}.plate-icon-placeholder{width:1.2em;flex-shrink:0}.info-banner{border:1px solid var(--accent-green);color:var(--text-primary);background-color:rgba(34,197,94,0.1);padding:10px 12px;border-radius:6px;text-align:center;font-weight:500;margin-bottom:15px;font-size:.8em}.current-balance-display{color:var(--text-secondary);background-color:var(--bg-primary);padding:8px 10px;border-radius:6px;margin-bottom:12px;text-align:center;font-size:.9em}.current-balance-display span{font-weight:700;color:var(--accent-green);font-size:1em}.ub-store-display{background:var(--bg-tertiary);border-radius:8px;padding:12px;margin-bottom:12px;border:1px solid var(--border-color)}.display-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.display-label{font-weight:600;color:var(--text-secondary);font-size:.85em}.display-value{font-weight:700;font-size:1.1em}.display-value.rp{color:#f59e0b}.display-value.ub{color:var(--accent-green)}#ub-slider{width:100%;margin:6px 0}.buy-ub-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.buy-ub-extra-actions{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:10px}.hasil-text.error{background-color:#991b1b;color:#fee2e2;margin-top:12px;padding:8px;border-radius:6px;font-weight:600;display:block;font-size:.85em}.topup-options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}.topup-option-btn{background-color:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-primary);padding:12px 8px;border-radius:8px;cursor:pointer;font-weight:600;font-size:.9em;transition:all .2s ease}.topup-option-btn:hover{background-color:var(--bg-primary);border-color:var(--accent-blue)}#qris-display-container img,#subscription-qris-container img{width:100%;max-width:200px;border-radius:8px;margin-bottom:12px;background:white;cursor:pointer}.important-notice{background-color:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.5);padding:10px;border-radius:6px;margin-bottom:15px}.important-notice .notice-title{font-weight:700;color:#f59e0b;display:block;margin-bottom:4px;font-size:.9em}.important-notice .notice-amount{font-weight:700;color:#fff;font-size:1.2em;letter-spacing:1px}.history-section{margin-top:25px;padding-top:20px;border-top:1px solid var(--border-color)}.history-section h3{font-size:1.2em;margin-bottom:12px;text-align:center}.history-tables-container{display:grid;grid-template-columns:1fr;gap:20px}.history-table h4{font-size:.9em;margin-bottom:10px;color:var(--text-secondary)}.history-list{list-style:none;max-height:300px;overflow-y:auto;padding-right:6px;border:1px solid var(--border-color);border-radius:6px;padding:6px}.history-list li{background-color:var(--bg-tertiary);padding:10px;border-radius:6px;margin-bottom:6px;border-left:3px solid var(--border-color)}.history-list li.topup{border-left-color:var(--accent-green)}.history-list li.purchase{border-left-color:var(--accent-red)}.history-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.history-item-header .amount{font-size:1em;font-weight:700}.history-item-header .amount.topup{color:var(--accent-green)}.history-item-header .amount.purchase{color:var(--accent-red)}.history-item-footer{font-size:.7em;color:var(--text-secondary)}.history-list .no-history{text-align:center;padding:12px;color:var(--text-secondary);background:0;border:0}#toast-container{position:fixed;top:15px;right:15px;z-index:10005;display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none}.toast{background:rgba(55,65,81,0.9);color:#fff;padding:10px 15px;border-radius:6px;box-shadow:0 6px 25px rgba(0,0,0,0.3);min-width:220px;max-width:320px;text-align:center;font-size:.9em;font-weight:600;border-left-width:4px;border-left-style:solid;border-left-color:var(--border-color);pointer-events:all;opacity:0;transform:translateX(100%);transition:all .3s ease-in-out}.toast.show{opacity:1;transform:translateX(0)}.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:10002;display:none;padding:16px}.modal-content{background-color:var(--bg-secondary);padding:20px;border-radius:10px;width:100%;max-width:450px;position:relative;border:1px solid var(--border-color)}.modal-close{position:absolute;top:10px;right:12px;font-size:2em;color:var(--text-secondary);cursor:pointer;line-height:1}.modal-warning{background-color:rgba(239,68,68,0.1);border:1px solid var(--accent-red);padding:10px;border-radius:6px;margin-top:12px;margin-bottom:15px;color:var(--text-primary)}.modal-warning p{margin-bottom:6px;line-height:1.5;font-size:.85em}.modal-actions{display:flex;flex-direction:column;gap:10px}.modal-actions .action-button{text-align:center;text-decoration:none;padding:8px;font-size:.9em}
+.player-name-plate{background-image:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiy8bkfRaz2UWiO9tnX8IDy9OJwti__IkaN5CBSsybGTzWG7_sSqWTmOBRj0X3NEQQv1cW1thZcmPSjVcpS2JSamwsCN4_u_QQqzdYa7BhyfM8QwQAsPMVeokL1rUfxRAZx_s_46Gb27M1u40kP55xVpyjBgBcuDGs-CD9t0B4IgnkyS9DS228u_sgdkc4/s1600/IMG_20250812_161453.jpg')}.player-ub-plate{background-image:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhJhoq7BI37iRAjcjRibzR3_-YgzMDy00OkGH_omg-c8FC1K2OmJdgyhiw8ARhhbLa7Bnip1h9_nBk2bdPJ3lhsdjgi9NTL43KQSH8Z4g8pT7RQLnUzdqqZc8Sn1ZZJm_3zJ-WwEhnWGCyW8cIAE_u8HewZspCCvr7l-EHkq8ln3pAXe_MkVVOx-9WA5UM/s1600/IMG_20250812_161504.jpg')}.player-name-text,.player-ub-text{color:#fff;font-weight:700;font-size:.765em;text-shadow:1px 1px 2px rgba(0,0,0,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-grow:1;text-align:center}.plate-icon{font-size:1.2em;color:white;cursor:pointer;opacity:.8;transition:opacity .2s,transform .2s;flex-shrink:0}.plate-icon:hover{opacity:1;transform:scale(1.1)}.plate-icon-placeholder{width:1.2em;flex-shrink:0}.info-banner{border:1px solid var(--accent-green);color:var(--text-primary);background-color:rgba(34,197,94,0.1);padding:10px 12px;border-radius:6px;text-align:center;font-weight:500;margin-bottom:15px;font-size:.8em}.current-balance-display{color:var(--text-secondary);background-color:var(--bg-primary);padding:8px 10px;border-radius:6px;margin-bottom:12px;text-align:center;font-size:.9em}.current-balance-display span{font-weight:700;color:var(--accent-green);font-size:1em}.ub-store-display{background:var(--bg-tertiary);border-radius:8px;padding:12px;margin-bottom:12px;border:1px solid var(--border-color)}.display-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.display-label{font-weight:600;color:var(--text-secondary);font-size:.85em}.display-value{font-weight:700;font-size:1.1em}.display-value.rp{color:#f59e0b}.display-value.ub{color:var(--accent-green)}#ub-slider{width:100%;margin:6px 0}.buy-ub-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.buy-ub-extra-actions{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:10px}.hasil-text.error{background-color:#991b1b;color:#fee2e2;margin-top:12px;padding:8px;border-radius:6px;font-weight:600;display:block;font-size:.85em}.topup-options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}.topup-option-btn{background-color:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-primary);padding:12px 8px;border-radius:8px;cursor:pointer;font-weight:600;font-size:.9em;transition:all .2s ease}.topup-option-btn:hover{background-color:var(--bg-primary);border-color:var(--accent-blue)}
+#qris-display-container .qris-image-wrapper img{width:100%;max-width:200px;border-radius:8px;margin-bottom:12px;background:white;cursor:pointer}
+.important-notice{background-color:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.5);padding:10px;border-radius:6px;margin-bottom:15px}.important-notice .notice-title{font-weight:700;color:#f59e0b;display:block;margin-bottom:4px;font-size:.9em}.important-notice .notice-amount{font-weight:700;color:#fff;font-size:1.2em;letter-spacing:1px}
+.qris-actions-wrapper {display: flex; flex-direction: column; gap: 10px;}
+.qris-main-actions {display: flex; gap: 10px;}
+.qris-main-actions .action-button {flex: 1;}
+.history-section{margin-top:25px;padding-top:20px;border-top:1px solid var(--border-color)}.history-section h3{font-size:1.2em;margin-bottom:12px;text-align:center}.history-tables-container{display:grid;grid-template-columns:1fr;gap:20px}.history-table h4{font-size:.9em;margin-bottom:10px;color:var(--text-secondary)}.history-list{list-style:none;max-height:300px;overflow-y:auto;padding-right:6px;border:1px solid var(--border-color);border-radius:6px;padding:6px}.history-list li{background-color:var(--bg-tertiary);padding:10px;border-radius:6px;margin-bottom:6px;border-left:3px solid var(--border-color)}.history-list li.topup{border-left-color:var(--accent-green)}.history-list li.purchase{border-left-color:var(--accent-red)}.history-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.history-item-header .amount{font-size:1em;font-weight:700}.history-item-header .amount.topup{color:var(--accent-green)}.history-item-header .amount.purchase{color:var(--accent-red)}.history-item-footer{font-size:.7em;color:var(--text-secondary)}.history-list .no-history{text-align:center;padding:12px;color:var(--text-secondary);background:0;border:0}#toast-container{position:fixed;top:15px;right:15px;z-index:10005;display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none}.toast{background:rgba(55,65,81,0.9);color:#fff;padding:10px 15px;border-radius:6px;box-shadow:0 6px 25px rgba(0,0,0,0.3);min-width:220px;max-width:320px;text-align:center;font-size:.9em;font-weight:600;border-left-width:4px;border-left-style:solid;border-left-color:var(--border-color);pointer-events:all;opacity:0;transform:translateX(100%);transition:all .3s ease-in-out}.toast.show{opacity:1;transform:translateX(0)}.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:10002;display:none;padding:16px}.modal-content{background-color:var(--bg-secondary);padding:20px;border-radius:10px;width:100%;max-width:450px;position:relative;border:1px solid var(--border-color)}.modal-close{position:absolute;top:10px;right:12px;font-size:2em;color:var(--text-secondary);cursor:pointer;line-height:1}.modal-warning{background-color:rgba(239,68,68,0.1);border:1px solid var(--accent-red);padding:10px;border-radius:6px;margin-top:12px;margin-bottom:15px;color:var(--text-primary)}.modal-warning p{margin-bottom:6px;line-height:1.5;font-size:.85em}.modal-actions{display:flex;flex-direction:column;gap:10px}.modal-actions .action-button{text-align:center;text-decoration:none;padding:8px;font-size:.9em}
 
 /* --- Start: My Account Page Redesign --- */
 #my-account-container h2 { text-align: center; font-size: 1.5em; margin-bottom: 20px; }
@@ -95,6 +101,12 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 #maintenance-modal .modal-content{text-align:center;max-width:400px;background-color:var(--bg-primary);border: 1px solid var(--premium-gold);}
 #maintenance-modal i {font-size: 3em;color: var(--premium-gold);margin-bottom: 15px;}
 #maintenance-modal-message{font-size:1em;line-height:1.6;color:var(--text-secondary);margin-bottom:0}
+
+/* Ban Modal Styling */
+#ban-modal {z-index: 20000;} /* Ensure it's on top of everything */
+#ban-modal .modal-content { text-align: center; border-color: var(--accent-red); background-color: var(--bg-primary); }
+#ban-modal i { font-size: 3em; color: var(--accent-red); margin-bottom: 15px; }
+#ban-modal h2 { color: var(--accent-red); }
 
 #confirmation-modal .modal-content { max-width: 380px; }
 .invoice-style-confirmation { font-family: 'Courier New', Courier, monospace; background-color: #f5f5f5; color: #333; padding: 15px; border-radius: 5px; border: 1px solid #ccc; font-size: 0.9em; }
@@ -124,7 +136,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 @media screen and (max-width:767px){
 .nav-item a .nav-icon-img{margin-right:0}
 .nav-text { font-size: 3.2vw; } /* Ukuran fleksibel di mobile */
-}@media screen and (max-width:480px){h2{font-size:1.2em}.subtitle{font-size:.75em}.content-card{padding:10px 15px}#login-container,#register-container,#forgot-password-container{padding:20px 25px}.info-banner,.important-notice{padding:8px;font-size:.8em}#akun-showcase-grid{grid-template-columns:1fr}.modal-content{padding:15px}.history-tables-container{gap:12px}.history-list li{padding:8px}#topup-options-grid{grid-template-columns:1fr}.buy-ub-actions,.buy-ub-extra-actions{grid-template-columns:1fr}.gmail-login-style-container{padding:25px 15px 20px}.fb-login-body{padding:12px}.subscription-grid{grid-template-columns:1fr}
+}@media screen and (max-width:480px){h2{font-size:1.2em}.subtitle{font-size:.75em}.content-card{padding:10px 15px}#login-container,#register-container,#forgot-password-container{padding:20px 25px}.info-banner,.important-notice{padding:8px;font-size:.8em}#akun-showcase-grid{grid-template-columns:1fr}.modal-content{padding:15px}.history-tables-container{gap:12px}.history-list li{padding:8px}.topup-options-grid{grid-template-columns:1fr}.buy-ub-actions,.buy-ub-extra-actions{grid-template-columns:1fr}.gmail-login-style-container{padding:25px 15px 20px}.fb-login-body{padding:12px}.subscription-grid{grid-template-columns:1fr}
 .nav-text { font-size: 3.5vw; }
 }
 .akun-card .credential-info-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}.akun-card .credential-item{display:flex;align-items:center;background-color:var(--bg-tertiary);padding:8px 10px;border-radius:6px}.akun-card .credential-label{font-size:.9em;color:var(--text-secondary);flex-basis:100px}.akun-card .credential-value{font-size:1.1em;font-weight:700;flex-grow:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.akun-card .copy-btn{background:none;border:none;color:var(--accent-blue);font-size:1.4em;cursor:pointer;padding:0 5px;margin-left:10px}.akun-card .processing-status{text-align:center;padding:20px;font-size:1.1em;font-weight:700;color:var(--accent-cyan)}
@@ -544,7 +556,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 <div id=stok-akun-container class=content-container>
 <div class="stok-akun-header-controls">
     <h2>Beli Akun</h2>
-    <p class=subtitle>Daftar akun yang tersedia. Beli akun menggunakan saldo Anda.</p>
+    <p class=subtitle>Daftar akun yang tersedia. Beli akun menggunakan saldo atau pembayaran langsung.</p>
     <div class="stok-akun-controls-wrapper" style="display: flex; gap: 10px; align-items: center;">
         <div class="stok-akun-filter-buttons">
             <button class="filter-btn active" id="show-available-btn">Tersedia</button>
@@ -610,17 +622,21 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 </div>
 </div>
 <div id=qris-display-container class=content-card>
-<h2>Scan untuk Membayar</h2>
-<div style=text-align:center>
+<h2 id="qris-title">Scan untuk Membayar</h2>
+<p class=subtitle id="qris-subtitle" style="text-align:center;font-weight:bold;color:var(--text-primary)"></p>
+<div style=text-align:center class="qris-image-wrapper">
 <img id=qris-image src=https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjYrQgd8P1fWDAzUWlgGSVCCOGsgIq9g92fKW8Y4FHNw_ztExhdgNq0nx8L1IHLAaVjBvjW6wxCqMU_0lBSAkVhDULa2BEX0MvkUWxTeBCwrWTDxzMNcpgEgVkcrIfG4ZGakv3ldA8okm1jlHOPV6tvy1WQQ2ubpP4jQVv6PGDDzCKetaN8mdt_EOO0UKY/s1600/QRIS.png alt="QRIS Code">
 </div>
 <div class=important-notice>
 <span class=notice-title>PENTING: Transfer Sesuai Nominal Unik</span>
 <span id=qris-amount-display class=notice-amount>Rp 0</span>
 </div>
-<div class=buy-ub-actions>
-<button id=cancel-qris-btn class="action-button btn-red">Batalkan Transaksi</button>
-<button id=confirm-payment-btn class="action-button btn-green">Saya Sudah Transfer</button>
+<div class="qris-actions-wrapper">
+    <div class="qris-main-actions">
+        <button id=cancel-qris-btn class="action-button btn-red">Batalkan</button>
+        <button id=confirm-payment-btn class="action-button btn-green">Saya Sudah Transfer</button>
+    </div>
+    <a href="https://wa.me/6285156776974" target="_blank" class="action-button btn-secondary"><i class="ph-bold ph-whatsapp-logo"></i> Hubungi Admin</a>
 </div>
 </div><div id=buy-ub-container class=content-card>
 <h2>Toko UB (<span id=buy-ub-game-name></span>)</h2>
@@ -694,22 +710,6 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 <button id=buy-permanent-sub-btn class="action-button btn-green">Beli Premium</button>
 </div>
 </div>
-</div>
-</div>
-<div id=subscription-qris-container class=content-card>
-<h2>Pembayaran Langganan</h2>
-<p class=subtitle id=sub-qris-package-name style=text-align:center;font-weight:bold;color:var(--text-primary)></p>
-<div style=text-align:center>
-<img id=sub-qris-image src=https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEifsIlVyECfE7iW14IC6-_Ot5pFguYRxkupdUFmzeAHMBDgMJ_KXJs14w3C6k1w7sY2cr2aFoAA7YBQWNtQC_JA8CjE3qyrdi0Rhes3aJ7czf_Qkui6Ha128LUN6fCI0DcazF2Inm9EivNZmiiQciH8XwLQad19BFXIlrOevmgHICqm9vALCXBYn2o7cj4/s1600/IMG_20250629_202856.jpg alt="QRIS Code">
-</div>
-<div class=important-notice>
-<span class=notice-title>PENTING: Transfer Sesuai Nominal Unik</span>
-<span id=sub-qris-amount-display class=notice-amount>Rp 0</span>
-</div>
-<p class=subtitle style=text-align:center;font-weight:600 id=sub-qris-timer>Batal Otomatis dalam: 06:00:00</p>
-<div class=buy-ub-actions>
-<button id=cancel-sub-qris-btn class="action-button btn-red">Batalkan Transaksi</button>
-<button id=confirm-sub-payment-btn class="action-button btn-green">Saya Sudah Transfer</button>
 </div>
 </div>
 </main>
@@ -848,6 +848,16 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 <p class=subtitle style=line-height:1.6;margin-bottom:25px>Masa Aktif Akun Anda Telah Berakhir. Harap hubungi Admin @donitata1717@dt17corp untuk memperpanjang.</p>
 </div>
 </div>
+<div id="ban-modal" class="modal-overlay">
+    <div class="modal-content">
+        <i class="ph-fill ph-prohibit"></i>
+        <h2>Akun Anda Diblokir</h2>
+        <p class="subtitle" style="line-height:1.6;margin-bottom:25px">
+            Akun ini telah ditangguhkan oleh admin. Silakan hubungi admin untuk informasi lebih lanjut atau untuk membuka blokir.
+        </p>
+        <a href="https://wa.me/6285156776974" target="_blank" class="action-button btn-green"><i class="ph-bold ph-whatsapp-logo"></i> Hubungi Admin</a>
+    </div>
+</div>
 <div id="welcome-message-modal" class="modal-overlay">
     <div class="modal-content">
         <span class="modal-close" id="close-welcome-modal-btn">×</span>
@@ -972,10 +982,13 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
     </div>
 </div><script type=module>
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, query, collection, where, getDocs, updateDoc, getDoc, addDoc, serverTimestamp, orderBy, limit, setDoc, deleteDoc, Timestamp, runTransaction } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, query, collection, where, getDocs, updateDoc, getDoc, addDoc, serverTimestamp, orderBy, limit, setDoc, deleteDoc, Timestamp, runTransaction, deleteField } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+        import { getDatabase, ref, onValue, onDisconnect, set, serverTimestamp as dbServerTimestamp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
         
-        const firebaseConfig = { apiKey: "AIzaSyB3KJT9eh42V6ytLoY5e4ozzDXY4sHhado", authDomain: "donitata1717-f10f7.firebaseapp.com", projectId: "donitata1717-f10f7", storageBucket: "donitata1717-f10f7.appspot.com", messagingSenderId: "760325542999", appId: "1:760325542999:web:be97c17580f64407e33f12" };const app = initializeApp(firebaseConfig);
+        const firebaseConfig = { apiKey: "AIzaSyB3KJT9eh42V6ytLoY5e4ozzDXY4sHhado", authDomain: "donitata1717-f10f7.firebaseapp.com", projectId: "donitata1717-f10f7", storageBucket: "donitata1717-f10f7.appspot.com", messagingSenderId: "760325542999", appId: "1:760325542999:web:be97c17580f64407e33f12", databaseURL: "https://donitata1717-f10f7-default-rtdb.asia-southeast1.firebasedatabase.app" };
+        const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const rtdb = getDatabase(app);
         
         const TELEGRAM_BOT_TOKEN = "7899731117:AAEpxfFIMiTR_Y-L8ad-VRR5qBF1y5kg4t4"; // Token untuk notif pembayaran, jual akun, dll.
         const userActionBotToken = "8409996364:AAGoO10QZJqNEUdNOuy9vkwsdB89m_-s-TI"; // Token khusus notif login, logout, topup, daftar.
@@ -1003,7 +1016,6 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
         let activeGameTab = 'topupBussid';
         let isSubscriptionExpired = false;
         let initialContentLoaded = false;
-        let subQrisTimerInterval = null;
         let userToResetPasswordId = null;
         let accountsToSell = [];
         
@@ -1020,7 +1032,6 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                 buyUb: document.getElementById("buy-ub-container"),
                 qris: document.getElementById('qris-display-container'),
                 subscription: document.getElementById('subscription-container'),
-                subscriptionQris: document.getElementById('subscription-qris-container'),
                 stokAkun: document.getElementById('stok-akun-container'),
                 jualAkun: document.getElementById('jual-akun-container'),
             },
@@ -1051,6 +1062,9 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             },
             subscriptionExpiredModal: {
                 overlay: document.getElementById('subscription-expired-modal'),
+            },
+            banModal: {
+                overlay: document.getElementById('ban-modal')
             },
             statusModal: {
                 overlay: document.getElementById('account-status-modal'),
@@ -1151,9 +1165,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             
             if (dom.nav[pageName]) {
                 dom.nav[pageName].classList.add('active');
-            }
-
-            if (dom.content[pageToShow]) {
+            }if (dom.content[pageToShow]) {
                 dom.content[pageToShow].style.display = 'block';
                  if (pageToShow === 'profile') {
                     if (pageName === 'topupBussid' || pageName === 'topupTrucksid') {
@@ -1283,6 +1295,17 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     const oldData = { ...loggedInUser };
                     const newData = d.data();
                     loggedInUser = { ...newData, docId: d.id };
+
+                    // Ban System Check
+                    if (loggedInUser.isBanned) {
+                        showModal(dom.banModal.overlay);
+                        dom.appLayout.style.pointerEvents = 'none';
+                        dom.appLayout.style.filter = 'blur(4px)';
+                    } else {
+                        hideModal(dom.banModal.overlay);
+                        dom.appLayout.style.pointerEvents = 'auto';
+                        dom.appLayout.style.filter = 'none';
+                    }
                     
                     const wasPreviouslyExpired = isSubscriptionExpired;
                     updateHeaderInfo();
@@ -1296,37 +1319,27 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                         await showAppLayout();
                     }
                     
-                    // --- START: REAL-TIME QRIS UPDATE ---
-                    // Cek perubahan pada transaksi saldo
+                    // --- REAL-TIME QRIS UPDATE ---
                     if (oldData.pendingTransaction > 0 && !newData.pendingTransaction) {
                         const balanceIncreased = newData.saldo > oldData.saldo;
                         showToast(balanceIncreased ? `Top up Rp ${oldData.pendingTransaction.toLocaleString('id-ID')} berhasil!` : "Transaksi top up dibatalkan/ditolak.", balanceIncreased ? 'success' : 'error');
-                        if (dom.content.qris.style.display === 'block') {
-                            showTopupMenu();
-                        }
+                        if (dom.content.qris.style.display === 'block') showTopupMenu();
                     }
-
-                    // Cek perubahan pada transaksi langganan
                     if (oldData.pendingSubscription && !newData.pendingSubscription) {
-                        if (newData.accountType !== oldData.accountType) {
-                           showToast(`Selamat! Akun Anda telah di-upgrade ke ${newData.accountType}.`, 'success', 5000);
-                        } else {
-                           showToast("Transaksi langganan dibatalkan/ditolak.", 'error');
-                        }
-                        if (dom.content.subscriptionQris.style.display === 'block') {
-                            showPage('subscription');
-                        }
+                        if (newData.accountType !== oldData.accountType) showToast(`Selamat! Akun Anda telah di-upgrade ke ${newData.accountType}.`, 'success', 5000);
+                        else showToast("Transaksi langganan dibatalkan/ditolak.", 'error');
+                        if (dom.content.qris.style.display === 'block') showPage('subscription');
                     }
-                    // --- END: REAL-TIME QRIS UPDATE ---
+                    if (oldData.pendingAkunPurchase && !newData.pendingAkunPurchase) {
+                        showToast("Pembelian akun Anda telah dikonfirmasi oleh Admin!", "success", 5000);
+                        if (dom.content.qris.style.display === 'block') showPage('stokAkun');
+                    }
                     
                      // Cek status penjualan akun
                     if (newData.akunJualStatus && newData.akunJualStatus.status) {
                         dom.sellMenu.statusDisplay.textContent = newData.akunJualStatus.status;
-                        if (newData.akunJualStatus.status === "Selesai(Terbayar Admin)") {
-                            dom.sellMenu.statusDisplay.style.color = 'var(--accent-green)';
-                        } else {
-                            dom.sellMenu.statusDisplay.style.color = 'var(--accent-cyan)';
-                        }
+                        if (newData.akunJualStatus.status === "Selesai(Terbayar Admin)") dom.sellMenu.statusDisplay.style.color = 'var(--accent-green)';
+                        else dom.sellMenu.statusDisplay.style.color = 'var(--accent-cyan)';
                     }
 
                 } else {
@@ -1338,6 +1351,37 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                 showToast("Koneksi data akun terputus.", "error");
             });
         }
+        
+// --- ONLINE PRESENCE SYSTEM (SUDAH DIPERBAIKI) ---
+        function setupPresenceSystem() {
+            if (!loggedInUser?.docId) return;
+
+            // Menentukan lokasi penulisan status di FIRESTORE, di koleksi 'presence'
+            const firestoreStatusRef = doc(db, 'presence', loggedInUser.docId);
+
+            // Menyiapkan data untuk status 'online' dan 'offline'
+            const isOnlineForFirestore = {
+                status: 'online',
+                last_seen: serverTimestamp(), // Menggunakan stempel waktu dari server Firestore
+                username: loggedInUser.username
+            };
+            const isOfflineForFirestore = {
+                status: 'offline',
+                last_seen: serverTimestamp(), // Menggunakan stempel waktu dari server Firestore
+                username: loggedInUser.username
+            };
+
+            // Saat fungsi ini dijalankan (setelah login), langsung set status user menjadi 'online' di Firestore.
+            setDoc(firestoreStatusRef, isOnlineForFirestore);
+
+            // Jika user menutup tab browser, set statusnya menjadi 'offline'.
+            // Ini adalah pengaman tambahan.
+            window.addEventListener('beforeunload', () => {
+                setDoc(firestoreStatusRef, isOfflineForFirestore, { merge: true });
+            });
+        }
+
+
         async function login(event) {
             event.preventDefault();
             const btn = event.target.querySelector('button');
@@ -1357,7 +1401,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                 });
                 if (f) {
                     showToast("Login Berhasil! Memuat data...", "success");
-                    new Audio('sambutan.wav').play(); // Memutar suara sambutan
+                    new Audio('sambutan.wav').play();
                     sendTelegramMessage(`✅ *Login Berhasil*\n*Username:* \`${loggedInUser.username}\``, userActionBotToken);
                     
                     const newLoginCount = (loggedInUser.loginCount || 0) + 1;
@@ -1365,6 +1409,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     await updateDoc(userRef, { loginCount: newLoginCount });
                     loggedInUser.loginCount = newLoginCount;
                     
+                    setupPresenceSystem();
                     checkAndShowWelcomeMessage();
                     
                     setupRealtimeBalanceListener();
@@ -1410,6 +1455,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     saldo: 0,
                     accountType: 'USER',
                     loginCount: 0,
+                    isBanned: false,
                     masaAktifHingga: null,
                     pendingTransaction: 0,
                     pendingSubscription: null,
@@ -1430,11 +1476,12 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
         }
         function logout() {
             if (loggedInUser) {
+                const firestoreStatusRef = doc(db, 'presence', loggedInUser.docId);
+                setDoc(firestoreStatusRef, { status: 'offline', last_seen: serverTimestamp() }, { merge: true });
                 sendTelegramMessage(`👋 *Logout*\n*Username:* \`${loggedInUser.username}\``, userActionBotToken);
             }
             if (balanceListenerUnsubscribe) { balanceListenerUnsubscribe(); balanceListenerUnsubscribe = null; }
             if (stokAkunUnsubscribe) { stokAkunUnsubscribe(); stokAkunUnsubscribe = null; }
-            if (subQrisTimerInterval) { clearInterval(subQrisTimerInterval); subQrisTimerInterval = null; }
             loggedInUser = null;
             activeGameSessions = {};
             currentTransactionTarget = null;
@@ -1847,7 +1894,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                 slider.value = newPercentage;
             }
             
-            const isFreeAccess = loggedInUser.accountType === 'PREMIUM' || loggedInUser.accountType === 'Admin' || (loggedInUser.accountType === 'Langganan' && checkSubscriptionStatus());
+            const isFreeAccess = ['PREMIUM', 'Admin', 'Langganan'].includes(loggedInUser.accountType) && checkSubscriptionStatus();
             
             if (isFreeAccess) {
                 document.getElementById('rp-display-row').style.display = 'none';
@@ -1862,7 +1909,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             const sessionData = activeGameSessions[targetSessionKey];
             if (!sessionData) { showToast("Sesi game tidak valid atau kadaluarsa. Coba refresh.", "error"); return; }
             currentTransactionTarget = { name: gameName, otherAccountIndex: otherAccountIndex, ...sessionData };
-            const isFreeAccess = loggedInUser.accountType === 'PREMIUM' || loggedInUser.accountType === 'Admin' || (loggedInUser.accountType === 'Langganan' && checkSubscriptionStatus());
+            const isFreeAccess = ['PREMIUM', 'Admin', 'Langganan'].includes(loggedInUser.accountType) && checkSubscriptionStatus();
             const slider = document.getElementById('ub-slider');
             const input = document.getElementById('ub-input');
             
@@ -1888,7 +1935,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
         async function executeUbTransaction(amount) {
             const ub = parseInt(String(amount).replace(/\./g, ''), 10);
             if (isNaN(ub) || ub === 0) { showToast("Jumlah UB tidak valid.", "error"); return; }
-            const isFreeAccess = loggedInUser.accountType === 'PREMIUM' || loggedInUser.accountType === 'Admin' || (loggedInUser.accountType === 'Langganan' && checkSubscriptionStatus());
+            const isFreeAccess = ['PREMIUM', 'Admin', 'Langganan'].includes(loggedInUser.accountType) && checkSubscriptionStatus();
             const isAdding = ub > 0;
             const actionText = isAdding ? "menambahkan" : "mengurangi";
             const cost = isAdding && !isFreeAccess ? calculateRpFromUb(ub) : 0;
@@ -1971,11 +2018,70 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             } 
             displayTransactionHistory(); 
         }
-        async function generateQrisScreen(baseAmount) { if (baseAmount < 10000) { showToast("Minimum top up Rp 10.000", "error"); return; } const uniqueCode = Math.floor(100 + Math.random() * 900); const totalAmount = baseAmount + uniqueCode; try { const userRef = doc(db, "users", loggedInUser.docId); await updateDoc(userRef, { pendingTransaction: totalAmount }); loggedInUser.pendingTransaction = totalAmount; activeTopupRequest = { baseAmount, totalAmount, username: loggedInUser.username, whatsapp: loggedInUser.whatsapp }; document.getElementById('qris-amount-display').innerText = `Rp ${totalAmount.toLocaleString('id-ID')}`; showPage('qris'); } catch (e) { showToast("Gagal memulai transaksi.", "error"); } }
-        async function sendTelegramNotification() { const btn = document.getElementById('confirm-payment-btn'); btn.disabled = true; btn.innerText = "Mengirim..."; const { totalAmount, username, whatsapp } = activeTopupRequest; const msg = `🔔 *Konfirmasi Pembayaran*\n\n*Username:* \`${username}\`\n*No. WA:* \`${whatsapp}\`\n*Jumlah Transfer:* *Rp ${totalAmount.toLocaleString('id-ID')}*\n\nPengguna telah mengkonfirmasi.`; const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`; try { const res = await fetch(url); if (!res.ok) throw new Error('Gagal kirim notifikasi.'); showToast("Konfirmasi terkirim! Admin akan segera memproses.", "success"); showTopupMenu(); } catch (e) { showToast("Gagal kirim notifikasi. Hubungi admin manual.", "error"); } finally { btn.disabled = false; btn.innerText = "Saya Sudah Transfer"; } }
+        async function generateQrisScreen(baseAmount, type = 'Top Up Saldo', meta = {}) { 
+            if (baseAmount < 10000 && type === 'Top Up Saldo') { 
+                showToast("Minimum top up Rp 10.000", "error"); 
+                return; 
+            } 
+            const uniqueCode = Math.floor(100 + Math.random() * 900); 
+            const totalAmount = baseAmount + uniqueCode; 
+            
+            try {
+                const userRef = doc(db, "users", loggedInUser.docId);
+                let updateData = {};
+                let notifMessage = "";
+
+                if (type === 'Top Up Saldo') {
+                    updateData = { pendingTransaction: totalAmount };
+                    notifMessage = `⏳ *Permintaan Pembayaran Dibuat (Top Up Saldo)*\n\n*Username:* \`${loggedInUser.username}\`\n*No. WA:* \`${loggedInUser.whatsapp}\`\n*Jumlah Transfer:* *Rp ${totalAmount.toLocaleString('id-ID')}*`;
+                } else if (type === 'Beli Akun') {
+                    updateData = { pendingAkunPurchase: { ...meta, uniqueAmount: totalAmount } };
+                     notifMessage = `⏳ *Permintaan Pembayaran Dibuat (Beli Akun)*\n\n*Username:* \`${loggedInUser.username}\`\n*No. WA:* \`${loggedInUser.whatsapp}\`\n*Nama Akun:* ${meta.usernameTampilan}\n*Jumlah Transfer:* *Rp ${totalAmount.toLocaleString('id-ID')}*`;
+                } else if (type.includes('Langganan') || type.includes('Premium')) {
+                     updateData = { pendingSubscription: { ...meta, uniqueAmount: totalAmount } };
+                     notifMessage = `⏳ *Permintaan Pembayaran Dibuat (Subscription)*\n\n*Username:* \`${loggedInUser.username}\`\n*No. WA:* \`${loggedInUser.whatsapp}\`\n*Paket:* ${type}\n*Jumlah Transfer:* *Rp ${totalAmount.toLocaleString('id-ID')}*`;
+                }
+                
+                await updateDoc(userRef, updateData);
+                await sendTelegramMessage(notifMessage, TELEGRAM_BOT_TOKEN);
+                
+                loggedInUser = { ...loggedInUser, ...updateData };
+                activeTopupRequest = { baseAmount, totalAmount, username: loggedInUser.username, whatsapp: loggedInUser.whatsapp, type }; 
+                
+                document.getElementById('qris-title').textContent = `Pembayaran ${type}`;
+                document.getElementById('qris-subtitle').textContent = `Paket: ${meta.usernameTampilan || type}`;
+                document.getElementById('qris-amount-display').innerText = `Rp ${totalAmount.toLocaleString('id-ID')}`;
+                
+                showPage('qris');
+            } catch (e) {
+                showToast("Gagal memulai transaksi.", "error"); 
+                console.error("QRIS Generation Error:", e);
+            } 
+        }
+
+        async function sendTelegramNotification() { 
+            const btn = document.getElementById('confirm-payment-btn'); 
+            btn.disabled = true; btn.innerText = "Mengirim..."; 
+            const { totalAmount, username, whatsapp, type } = activeTopupRequest; 
+            const msg = `🔔 *Konfirmasi Pembayaran (${type})*\n\n*Username:* \`${username}\`\n*No. WA:* \`${whatsapp}\`\n*Jumlah Transfer:* *Rp ${totalAmount.toLocaleString('id-ID')}*\n\nPengguna telah mengkonfirmasi.`; 
+            try { 
+                await sendTelegramMessage(msg, TELEGRAM_BOT_TOKEN);
+                showToast("Konfirmasi terkirim! Admin akan segera memproses.", "success"); 
+                if (type === 'Top Up Saldo') {
+                    showTopupMenu(); 
+                } else {
+                    showPage('stokAkun');
+                }
+            } catch (e) { 
+                showToast("Gagal kirim notifikasi. Hubungi admin manual.", "error"); 
+            } finally { 
+                btn.disabled = false; btn.innerText = "Saya Sudah Transfer"; 
+            } 
+        }
+
         async function cancelTopupTransaction(event) {
             const clickedButton = event.target;
-            const isConfirmed = await showConfirmation(`Apakah Anda yakin ingin membatalkan transaksi top up ini? Nominal yang harus dibayar akan dihapus.`, "Konfirmasi Pembatalan");
+            const isConfirmed = await showConfirmation(`Apakah Anda yakin ingin membatalkan transaksi ini?`, "Konfirmasi Pembatalan");
             if (!isConfirmed) {
                 return;
             }
@@ -1988,13 +2094,17 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             }
             try {
                 const userRef = doc(db, "users", loggedInUser.docId);
-                await updateDoc(userRef, {
-                    pendingTransaction: 0
-                });
-                loggedInUser.pendingTransaction = 0;
+                let updateData = {};
+                 if (loggedInUser.pendingTransaction > 0) updateData = { pendingTransaction: 0 };
+                 else if (loggedInUser.pendingSubscription) updateData = { pendingSubscription: deleteField() };
+                 else if (loggedInUser.pendingAkunPurchase) updateData = { pendingAkunPurchase: deleteField() };
+
+                await updateDoc(userRef, updateData);
+
+                loggedInUser = {...loggedInUser, ...updateData};
                 activeTopupRequest = {};
-                showToast("Transaksi top up berhasil dibatalkan.", "success");
-                showTopupMenu();
+                showToast("Transaksi berhasil dibatalkan.", "success");
+                showTopupMenu(); // Go back to the main topup menu
             } catch (e) {
                 showToast("Gagal membatalkan transaksi: " + e.message, "error");
                 console.error("Error cancelling transaction:", e);
@@ -2031,12 +2141,14 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                         if (typeof item.ubAmount === 'number') {
                              const isAdding = item.ubAmount > 0;
                              actionText = (isAdding ? `+${item.ubAmount.toLocaleString('id-ID')} UB` : `${item.ubAmount.toLocaleString('id-ID')} UB`);
+                        } else if (item.package) {
+                            actionText = `Langganan: ${item.package}`;
                         } else {
                             actionText = `Beli: ${item.ubAmount}`; 
                         }
                         const costText = item.rpCost > 0 ? `- Rp ${item.rpCost.toLocaleString('id-ID')}` : 'Gratis'; 
                         const costClass = item.rpCost > 0 ? 'purchase' : 'topup'; 
-                        purchaseList.innerHTML += `<li class="${costClass}"><div class="history-item-header"><span class="amount ${costClass}">${costText}</span><span>${item.game}</span></div><div class="history-item-footer"><span>${actionText}</span> | <span>${formatDate(item.timestamp)}</span></div></li>`; 
+                        purchaseList.innerHTML += `<li class="${costClass}"><div class="history-item-header"><span class="amount ${costClass}">${costText}</span><span>${item.game || 'Layanan'}</span></div><div class="history-item-footer"><span>${actionText}</span> | <span>${formatDate(item.timestamp)}</span></div></li>`; 
                     });
                 }
             } catch (error) { console.error("Error fetching purchase history:", error); purchaseList.innerHTML = '<li class="no-history">Gagal memuat riwayat.</li>'; }
@@ -2158,9 +2270,9 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
         function updateSubscriptionPage() {
             if (loggedInUser.pendingSubscription) {
                 document.getElementById('subscription-packages-view').style.display = 'none';
-                showSubscriptionQrisScreen(loggedInUser.pendingSubscription);
+                 generateQrisScreen(loggedInUser.pendingSubscription.amount, loggedInUser.pendingSubscription.type, loggedInUser.pendingSubscription);
             } else {
-                dom.content.subscriptionQris.style.display = 'none';
+                dom.content.qris.style.display = 'none';
                 document.getElementById('subscription-packages-view').style.display = 'block';
                 
                 const monthlyBtn = document.getElementById('buy-monthly-sub-btn');
@@ -2184,103 +2296,12 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
         }
 
         async function initiateSubscriptionPayment(type, baseAmount) {
-            if (loggedInUser.pendingSubscription || loggedInUser.pendingTransaction > 0) {
-                showToast("Anda memiliki transaksi yang belum selesai.", "error");
+            if (loggedInUser.pendingSubscription || loggedInUser.pendingTransaction > 0 || loggedInUser.pendingAkunPurchase) {
+                showToast("Anda memiliki transaksi lain yang belum selesai.", "error");
                 return;
             }
-
-            const uniqueAmount = baseAmount + Math.floor(100 + Math.random() * 900);
-            const expiryDate = new Date();
-            expiryDate.setHours(expiryDate.getHours() + 6);
-            const expiryTimestamp = Timestamp.fromDate(expiryDate);
-
-            const pendingData = { type, amount: baseAmount, uniqueAmount, expiryTimestamp };
-            const userRef = doc(db, "users", loggedInUser.docId);
-
-            try {
-                await updateDoc(userRef, { pendingSubscription: pendingData });
-                loggedInUser.pendingSubscription = pendingData;
-                updateSubscriptionPage();
-                showToast("Memulai pembayaran...", "success");
-            } catch (error) {
-                console.error("Error initiating subscription payment:", error);
-                showToast("Gagal memulai pembayaran langganan.", "error");
-            }
-        }
-
-        function showSubscriptionQrisScreen(pendingData) {
-            dom.content.subscription.style.display = 'none';
-            dom.content.subscriptionQris.style.display = 'block';
-            
-            const packageName = pendingData.type === 'Langganan' ? 'Langganan Bulanan' : 'Premium Permanen';
-            document.getElementById('sub-qris-package-name').textContent = `Paket: ${packageName}`;
-            document.getElementById('sub-qris-amount-display').textContent = `Rp ${pendingData.uniqueAmount.toLocaleString('id-ID')}`;
-
-            startSubscriptionTimer(pendingData.expiryTimestamp);
-        }
-
-        function startSubscriptionTimer(expiryTimestamp) {
-            if (subQrisTimerInterval) clearInterval(subQrisTimerInterval);
-
-            const timerEl = document.getElementById('sub-qris-timer');
-            const expiryDate = expiryTimestamp.toDate();
-
-            subQrisTimerInterval = setInterval(() => {
-                const now = new Date();
-                const diff = expiryDate.getTime() - now.getTime();
-
-                if (diff <= 0) {
-                    clearInterval(subQrisTimerInterval);
-                    timerEl.textContent = "Waktu pembayaran habis.";
-                    if (loggedInUser && loggedInUser.pendingSubscription) {
-                       cancelSubscriptionTransaction(true);
-                    }
-                    return;
-                }
-
-                const hours = Math.floor(diff / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-                
-                timerEl.textContent = `Batal Otomatis dalam: ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            }, 1000);
-        }
-
-        async function sendSubscriptionTelegramNotification() {
-            const btn = document.getElementById('confirm-sub-payment-btn');
-            btn.disabled = true; btn.innerText = "Mengirim...";
-            
-            const { type, uniqueAmount } = loggedInUser.pendingSubscription;
-            const packageName = type === 'Langganan' ? 'Langganan Bulanan' : 'Premium Permanen';
-            const msg = `🔔 *Konfirmasi Langganan*\n\n*Username:* \`${loggedInUser.username}\`\n*No. WA:* \`${loggedInUser.whatsapp}\`\n*Paket:* *${packageName}*\n*Jumlah Transfer:* *Rp ${uniqueAmount.toLocaleString('id-ID')}*\n\nPengguna telah mengkonfirmasi pembayaran.`;
-            
-            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
-            try {
-                const res = await fetch(url);
-                if (!res.ok) throw new Error('Gagal kirim notifikasi.');
-                showToast("Konfirmasi terkirim! Admin akan segera memproses.", "success");
-            } catch (e) {
-                showToast("Gagal kirim notifikasi. Hubungi admin manual.", "error");
-            } finally {
-                btn.disabled = false; btn.innerText = "Saya Sudah Transfer";
-            }
-        }
-
-        async function cancelSubscriptionTransaction(isSilent = false) {
-            if (!isSilent) {
-                const isConfirmed = await showConfirmation(`Apakah Anda yakin ingin membatalkan pembelian langganan ini?`, "Konfirmasi Pembatalan");
-                if (!isConfirmed) return;
-            }
-
-            if (subQrisTimerInterval) clearInterval(subQrisTimerInterval);
-            
-            try {
-                const userRef = doc(db, "users", loggedInUser.docId);
-                await updateDoc(userRef, { pendingSubscription: null });
-                showToast("Pembelian langganan dibatalkan.", "success");
-            } catch (error) {
-                showToast("Gagal membatalkan: " + error.message, "error");
-            }
+            const pendingData = { type, amount: baseAmount };
+            generateQrisScreen(baseAmount, type, pendingData);
         }
 
         async function handleVerifyUser(event) {
@@ -2615,32 +2636,40 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                 }
                 const offeringData = offeringDocSnap.data();
                 const accountPrice = offeringData.price || 0;
+                const userType = loggedInUser.accountType;
 
-                if (loggedInUser.saldo < accountPrice) {
-                    throw new Error("Saldo Anda tidak mencukupi untuk pembelian ini.");
-                }
-                
                 const confirmationMessage = `
                 <div class="invoice-style-confirmation">
                     <h4>** Struk Pembelian **</h4>
                     <div class="invoice-row"><span>Paket Akun ${offeringData.gameType}</span> <span class="price"></span></div>
                     <div class="invoice-row"><span>Nama Paket: ${offeringData.usernameTampilan}</span> <span class="price"></span></div>
-                    <div class="invoice-row total"><span>TOTAL</span> <span class="price">Rp ${accountPrice.toLocaleString('id-ID')}</span></div>
+                    <div class="invoice-row total"><span>TOTAL</span> <span class="price">${userType === 'Admin' ? 'GRATIS' : `Rp ${accountPrice.toLocaleString('id-ID')}`}</span></div>
                 </div>`;
-
                 const isConfirmed = await showConfirmation(confirmationMessage, "Struk Konfirmasi Pembelian");
-                if (!isConfirmed) {
-                    btn.disabled = false;
-                    btn.innerText = "Beli Akun";
-                    return;
+                if (!isConfirmed) return; // Exit if not confirmed
+
+                if (userType === 'Admin') {
+                    // Admin gets it for free, direct execution
+                    new Audio('proses.wav').play();
+                    showPurchaseLoading("Mode Admin: Mempersiapkan Akun");
+                    await executeServersidePurchase(offeringId, newUsername, updatePurchaseLoading);
+                } else if (userType === 'Langganan' || userType === 'PREMIUM') {
+                    // Langganan/Premium users pay via QRIS
+                    hideModal(modal.overlay); // Hide the purchase modal
+                    await generateQrisScreen(accountPrice, 'Beli Akun', { offeringId, newUsername, usernameTampilan: offeringData.usernameTampilan });
+                    return; // Stop execution here, wait for payment
+                } else {
+                    // Regular users pay with saldo
+                    if (loggedInUser.saldo < accountPrice) {
+                        throw new Error("Saldo Anda tidak mencukupi untuk pembelian ini.");
+                    }
+                    new Audio('proses.wav').play();
+                    showPurchaseLoading("Memvalidasi Pembelian");
+                    await executeServersidePurchase(offeringId, newUsername, updatePurchaseLoading);
                 }
                 
-                new Audio('proses.wav').play(); // Memutar suara proses
-                showPurchaseLoading("Memvalidasi Pembelian");
-                await executeServersidePurchase(offeringId, newUsername, updatePurchaseLoading);
-                
                 showToast("Pembelian berhasil! Akun Anda telah ditambahkan.", "success", 4000);
-                new Audio('sukses.wav').play(); // Memutar suara sukses
+                new Audio('sukses.wav').play();
                 hideModal(modal.overlay);
                 await displayTransactionHistory();
                 document.getElementById('show-purchased-btn').click(); 
@@ -2660,20 +2689,19 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     updateStatusCallback("Mencari penawaran...");
                     const offeringDocRef = doc(db, "stokAkun", offeringId);
                     const offeringDoc = await transaction.get(offeringDocRef);
-                    if (!offeringDoc.exists()) {
-                        throw new Error("Penawaran akun ini tidak lagi valid.");
-                    }
+                    if (!offeringDoc.exists()) throw new Error("Penawaran akun ini tidak lagi valid.");
                     const offeringData = offeringDoc.data();
                     const accountPrice = offeringData.price || 0;
                     const targetUB = offeringData.jumlahUB || 0;
                     const gameType = offeringData.gameType;
-
-                    updateStatusCallback("Memverifikasi saldo Anda...");
-                    const userRef = doc(db, "users", loggedInUser.docId);
-                    const userDoc = await transaction.get(userRef);
-                    const currentUserSaldo = userDoc.data().saldo || 0;
-                    if (currentUserSaldo < accountPrice) {
-                        throw new Error("Saldo Anda tidak mencukupi.");
+                    
+                    if (loggedInUser.accountType === 'USER') {
+                        updateStatusCallback("Memverifikasi saldo Anda...");
+                        const userRef = doc(db, "users", loggedInUser.docId);
+                        const userDoc = await transaction.get(userRef);
+                        const currentUserSaldo = userDoc.data().saldo || 0;
+                        if (currentUserSaldo < accountPrice) throw new Error("Saldo Anda tidak mencukupi.");
+                        transaction.update(userRef, { saldo: currentUserSaldo - accountPrice });
                     }
                     
                     updateStatusCallback("Menyiapkan kredensial akun...");
@@ -2681,20 +2709,15 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     const primaryKredensialQuery = query(collection(db, "stokKredensial"), where("gameType", "==", gameType), where("ownedBy", "==", null), limit(1));
                     const primarySnapshot = await getDocs(primaryKredensialQuery);
                     
-                    if (!primarySnapshot.empty) {
-                        kredensialDoc = primarySnapshot.docs[0];
-                    } else {
+                    if (!primarySnapshot.empty) kredensialDoc = primarySnapshot.docs[0];
+                    else {
                         updateStatusCallback("Mencari kredensial universal...");
                         const fallbackKredensialQuery = query(collection(db, "stokKredensial"), where("gameType", "==", "BUSSID/TRUCKSID"), where("ownedBy", "==", null), limit(1));
                         const fallbackSnapshot = await getDocs(fallbackKredensialQuery);
-                        if (!fallbackSnapshot.empty) {
-                            kredensialDoc = fallbackSnapshot.docs[0];
-                        }
+                        if (!fallbackSnapshot.empty) kredensialDoc = fallbackSnapshot.docs[0];
                     }
 
-                    if (!kredensialDoc) {
-                        throw new Error("Maaf, stok akun untuk game ini sedang habis. Silakan hubungi admin.");
-                    }
+                    if (!kredensialDoc) throw new Error("Maaf, stok akun untuk game ini sedang habis. Silakan hubungi admin.");
                     const kredensialData = kredensialDoc.data();
                     const kredensialDocRef = kredensialDoc.ref;
                     
@@ -2718,7 +2741,6 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                         if (execResult.code !== 200) throw new Error('Gagal menyesuaikan UB akun.');
                     }
 
-                    // --- START: USERNAME CHANGE RETRY LOGIC ---
                     updateStatusCallback("Mengganti nama player...");
                     let nameChanged = false;
                     let currentUsernameAttempt = originalUsername.trim();
@@ -2727,7 +2749,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     for (let i = 0; i < maxRetries; i++) {
                         if (i > 0) {
                             updateStatusCallback(`Nama sudah ada, mencoba nama baru... (${i}/${maxRetries-1})`);
-                            const randomSuffix = Math.floor(10 + Math.random() * 990); // 2-3 digit random
+                            const randomSuffix = Math.floor(10 + Math.random() * 990);
                             currentUsernameAttempt = `${originalUsername.trim()}${randomSuffix}`;
                         }
                         
@@ -2740,13 +2762,9 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                         }
                     }
 
-                    if (!nameChanged) {
-                        throw new Error('Gagal mengganti nama akun game setelah beberapa kali percobaan. Silakan coba nama lain.');
-                    }
-                    // --- END: USERNAME CHANGE RETRY LOGIC ---
+                    if (!nameChanged) throw new Error('Gagal mengganti nama akun game setelah beberapa kali percobaan. Silakan coba nama lain.');
                     
                     updateStatusCallback("Menyelesaikan transaksi...");
-                    transaction.update(userRef, { saldo: currentUserSaldo - accountPrice });
                     transaction.update(kredensialDocRef, { 
                         ownedBy: loggedInUser.username, 
                         usernameTampilan: currentUsernameAttempt, 
@@ -2909,9 +2927,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             });
             
             try {
-                const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
-                const res = await fetch(url);
-                if (!res.ok) throw new Error("Gagal mengirim data ke admin.");
+                await sendTelegramMessage(message, TELEGRAM_BOT_TOKEN);
 
                 const sellStatus = {
                     status: "Di Proses",
@@ -3104,7 +3120,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                 if (dom.nav[key]) {
                     dom.nav[key].addEventListener('click', async (e) => {
                         e.preventDefault();
-                        if (!checkSubscriptionStatus()) return;
+                        if (!checkSubscriptionStatus() || (loggedInUser.isBanned && key !== 'logout')) return;
                         
                         if (stokAkunUnsubscribe && key !== 'stokAkun') {
                              stokAkunUnsubscribe();
@@ -3319,8 +3335,6 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             document.getElementById('add-balance-btn').addEventListener('click', showTopupMenu);
             document.getElementById('buy-monthly-sub-btn').addEventListener('click', () => initiateSubscriptionPayment('Langganan', 35000));
             document.getElementById('buy-permanent-sub-btn').addEventListener('click', () => initiateSubscriptionPayment('PREMIUM', 199000));
-            document.getElementById('confirm-sub-payment-btn').addEventListener('click', sendSubscriptionTelegramNotification);
-            document.getElementById('cancel-sub-qris-btn').addEventListener('click', () => cancelSubscriptionTransaction(false));
             document.querySelector('.sidebar-balance-card').addEventListener('click', () => {
                 if (loggedInUser && (loggedInUser.accountType === 'USER' || loggedInUser.accountType === 'Admin')) {
                     if (loggedInUser.accountType === 'USER') showTopupMenu();
@@ -3334,7 +3348,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 
             const mainContent = document.getElementById('main-content');
             mainContent.addEventListener('click', (e) => {
-                if (e.target.id === 'qris-image' || e.target.id === 'sub-qris-image') { dom.lightbox.image.src = e.target.src; showModal(dom.lightbox.overlay); }
+                if (e.target.id === 'qris-image') { dom.lightbox.image.src = e.target.src; showModal(dom.lightbox.overlay); }
             });
             const closeLightbox = () => { hideModal(dom.lightbox.overlay); dom.lightbox.image.src = ''; };
             dom.lightbox.closeBtn.addEventListener('click', closeLightbox);
