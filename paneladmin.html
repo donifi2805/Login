@@ -24,6 +24,7 @@
             --warning-primary: #f59e0b;
             --premium-gold: #FBBF24;
             --subscription-cyan: #06b6d4;
+            --online-green: #2ecc71;
         }
 
         html { height: 100%; }
@@ -79,22 +80,22 @@
             overflow-y: auto;
         }
         
-        .view-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px;}
+        .view-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 10px;}
         .view-header h1 { margin: 0; text-shadow: 0 0 12px rgba(59, 130, 246, 0.5); }
-        .view-header .actions { display: flex; gap: 10px; }
+        .view-header .actions { display: flex; gap: 10px; flex-wrap: wrap; }
         
-        /* --- REVISED MENU GRID --- */
+        /* --- REVISED MENU GRID (ELEGANT LAYOUT) --- */
         .menu-grid-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-auto-rows: minmax(140px, auto);
-            gap: 3px; /* Jarak sangat dekat */
+            gap: 20px;
         }
 
         .menu-grid-button {
-            background: var(--bg-secondary);
+            background: var(--bg-glass);
             border: 1px solid var(--border-color);
-            border-radius: 0; /* Tanpa sudut melengkung */
+            border-radius: 12px;
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -107,13 +108,15 @@
             font-weight: 500;
             text-align: center;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: all 0.2s ease;
             text-decoration: none;
-            position: relative; /* Diperlukan untuk notifikasi */
+            position: relative;
         }
 
         .menu-grid-button:hover {
-            background-color: var(--bg-glass);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            border-color: var(--accent-primary);
         }
 
         .menu-grid-button i {
@@ -122,14 +125,11 @@
         }
         
         /* Specific sizes for irregular layout */
-        .menu-users {
-            grid-column: span 2; /* Tombol ini memakan 2 kolom */
-        }
         .menu-stok-penawaran {
-            grid-column: span 2; /* Tombol ini memakan 2 kolom */
+            grid-column: span 2;
         }
         .menu-settings {
-            grid-column: span 3; /* Tombol ini memakan 3 kolom */
+            grid-column: span 3;
         }
 
         /* Style untuk Notifikasi Badge */
@@ -149,8 +149,6 @@
             font-weight: 700;
             border: 2px solid var(--bg-secondary);
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            transform: scale(1);
-            transition: transform 0.2s ease-in-out;
         }
 
         /* Kontainer untuk toggle maintenance di menu utama */
@@ -176,7 +174,14 @@
             display: flex;
             align-items: center;
             gap: 20px;
+            transition: transform 0.2s ease;
         }
+        .stat-card.clickable:hover {
+            cursor: pointer;
+            transform: translateY(-3px);
+            border-color: var(--accent-primary);
+        }
+
         .stat-card .icon {
             font-size: 2em;
             width: 60px;
@@ -188,9 +193,10 @@
             flex-shrink: 0;
         }
         .stat-card:nth-child(1) .icon { background: rgba(59, 130, 246, 0.2); color: var(--accent-primary); }
-        .stat-card:nth-child(2) .icon { background: rgba(245, 158, 11, 0.2); color: var(--warning-primary); }
-        .stat-card:nth-child(3) .icon { background: rgba(34, 197, 94, 0.2); color: var(--success-primary); }
-        .stat-card:nth-child(4) .icon { background: rgba(168, 85, 247, 0.2); color: #a855f7; } /* Fallback, not used */
+        .stat-card:nth-child(2) .icon { background: rgba(34, 204, 113, 0.2); color: var(--online-green); }
+        .stat-card:nth-child(3) .icon { background: rgba(245, 158, 11, 0.2); color: var(--warning-primary); }
+        .stat-card:nth-child(4) .icon { background: rgba(34, 197, 94, 0.2); color: var(--success-primary); }
+        
         .stat-card .info h3 { margin: 0 0 5px 0; font-size: 1.8em; color: white; }
         .stat-card .info p { margin: 0; color: var(--text-secondary); }
 
@@ -345,6 +351,7 @@
             border-top: 1px solid var(--border-color);
             display: flex;
             gap: 10px;
+            flex-wrap: wrap; /* Allow wrapping */
         }
         .card-actions .action-button {
             flex-grow: 1;
@@ -437,47 +444,114 @@
 
         #admin-panel { display: none; }
         #login-page { display: flex; }
+
+        /* --- REKAP VIEW STYLES --- */
+        #rekap-table-container {
+            width: 100%;
+            overflow-x: auto;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px;
+        }
+        #rekap-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        #rekap-table th, #rekap-table td {
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+        #rekap-table th {
+            background-color: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+        #rekap-table tbody tr:nth-child(even) {
+            background-color: rgba(0,0,0,0.1);
+        }
+        #rekap-table .amount-spent {
+            color: var(--danger-primary);
+            font-weight: 600;
+        }
+         #rekap-table .amount-topup {
+            color: var(--success-primary);
+            font-weight: 600;
+        }
+        #rekap-table .current-balance {
+            color: var(--premium-gold);
+        }
+        
+        /* --- Filter Buttons --- */
+        .filter-buttons {
+            display: flex;
+            gap: 5px;
+            background-color: var(--bg-secondary);
+            padding: 5px;
+            border-radius: 8px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 15px;
+            font-size: 0.9em;
+            font-weight: 500;
+            border: none;
+            background-color: transparent;
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .filter-btn.active {
+            background-color: var(--accent-primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
         
         /* --- Tampilan Kompak & Responsif --- */
-        :root { font-size: 10px; }
-        .main-content { padding: 8px; }
-        .top-header { padding: 4px 10px; gap: 8px; }
-        .header-title { font-size: 1.2em; }
-        
-        .header-actions { gap: 5px; }
-        .header-actions .action-button { padding: 4px 8px; font-size: 1em; }
-        .view-header { margin-bottom: 12px; gap: 10px; }
-        .view-header h1 { font-size: 1.6em; }
-        .view-header .actions .action-button { font-size: 1em; }
-        .stat-cards { gap: 8px; margin-bottom: 12px; }
-        .stat-card { padding: 8px; gap: 8px; border-radius: 6px; }
-        .stat-card .icon { width: 32px; height: 32px; font-size: 1.4em; }
-        .stat-card .info h3 { font-size: 1.5em; margin-bottom: 2px; }
-        .stat-card .info p { font-size: 0.9em; }
-        .controls-container { padding: 10px; margin-bottom: 12px; }
-        .controls { gap: 10px; }
-        #user-card-container, #pending-transaction-container, #stok-akun-card-container, #stok-kredensial-card-container { gap: 10px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
-        .user-profile-card, .transaction-card, .stok-akun-card, .stok-kredensial-card { padding: 12px; border-radius: 8px; gap: 10px; }
-        .card-header { padding-bottom: 8px; }
-        .card-header .user-title h3 { font-size: 1.3em; }
-        .card-info-grid { gap: 10px; }
-        .info-label { font-size: 0.9em; }
-        .info-value { font-size: 1em; }
-        .transaction-details-section { padding: 8px; }
-        .transaction-details-section h4 { font-size: 0.9em; margin-bottom: 6px; }
-        .transaction-amount { font-size: 1.3em; }
-        .card-actions { padding-top: 10px; gap: 8px; }
-        .card-actions .action-button { font-size: 1em; }
-        .pagination { margin-top: 15px; }
-        .pagination, .pagination .action-button { font-size: 1em; }
-        .input-group { margin-bottom: 12px; }
-        .input-group label { margin-bottom: 4px; font-size: 1em; }
-        .input-field, textarea.input-field, select.input-field { padding: 8px; font-size: 1.1em; border-radius: 5px; }
-        .action-button { padding: 7px 14px; font-size: 1em; border-radius: 5px; gap: 5px; }
-        .modal-content { padding: 20px; max-width: 480px; }
-        .modal-content h2 { font-size: 1.3em; margin-bottom: 15px; }
-        .modal-actions { margin-top: 20px; }
-        .status-badge { padding: 3px 7px; font-size: 0.9em; }
+        @media (max-width: 1024px) {
+            :root { font-size: 10px; }
+            .main-content { padding: 8px; }
+            .top-header { padding: 4px 10px; gap: 8px; }
+            .header-title { font-size: 1.2em; }
+            
+            .header-actions { gap: 5px; }
+            .header-actions .action-button { padding: 4px 8px; font-size: 1em; }
+            .view-header { margin-bottom: 12px; gap: 10px; }
+            .view-header h1 { font-size: 1.6em; }
+            .view-header .actions .action-button { font-size: 1em; }
+            .stat-cards { gap: 8px; margin-bottom: 12px; }
+            .stat-card { padding: 8px; gap: 8px; border-radius: 6px; }
+            .stat-card .icon { width: 32px; height: 32px; font-size: 1.4em; }
+            .stat-card .info h3 { font-size: 1.5em; margin-bottom: 2px; }
+            .stat-card .info p { font-size: 0.9em; }
+            .controls-container { padding: 10px; margin-bottom: 12px; }
+            .controls { gap: 10px; }
+            #user-card-container, #pending-transaction-container, #stok-akun-card-container, #stok-kredensial-card-container { gap: 10px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+            .user-profile-card, .transaction-card, .stok-akun-card, .stok-kredensial-card { padding: 12px; border-radius: 8px; gap: 10px; }
+            .card-header { padding-bottom: 8px; }
+            .card-header .user-title h3 { font-size: 1.3em; }
+            .card-info-grid { gap: 10px; }
+            .info-label { font-size: 0.9em; }
+            .info-value { font-size: 1em; }
+            .transaction-details-section { padding: 8px; }
+            .transaction-details-section h4 { font-size: 0.9em; margin-bottom: 6px; }
+            .transaction-amount { font-size: 1.3em; }
+            .card-actions { padding-top: 10px; gap: 8px; }
+            .card-actions .action-button { font-size: 1em; }
+            .pagination { margin-top: 15px; }
+            .pagination, .pagination .action-button { font-size: 1em; }
+            .input-group { margin-bottom: 12px; }
+            .input-group label { margin-bottom: 4px; font-size: 1em; }
+            .input-field, textarea.input-field, select.input-field { padding: 8px; font-size: 1.1em; border-radius: 5px; }
+            .action-button { padding: 7px 14px; font-size: 1em; border-radius: 5px; gap: 5px; }
+            .modal-content { padding: 20px; max-width: 480px; }
+            .modal-content h2 { font-size: 1.3em; margin-bottom: 15px; }
+            .modal-actions { margin-top: 20px; }
+            .status-badge { padding: 3px 7px; font-size: 0.9em; }
+        }
         
         .reset-owner-btn {
             padding: 2px 8px !important;
@@ -508,6 +582,8 @@
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 10px;
         }
+        
+        /* General Toggle Switch styles */
         .toggle-switch {
             display: flex;
             align-items: center;
@@ -528,6 +604,11 @@
         }
         .toggle-switch input:checked + label { background: var(--success-primary); }
         .toggle-switch input:checked + label::after { transform: translateX(23px); }
+        
+        /* Ban Toggle Specific styles */
+        .ban-toggle-switch input:checked + label { background: var(--danger-primary); }
+        .card-ban-toggle { grid-column: 1 / -1; margin-top: 10px; }
+
 
         .settings-tabs {
             display: flex;
@@ -577,14 +658,51 @@
             .menu-grid-container { 
                 grid-template-columns: repeat(2, 1fr);
                 grid-auto-rows: minmax(120px, auto);
+                gap: 15px;
             }
             /* On mobile, reset all spans to be more uniform */
-            .menu-users, .menu-stok-penawaran, .menu-settings {
+            .menu-users, .menu-transactions, .menu-rekap, .menu-stok-penawaran, .menu-stok-kredensial, .menu-settings {
                 grid-column: span 1;
             }
-            .menu-settings {
+            .menu-stok-penawaran, .menu-settings {
                 grid-column: span 2;
             }
+        }
+        
+        /* Floating Transaction Modal */
+        #floating-transaction-modal .modal-content {
+            max-width: 420px;
+            border-left: 5px solid var(--warning-primary);
+        }
+        #floating-transaction-modal .modal-actions {
+            justify-content: space-between;
+        }
+        #floating-transaction-modal .action-button {
+            flex-grow: 1;
+        }
+
+        /* Online Users Modal */
+        #online-users-list {
+            list-style: none;
+            padding: 0;
+            max-height: 40vh;
+            overflow-y: auto;
+        }
+        #online-users-list li {
+            background-color: var(--bg-primary);
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #online-users-list .online-indicator {
+            width: 10px;
+            height: 10px;
+            background-color: var(--online-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--online-green);
         }
     </style>
 </head>
@@ -614,9 +732,17 @@
                  <header class="view-header">
                     <h1>Admin Dashboard</h1>
                     <div class="actions">
-                        <button id="quick-add-credential-btn" class="action-button btn-success"><i class="fas fa-plus-circle"></i> Add Credential</button>
+                        <button id="quick-add-user-btn" class="action-button btn-success"><i class="fas fa-user-plus"></i> Add User</button>
+                        <button id="quick-add-stok-btn" class="action-button btn-primary"><i class="fas fa-archive"></i> Add Stok</button>
+                        <button id="quick-add-credential-btn" class="action-button btn-warning"><i class="fas fa-key"></i> Add Credential</button>
                     </div>
                 </header>
+                 <div class="stat-cards" id="main-menu-stats">
+                    <div class="stat-card"> <div class="icon"><i class="fas fa-users"></i></div> <div class="info"> <h3 id="stat-total-users">0</h3> <p>Total Users</p> </div> </div>
+                    <div class="stat-card clickable" id="online-users-card"> <div class="icon"><i class="fas fa-wifi"></i></div> <div class="info"> <h3 id="stat-online-users">0</h3> <p>Online Users</p> </div> </div>
+                    <div class="stat-card"> <div class="icon"><i class="fas fa-hourglass-half"></i></div> <div class="info"> <h3 id="stat-pending-trx">0</h3> <p>Pending Requests</p> </div> </div>
+                    <div class="stat-card"> <div class="icon"><i class="fas fa-cash-register"></i></div> <div class="info"> <h3 id="stat-total-spent">0</h3> <p>Total Dibelanjakan</p> </div> </div>
+                </div>
                 <div class="menu-grid-container">
                     <button class="menu-grid-button menu-users" data-view="users"> <i class="fas fa-users"></i> <span>Users</span> </button>
                     <button class="menu-grid-button menu-transactions" data-view="transactions">
@@ -624,6 +750,7 @@
                         <i class="fas fa-exchange-alt"></i> 
                         <span>Transactions</span> 
                     </button>
+                    <button class="menu-grid-button menu-rekap" data-view="rekap"> <i class="fas fa-receipt"></i> <span>Rekap</span> </button>
                     <button class="menu-grid-button menu-stok-penawaran" data-view="stokAkun"> <i class="fas fa-archive"></i> <span>Stok Penawaran</span> </button>
                     <button class="menu-grid-button menu-stok-kredensial" data-view="stokKredensial"> <i class="fas fa-key"></i> <span>Stok Kredensial</span> </button>
                     <button class="menu-grid-button menu-settings" data-view="settings"> <i class="fas fa-cogs"></i> <span>Settings</span> </button>
@@ -651,12 +778,6 @@
                     </div>
                 </header>
 
-                <div class="stat-cards">
-                    <div class="stat-card"> <div class="icon"><i class="fas fa-users"></i></div> <div class="info"> <h3 id="stat-total-users">0</h3> <p>Total Users</p> </div> </div>
-                    <div class="stat-card"> <div class="icon"><i class="fas fa-hourglass-half"></i></div> <div class="info"> <h3 id="stat-pending-trx">0</h3> <p>Pending Requests</p> </div> </div>
-                    <div class="stat-card"> <div class="icon"><i class="fas fa-cash-register"></i></div> <div class="info"> <h3 id="stat-total-spent">0</h3> <p>Total Dibelanjakan</p> </div> </div>
-                </div>
-
                 <div class="controls-container">
                     <div class="controls">
                         <div class="search-bar"> <i class="fas fa-search"></i> <input type="text" id="search-input" class="input-field" placeholder="Search by username, whatsapp, device ID..."> </div>
@@ -665,7 +786,7 @@
                 </div>
 
                 <div id="user-card-container">
-                    </div>
+                </div>
                 <div class="spinner-overlay" id="user-spinner" style="display:none;"><div class="spinner"></div></div>
 
                 <div class="pagination">
@@ -687,7 +808,7 @@
                     </div>
                 </header>
                 <div id="pending-transaction-container">
-                    </div>
+                </div>
                  <div class="spinner-overlay" id="transaction-spinner" style="display:none;"><div class="spinner"></div></div>
             </div>
             
@@ -701,11 +822,16 @@
                 </header>
                 <div class="controls-container">
                     <div class="controls">
+                         <div class="filter-buttons" id="stok-akun-filters">
+                            <button class="filter-btn active" data-filter="all">Semua Penawaran</button>
+                            <button class="filter-btn" data-filter="available">Tersedia</button>
+                            <button class="filter-btn" data-filter="sold">Terjual</button>
+                         </div>
                          <button id="refresh-stok-akun-btn" class="action-button btn-primary"> <i class="fas fa-sync-alt"></i> Refresh</button>
                     </div>
                 </div>
                 <div id="stok-akun-card-container">
-                    </div>
+                </div>
                 <div class="spinner-overlay" id="stok-akun-spinner" style="display:none;"><div class="spinner"></div></div>
             </div>
             
@@ -719,12 +845,53 @@
                 </header>
                 <div class="controls-container">
                     <div class="controls">
+                        <div class="filter-buttons" id="stok-kredensial-filters">
+                            <button class="filter-btn active" data-filter="all">Semua Kredensial</button>
+                            <button class="filter-btn" data-filter="available">Tersedia</button>
+                            <button class="filter-btn" data-filter="used">Terpakai</button>
+                        </div>
                          <button id="refresh-stok-kredensial-btn" class="action-button btn-primary"> <i class="fas fa-sync-alt"></i> Refresh</button>
                     </div>
                 </div>
                 <div id="stok-kredensial-card-container">
                 </div>
                 <div class="spinner-overlay" id="stok-kredensial-spinner" style="display:none;"><div class="spinner"></div></div>
+            </div>
+
+            <div id="rekap-view" style="display: none;">
+                <header class="view-header">
+                    <button class="action-button btn-secondary back-to-menu-btn"><i class="fas fa-arrow-left"></i> Menu</button>
+                    <h1>Rekap Transaksi</h1>
+                    <div class="actions">
+                        <button id="reset-rekap-btn" class="action-button btn-danger"><i class="fas fa-trash-alt"></i> Reset Rekap</button>
+                    </div>
+                </header>
+                 <div class="controls-container">
+                    <div class="filter-buttons" id="rekap-filters">
+                        <button class="filter-btn active" data-filter="all">Tampilkan Semua</button>
+                        <button class="filter-btn" data-filter="today">Hari Ini</button>
+                        <button class="filter-btn" data-filter="yesterday">Kemarin</button>
+                        <button class="filter-btn" data-filter="this_week">Minggu Ini</button>
+                    </div>
+                </div>
+                <div id="rekap-table-container">
+                    <table id="rekap-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Nama User</th>
+                                <th>WhatsApp</th>
+                                <th>Jenis Transaksi</th>
+                                <th>Detail Transaksi</th>
+                                <th>Saldo Terpakai</th>
+                                <th>Saldo Saat Ini</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rekap-table-body">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="spinner-overlay" id="rekap-spinner" style="display:none;"><div class="spinner"></div></div>
             </div>
 
             <div id="settings-view" style="display: none;">
@@ -815,6 +982,31 @@
             </div>
 
         </main>
+    </div>
+
+    <div id="floating-transaction-modal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-bell" style="color:var(--warning-primary);"></i> Transaksi Pending Ditemukan</h2>
+            <div id="floating-transaction-content" style="margin-top: 20px;">
+                </div>
+            <div class="modal-actions" style="margin-top: 20px;">
+                <button type="button" id="floating-reject-btn" class="action-button btn-danger">Tolak</button>
+                <button type="button" id="floating-accept-btn" class="action-button btn-success">Terima</button>
+                <button type="button" class="action-button btn-secondary cancel-modal-btn">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="online-users-modal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-wifi" style="color:var(--online-green);"></i> Pengguna Online</h2>
+            <ul id="online-users-list">
+                <p>Tidak ada pengguna yang online saat ini.</p>
+            </ul>
+            <div class="modal-actions">
+                <button type="button" class="action-button btn-secondary cancel-modal-btn">Tutup</button>
+            </div>
+        </div>
     </div>
 
     <div id="edit-user-modal" class="modal">
@@ -1052,11 +1244,28 @@
             </div>
         </div>
     </div>
+
+    <div id="pin-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <h2><i class="fas fa-key"></i> Masukkan PIN Keamanan</h2>
+            <form id="pin-form">
+                <div class="input-group">
+                    <label for="pin-input">Untuk melanjutkan, masukkan PIN Anda.</label>
+                    <input type="password" id="pin-input" class="input-field" required pattern="[0-9]*" inputmode="numeric">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="action-button btn-secondary cancel-modal-btn">Batal</button>
+                    <button type="submit" class="action-button btn-primary">Konfirmasi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="toast-container"></div>
     
 <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, getDoc, deleteField, orderBy, query, onSnapshot } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, getDoc, deleteField, orderBy, query, onSnapshot, writeBatch, where, limit } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -1073,10 +1282,12 @@
         const auth = getAuth(app);
 
         // State variables
-        let allUsers = [], displayedUsers = [], currentPage = 1, allStokAkun = [], allStokKredensial = [];
+        let allUsers = [], displayedUsers = [], currentPage = 1, allStokAkun = [], allStokKredensial = [], allRekapData = [];
         const rowsPerPage = 10;
         let appSettings = {};
         let unsubscribeListeners = []; // Untuk menyimpan semua listener realtime
+        let isFloatingModalShown = false;
+
 
         // DOM element references
         const dom = { 
@@ -1092,6 +1303,7 @@
             transactionSpinner: document.getElementById('transaction-spinner'),
             stokAkunSpinner: document.getElementById('stok-akun-spinner'),
             stokKredensialSpinner: document.getElementById('stok-kredensial-spinner'),
+            rekapSpinner: document.getElementById('rekap-spinner'),
             editUserModal: document.getElementById('edit-user-modal'), 
             addUserModal: document.getElementById('add-user-modal'), 
             editStokAkunModal: document.getElementById('edit-stok-akun-modal'),
@@ -1099,12 +1311,16 @@
             editStokKredensialModal: document.getElementById('edit-stok-kredensial-modal'),
             addStokKredensialModal: document.getElementById('add-stok-kredensial-modal'),
             confirmModal: document.getElementById('confirm-modal'),
+            pinModal: document.getElementById('pin-modal'),
+            onlineUsersModal: document.getElementById('online-users-modal'),
+            floatingTransactionModal: document.getElementById('floating-transaction-modal'),
             views: {
                 users: document.getElementById('user-management-view'),
                 transactions: document.getElementById('transaction-management-view'),
                 stokAkun: document.getElementById('stok-akun-management-view'),
                 stokKredensial: document.getElementById('stok-kredensial-management-view'),
-                settings: document.getElementById('settings-view')
+                settings: document.getElementById('settings-view'),
+                rekap: document.getElementById('rekap-view')
             }
         };
 
@@ -1122,6 +1338,8 @@
             Object.values(dom.views).forEach(view => view.style.display = 'none');
             dom.mainMenuView.style.display = 'block';
             document.querySelector('.header-title').innerHTML = '<i class="fas fa-gamepad"></i> Auth Tools';
+            updateMainMenuStats();
+            checkAndShowFloatingTransaction();
         };
 
         const showView = async (viewName) => {
@@ -1138,11 +1356,12 @@
             else if (viewName === 'stokAkun') await fetchStokAkun();
             else if (viewName === 'stokKredensial') await fetchStokKredensial();
             else if (viewName === 'settings') await loadAndDisplaySettings();
+            else if (viewName === 'rekap') await fetchAndRenderRekap('all');
         };
 
         // --- REALTIME LISTENERS ---
         const setupRealtimeListeners = () => {
-            // Listener untuk Notifikasi Transaksi Pending
+            // Listener untuk Notifikasi Transaksi Pending & Jumlah Pending
             const usersRef = collection(db, "users");
             const unsubscribeUsers = onSnapshot(usersRef, (querySnapshot) => {
                 const pendingCount = querySnapshot.docs.reduce((count, doc) => {
@@ -1152,13 +1371,16 @@
                     }
                     return count;
                 }, 0);
-
+                
                 const badge = document.getElementById('pending-trx-badge');
+                const statPending = document.getElementById('stat-pending-trx');
                 if (pendingCount > 0) {
                     badge.textContent = pendingCount;
                     badge.style.display = 'flex';
+                    statPending.textContent = pendingCount;
                 } else {
                     badge.style.display = 'none';
+                    statPending.textContent = 0;
                 }
             });
             unsubscribeListeners.push(unsubscribeUsers);
@@ -1169,16 +1391,39 @@
                 appSettings = docSnap.exists() ? docSnap.data() : {};
                 const isActive = appSettings.maintenance?.isActive || false;
                 
-                // Update UI untuk kedua toggle
                 document.getElementById('maintenance-toggle').checked = isActive;
                 document.getElementById('main-menu-maintenance-toggle').checked = isActive;
                 
-                // Update pesan di halaman settings jika ada
                 if(document.getElementById('maintenance-message')) {
                     document.getElementById('maintenance-message').value = appSettings.maintenance?.message || '';
                 }
             });
             unsubscribeListeners.push(unsubscribeSettings);
+
+            // Listener untuk Pengguna Online
+            const presenceRef = collection(db, "presence");
+            const unsubscribePresence = onSnapshot(presenceRef, (snapshot) => {
+                const onlineUsers = [];
+                snapshot.forEach(doc => {
+                    if (doc.data().status === 'online') {
+                        onlineUsers.push(doc.data().username);
+                    }
+                });
+                document.getElementById('stat-online-users').textContent = onlineUsers.length;
+                
+                const onlineList = document.getElementById('online-users-list');
+                onlineList.innerHTML = '';
+                if (onlineUsers.length > 0) {
+                    onlineUsers.forEach(username => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<span class="online-indicator"></span> ${username}`;
+                        onlineList.appendChild(li);
+                    });
+                } else {
+                    onlineList.innerHTML = '<p>Tidak ada pengguna yang online.</p>';
+                }
+            });
+            unsubscribeListeners.push(unsubscribePresence);
         };
 
         const cleanupListeners = () => {
@@ -1194,8 +1439,6 @@
                 allUsers = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 currentPage = 1;
                 filterAndDisplayUsers();
-                updateStats();
-                updateTotalSpentStat();
                 document.getElementById('last-refreshed').textContent = `Last refreshed: ${new Date().toLocaleTimeString('id-ID')}`;
             } catch (error) {
                 console.error("Error fetching users:", error);
@@ -1250,6 +1493,8 @@
                 if ((user.pendingTransaction && user.pendingTransaction > 0) || user.pendingSubscription || user.akunJualStatus) {
                     pendingIndicatorHTML = '<i class="fas fa-bell pending-indicator" title="Pending Transaction"></i>';
                 }
+                
+                const isBanned = user.isBanned || false;
 
                 const cardHTML = `
                     <div class="user-profile-card">
@@ -1279,6 +1524,14 @@
                                 <span class="info-label">Password</span>
                                 <span class="info-value"><span>••••••••</span></span>
                             </div>
+                            <div class="info-item card-ban-toggle">
+                                <span class="info-label">Status Akun (Normal / Banned)</span>
+                                <div class="toggle-switch ban-toggle-switch">
+                                    <input type="checkbox" id="ban-toggle-${user.id}" class="ban-toggle-input" data-doc-id="${user.id}" ${isBanned ? 'checked' : ''}>
+                                    <label for="ban-toggle-${user.id}"></label>
+                                    <span id="ban-status-text-${user.id}">${isBanned ? 'Banned' : 'Normal'}</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-actions">
                             <button class="action-button btn-primary edit-user-btn" data-doc-id="${user.id}"><i class="fas fa-edit"></i> Edit</button>
@@ -1301,7 +1554,6 @@
                 allUsers = usersQuery.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
                 renderTransactionCards();
-                updateStats();
             } catch (error) {
                 console.error("Error fetching data for transactions:", error);
                 showToast('Error fetching transaction data.', 'error');
@@ -1321,32 +1573,8 @@
                 contentRendered = true;
                 dom.pendingTransactionContainer.innerHTML += `<h2 class="section-heading">Pending Top-ups & Subscriptions</h2>`;
                 pendingUsers.forEach(user => {
-                    const accountType = user.accountType || 'USER';
-                    let statusBadgeClass = 'status-user';
-                    let statusOrSaldoHTML = `<span class="info-label">Current Saldo</span><span class="info-value">Rp ${(user.saldo || 0).toLocaleString('id-ID')}</span>`;
-                    
-                    if (accountType === 'PREMIUM') { statusBadgeClass = 'status-premium'; statusOrSaldoHTML = ''; }
-                    if (accountType === 'Langganan') { statusBadgeClass = 'status-langganan'; statusOrSaldoHTML = ''; }
-                    
-                    let transactionDetailsHTML = '';
-                    let actionButtonsHTML = '';
-                    
-                    if (user.pendingSubscription) {
-                        const sub = user.pendingSubscription;
-                        transactionDetailsHTML = `<h4>Pending Subscription</h4><p class="transaction-amount">${sub.type} - Rp ${(sub.uniqueAmount || sub.amount).toLocaleString('id-ID')}</p>`;
-                        actionButtonsHTML = `<button class="action-button btn-success" data-action="accept-sub" data-doc-id="${user.id}"><i class="fas fa-check"></i> Accept</button><button class="action-button btn-danger" data-action="reject-sub" data-doc-id="${user.id}"><i class="fas fa-times"></i> Reject</button>`;
-                    } else if (user.pendingTransaction > 0) {
-                        transactionDetailsHTML = `<h4>Pending Top-up</h4><p class="transaction-amount">Rp ${user.pendingTransaction.toLocaleString('id-ID')}</p>`;
-                        actionButtonsHTML = `<button class="action-button btn-success" data-action="accept-topup" data-doc-id="${user.id}"><i class="fas fa-check"></i> Accept</button><button class="action-button btn-danger" data-action="reject-topup" data-doc-id="${user.id}"><i class="fas fa-times"></i> Reject</button>`;
-                    }
-
-                    dom.pendingTransactionContainer.innerHTML += `
-                        <div class="transaction-card">
-                            <div class="card-header"><div class="user-title"><h3>${user.username}</h3><span class="status-badge ${statusBadgeClass}">${accountType}</span></div></div>
-                            <div class="card-info-grid"><div class="info-item"><span class="info-label">Email</span><span class="info-value"><span>${user.email || 'N/A'}</span></span></div><div class="info-item">${statusOrSaldoHTML}</div></div>
-                            <div class="transaction-details-section">${transactionDetailsHTML}</div>
-                            <div class="card-actions">${actionButtonsHTML}</div>
-                        </div>`;
+                    const cardHTML = createTransactionCardHTML(user);
+                    dom.pendingTransactionContainer.innerHTML += cardHTML;
                 });
             }
             
@@ -1354,26 +1582,8 @@
                 contentRendered = true;
                 dom.pendingTransactionContainer.innerHTML += `<h2 class="section-heading">Pending Penjualan Akun</h2>`;
                 pendingAccountSales.forEach(user => {
-                    const saleData = user.akunJualStatus;
-                    const accountListHTML = saleData.accounts.map(acc => `<li>${acc}</li>`).join('');
-
-                    const transactionDetailsHTML = `
-                        <h4>Pending Penjualan Akun</h4>
-                        <div style="font-size:1.1em; text-align:left; max-height: 80px; overflow-y:auto;">
-                           <ul style="padding-left: 20px; margin: 0;">${accountListHTML}</ul>
-                        </div>
-                    `;
-                    const actionButtonsHTML = `
-                        <button class="action-button btn-success" data-action="accept-sale" data-doc-id="${user.id}"><i class="fas fa-check"></i> Terima</button>
-                        <button class="action-button btn-danger" data-action="reject-sale" data-doc-id="${user.id}"><i class="fas fa-times"></i> Tolak</button>
-                    `;
-
-                    dom.pendingTransactionContainer.innerHTML += `
-                        <div class="transaction-card">
-                            <div class="card-header"><div class="user-title"><h3>${user.username}</h3></div></div>
-                            <div class="transaction-details-section">${transactionDetailsHTML}</div>
-                            <div class="card-actions">${actionButtonsHTML}</div>
-                        </div>`;
+                    const cardHTML = createTransactionCardHTML(user);
+                    dom.pendingTransactionContainer.innerHTML += cardHTML;
                 });
             }
 
@@ -1382,6 +1592,41 @@
             }
 
             addTransactionCardButtonListeners();
+        };
+        
+        const createTransactionCardHTML = (user) => {
+            const accountType = user.accountType || 'USER';
+            let statusBadgeClass = 'status-user';
+            let statusOrSaldoHTML = `<span class="info-label">Current Saldo</span><span class="info-value">Rp ${(user.saldo || 0).toLocaleString('id-ID')}</span>`;
+            
+            if (accountType === 'PREMIUM') { statusBadgeClass = 'status-premium'; statusOrSaldoHTML = ''; }
+            if (accountType === 'Langganan') { statusBadgeClass = 'status-langganan'; statusOrSaldoHTML = ''; }
+            
+            let transactionDetailsHTML = '';
+            let actionButtonsHTML = '';
+            
+            if (user.pendingSubscription) {
+                const sub = user.pendingSubscription;
+                transactionDetailsHTML = `<h4>Pending Subscription</h4><p class="transaction-amount">${sub.type} - Rp ${(sub.uniqueAmount || sub.amount).toLocaleString('id-ID')}</p>`;
+                actionButtonsHTML = `<button class="action-button btn-success" data-action="accept-sub" data-doc-id="${user.id}"><i class="fas fa-check"></i> Accept</button><button class="action-button btn-danger" data-action="reject-sub" data-doc-id="${user.id}"><i class="fas fa-times"></i> Reject</button>`;
+            } else if (user.pendingTransaction > 0) {
+                transactionDetailsHTML = `<h4>Pending Top-up</h4><p class="transaction-amount">Rp ${user.pendingTransaction.toLocaleString('id-ID')}</p>`;
+                actionButtonsHTML = `<button class="action-button btn-success" data-action="accept-topup" data-doc-id="${user.id}"><i class="fas fa-check"></i> Accept</button><button class="action-button btn-danger" data-action="reject-topup" data-doc-id="${user.id}"><i class="fas fa-times"></i> Reject</button>`;
+            } else if (user.akunJualStatus && user.akunJualStatus.status === 'Di Proses') {
+                const saleData = user.akunJualStatus;
+                const accountListHTML = saleData.accounts.map(acc => `<li>${acc}</li>`).join('');
+                transactionDetailsHTML = `<h4>Pending Penjualan Akun</h4><div style="font-size:1.1em; text-align:left; max-height: 80px; overflow-y:auto;"><ul style="padding-left: 20px; margin: 0;">${accountListHTML}</ul></div>`;
+                actionButtonsHTML = `<button class="action-button btn-success" data-action="accept-sale" data-doc-id="${user.id}"><i class="fas fa-check"></i> Terima</button><button class="action-button btn-danger" data-action="reject-sale" data-doc-id="${user.id}"><i class="fas fa-times"></i> Tolak</button>`;
+                statusOrSaldoHTML = ''; // Hide saldo for account sale
+            }
+
+            return `
+                <div class="transaction-card">
+                    <div class="card-header"><div class="user-title"><h3>${user.username}</h3><span class="status-badge ${statusBadgeClass}">${accountType}</span></div></div>
+                    <div class="card-info-grid"><div class="info-item"><span class="info-label">Email</span><span class="info-value"><span>${user.email || 'N/A'}</span></span></div><div class="info-item">${statusOrSaldoHTML}</div></div>
+                    <div class="transaction-details-section">${transactionDetailsHTML}</div>
+                    <div class="card-actions">${actionButtonsHTML}</div>
+                </div>`;
         };
 
         const updatePaginationControls = () => {
@@ -1393,23 +1638,19 @@
             document.getElementById('next-page-btn').disabled = currentPage === totalPages || totalPages === 0;
         };
         
-        const updateStats = () => {
-            if(!allUsers) return;
-            const totalUsers = allUsers.length;
-            const pendingTrxCount = allUsers.filter(u => (u.pendingTransaction && u.pendingTransaction > 0) || u.pendingSubscription || (u.akunJualStatus && u.akunJualStatus.status === 'Di Proses')).length;
-            document.getElementById('stat-total-users').textContent = totalUsers.toLocaleString('id-ID');
-            document.getElementById('stat-pending-trx').textContent = pendingTrxCount;
-        };
-
-        const updateTotalSpentStat = async () => {
-            const statElement = document.getElementById('stat-total-spent');
+        const updateMainMenuStats = async () => {
             try {
-                const querySnapshot = await getDocs(collection(db, "topup_history"));
-                const totalSpent = querySnapshot.docs.reduce((sum, doc) => sum + (doc.data().amount || 0), 0);
-                statElement.textContent = `Rp ${totalSpent.toLocaleString('id-ID')}`;
+                // Fetch user count
+                const usersQuerySnapshot = await getDocs(collection(db, "users"));
+                document.getElementById('stat-total-users').textContent = usersQuerySnapshot.size.toLocaleString('id-ID');
+
+                // Fetch total spent
+                const purchaseHistorySnapshot = await getDocs(collection(db, "purchase_history"));
+                const totalSpent = purchaseHistorySnapshot.docs.reduce((sum, doc) => sum + (doc.data().rpCost || 0), 0);
+                document.getElementById('stat-total-spent').textContent = `Rp ${totalSpent.toLocaleString('id-ID')}`;
+
             } catch (error) {
-                console.error("Error calculating total spent:", error);
-                statElement.textContent = 'Error';
+                console.error("Error updating main menu stats:", error);
             }
         };
 
@@ -1477,7 +1718,8 @@
                 device_id: '',
                 password: document.getElementById('add-password').value, 
                 accountType: 'USER',
-                createdAt: serverTimestamp() 
+                createdAt: serverTimestamp(),
+                isBanned: false
             };
             try {
                 await addDoc(collection(db, "users"), newData);
@@ -1488,7 +1730,7 @@
             } catch (error) { showToast('Failed to add user.', 'error'); }
         };
         
-        const handleAcceptTransaction = (docId) => {
+        const handleAcceptTransaction = (docId, isFromFloating = false) => {
             const user = allUsers.find(u => u.id === docId);
             if (!user || !user.pendingTransaction || user.pendingTransaction <= 0) return;
             
@@ -1508,6 +1750,10 @@
                     await updateDoc(doc(db, "users", docId), updatedUserData);
                     await addDoc(collection(db, "topup_history"), topupHistoryData);
                     showToast('Transaction accepted!', 'success');
+                    if (isFromFloating) {
+                        dom.floatingTransactionModal.style.display = 'none';
+                        isFloatingModalShown = false; 
+                    }
                     await fetchAndRenderTransactions();
                 } catch (error) {
                     showToast('Failed to accept transaction.', 'error');
@@ -1522,7 +1768,7 @@
             );
         };
         
-        const handleRejectTransaction = (docId) => {
+        const handleRejectTransaction = (docId, isFromFloating = false) => {
             const user = allUsers.find(u => u.id === docId);
             if (!user || !user.pendingTransaction || user.pendingTransaction <= 0) return;
             
@@ -1530,6 +1776,10 @@
                 try {
                     await updateDoc(doc(db, "users", docId), { pendingTransaction: 0 });
                     showToast('Pending top-up rejected.', 'success');
+                    if (isFromFloating) {
+                        dom.floatingTransactionModal.style.display = 'none';
+                        isFloatingModalShown = false;
+                    }
                     await fetchAndRenderTransactions();
                 } catch (error) {
                     showToast('Failed to reject transaction.', 'error');
@@ -1544,7 +1794,7 @@
             );
         };
 
-        const handleAcceptSubscription = (docId) => {
+        const handleAcceptSubscription = (docId, isFromFloating = false) => {
             const user = allUsers.find(u => u.id === docId);
             if (!user || !user.pendingSubscription) return;
             
@@ -1574,6 +1824,10 @@
                     await updateDoc(doc(db, "users", docId), updatedUserData);
                     await addDoc(collection(db, "purchase_history"), historyData);
                     showToast('Subscription activated!', 'success');
+                    if(isFromFloating){
+                        dom.floatingTransactionModal.style.display = 'none';
+                        isFloatingModalShown = false;
+                    }
                     await fetchAndRenderTransactions();
                 } catch (error) {
                     showToast('Failed to activate subscription.', 'error');
@@ -1588,7 +1842,7 @@
             );
         };
 
-        const handleRejectSubscription = (docId) => {
+        const handleRejectSubscription = (docId, isFromFloating = false) => {
             const user = allUsers.find(u => u.id === docId);
             if (!user || !user.pendingSubscription) return;
 
@@ -1596,6 +1850,10 @@
                 try {
                     await updateDoc(doc(db, "users", docId), { pendingSubscription: deleteField() });
                     showToast('Subscription request rejected.', 'success');
+                     if(isFromFloating){
+                        dom.floatingTransactionModal.style.display = 'none';
+                        isFloatingModalShown = false;
+                    }
                     await fetchAndRenderTransactions();
                 } catch (error) {
                     showToast('Failed to reject subscription.', 'error');
@@ -1610,7 +1868,7 @@
             );
         };
         
-        const handleAcceptAccountSale = (docId) => {
+        const handleAcceptAccountSale = (docId, isFromFloating = false) => {
             const user = allUsers.find(u => u.id === docId);
             if (!user || !user.akunJualStatus) return;
 
@@ -1620,6 +1878,10 @@
                         'akunJualStatus.status': 'Selesai(Terbayar Admin)'
                     });
                     showToast(`Penjualan akun dari ${user.username} telah diterima.`, 'success');
+                    if(isFromFloating){
+                        dom.floatingTransactionModal.style.display = 'none';
+                        isFloatingModalShown = false;
+                    }
                     await fetchAndRenderTransactions();
                 } catch (error) {
                     showToast('Gagal menerima penjualan akun.', 'error');
@@ -1634,7 +1896,7 @@
             );
         };
 
-        const handleRejectAccountSale = (docId) => {
+        const handleRejectAccountSale = (docId, isFromFloating = false) => {
             const user = allUsers.find(u => u.id === docId);
             if (!user || !user.akunJualStatus) return;
 
@@ -1644,6 +1906,10 @@
                         akunJualStatus: deleteField()
                     });
                     showToast(`Penjualan akun dari ${user.username} telah ditolak.`, 'success');
+                    if(isFromFloating){
+                        dom.floatingTransactionModal.style.display = 'none';
+                        isFloatingModalShown = false;
+                    }
                     await fetchAndRenderTransactions();
                 } catch (error) {
                     showToast('Gagal menolak penjualan akun.', 'error');
@@ -1684,7 +1950,7 @@
                 const q = query(collection(db, "stokAkun"), orderBy("createdAt", "desc"));
                 const querySnapshot = await getDocs(q);
                 allStokAkun = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderStokAkunCards();
+                renderStokAkunCards('all'); // Show all by default
             } catch (error) {
                 console.error("Error fetching stok akun:", error);
                 showToast('Gagal mengambil data penawaran.', 'error');
@@ -1693,13 +1959,20 @@
             }
         };
         
-        const renderStokAkunCards = () => {
+        const renderStokAkunCards = (filter = 'all') => {
             dom.stokAkunCardContainer.innerHTML = '';
-            if (allStokAkun.length === 0) {
-                dom.stokAkunCardContainer.innerHTML = '<p style="text-align:center; grid-column: 1 / -1;">Belum ada penawaran akun.</p>';
+            
+            const filteredData = allStokAkun.filter(akun => {
+                if (filter === 'available') return !akun.ownedBy;
+                if (filter === 'sold') return !!akun.ownedBy;
+                return true; // 'all'
+            });
+
+            if (filteredData.length === 0) {
+                dom.stokAkunCardContainer.innerHTML = `<p style="text-align:center; grid-column: 1 / -1;">Tidak ada data untuk filter "${filter}".</p>`;
                 return;
             }
-            allStokAkun.forEach(akun => {
+            filteredData.forEach(akun => {
                 let claimedByHTML = '';
                 if (akun.ownedBy) {
                     claimedByHTML = `<div class="info-item" style="grid-column: 1 / -1;"><span class="info-label">Terjual Kepada</span><span class="info-value owner"><span>${akun.ownedBy}</span><button class="action-button reset-owner-btn" data-doc-id="${akun.id}" data-type="stokAkun" title="Batalkan status terjual"><i class="fas fa-times"></i> Batal</button></span></div>`;
@@ -1798,7 +2071,7 @@
                 const q = query(collection(db, "stokKredensial"), orderBy("createdAt", "desc"));
                 const querySnapshot = await getDocs(q);
                 allStokKredensial = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderStokKredensialCards();
+                renderStokKredensialCards('all');
             } catch (error) {
                 console.error("Error fetching stok kredensial:", error);
                 showToast('Gagal mengambil data kredensial.', 'error');
@@ -1807,13 +2080,19 @@
             }
         };
 
-        const renderStokKredensialCards = () => {
+        const renderStokKredensialCards = (filter = 'all') => {
             dom.stokKredensialCardContainer.innerHTML = '';
-            if (allStokKredensial.length === 0) {
-                dom.stokKredensialCardContainer.innerHTML = '<p style="text-align:center; grid-column: 1 / -1;">Belum ada kredensial di dalam stok.</p>';
+             const filteredData = allStokKredensial.filter(akun => {
+                if (filter === 'available') return !akun.ownedBy;
+                if (filter === 'used') return !!akun.ownedBy;
+                return true; // 'all'
+            });
+
+            if (filteredData.length === 0) {
+                dom.stokKredensialCardContainer.innerHTML = `<p style="text-align:center; grid-column: 1 / -1;">Tidak ada data untuk filter "${filter}".</p>`;
                 return;
             }
-            allStokKredensial.forEach(akun => {
+            filteredData.forEach(akun => {
                 let claimedByHTML = '';
                 if (akun.ownedBy) {
                     claimedByHTML = `<div class="info-item" style="grid-column: 1 / -1;"><span class="info-label">Terpakai Oleh</span><span class="info-value owner"><span>${akun.ownedBy}</span><button class="action-button reset-owner-btn" data-doc-id="${akun.id}" data-type="stokKredensial" title="Batalkan status terpakai"><i class="fas fa-times"></i> Batal</button></span></div>`;
@@ -1915,6 +2194,128 @@
             showConfirmation('Yakin ingin mengembalikan item ini ke stok?', 'Reset Status', 'btn-warning', confirmAction);
         };
         
+        // --- REKAP MANAGEMENT FUNCTIONS ---
+        const fetchAndRenderRekap = async (filter = 'all') => {
+            dom.rekapSpinner.style.display = 'flex';
+            const tableBody = document.getElementById('rekap-table-body');
+            tableBody.innerHTML = '';
+            try {
+                // Fetch data only if it's empty
+                if (allRekapData.length === 0) {
+                    const usersSnapshot = await getDocs(collection(db, "users"));
+                    const usersMap = new Map();
+                    usersSnapshot.forEach(doc => usersMap.set(doc.id, doc.data()));
+
+                    const topupHistorySnapshot = await getDocs(collection(db, "topup_history"));
+                    const purchaseHistorySnapshot = await getDocs(collection(db, "purchase_history"));
+                    
+                    let combinedTransactions = [];
+
+                    topupHistorySnapshot.forEach(doc => {
+                        const data = doc.data();
+                        combinedTransactions.push({ type: 'Top Up Saldo', detail: `+ Rp ${(data.amount || 0).toLocaleString('id-ID')}`, amount: data.amount || 0, isTopUp: true, ...data });
+                    });
+                    purchaseHistorySnapshot.forEach(doc => {
+                        const data = doc.data();
+                        let detail = `Beli UB ${data.game || 'N/A'}`;
+                        if(data.ubAmount && typeof data.ubAmount === 'string' && data.ubAmount.startsWith('Akun:')){
+                            detail = `Beli Akun (${data.game || 'N/A'})`;
+                        }
+                        combinedTransactions.push({ type: 'Pembelian', detail: detail, amount: data.rpCost || 0, isTopUp: false, ...data });
+                    });
+                    
+                    allRekapData = combinedTransactions.map(trx => ({ ...trx, user: usersMap.get(trx.userId) })).filter(trx => trx.user);
+                }
+
+                // Apply filters
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                const startOfWeek = new Date(today);
+                startOfWeek.setDate(startOfWeek.getDate() - today.getDay());
+
+                const filteredData = allRekapData.filter(trx => {
+                    if (!trx.timestamp || typeof trx.timestamp.seconds !== 'number') return false;
+                    const trxDate = new Date(trx.timestamp.seconds * 1000);
+                    switch (filter) {
+                        case 'today': return trxDate >= today;
+                        case 'yesterday': return trxDate >= yesterday && trxDate < today;
+                        case 'this_week': return trxDate >= startOfWeek;
+                        case 'all': default: return true;
+                    }
+                });
+
+                // Sort by timestamp
+                filteredData.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+                if (filteredData.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Tidak ada riwayat transaksi untuk filter "${filter}".</td></tr>`;
+                } else {
+                    filteredData.forEach(trx => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${new Date(trx.timestamp.seconds * 1000).toLocaleString('id-ID')}</td>
+                            <td>${trx.user.username || 'N/A'}</td>
+                            <td>${trx.user.whatsapp || 'N/A'}</td>
+                            <td>${trx.type}</td>
+                            <td>${trx.detail}</td>
+                            <td class="${trx.isTopUp ? 'amount-topup' : 'amount-spent'}">${trx.isTopUp ? '+' : '-'} Rp ${trx.amount.toLocaleString('id-ID')}</td>
+                            <td class="current-balance">Rp ${(trx.user.saldo || 0).toLocaleString('id-ID')}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching rekap data:", error);
+                showToast('Gagal memuat data rekap.', 'error');
+                tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--danger-primary);">Gagal memuat data.</td></tr>';
+            } finally {
+                dom.rekapSpinner.style.display = 'none';
+            }
+        };
+
+        const handleResetRekap = async () => {
+            const pinForm = document.getElementById('pin-form');
+            const pinInput = document.getElementById('pin-input');
+            pinInput.value = '';
+            dom.pinModal.style.display = 'flex';
+            
+            pinForm.onsubmit = (e) => {
+                e.preventDefault();
+                if (pinInput.value === '050213') {
+                    dom.pinModal.style.display = 'none';
+                    showConfirmation(
+                        'Anda YAKIN ingin menghapus SEMUA riwayat transaksi (topup & pembelian)? Tindakan ini tidak dapat dibatalkan.',
+                        'Konfirmasi Reset Rekap',
+                        'btn-danger',
+                        async () => {
+                            dom.rekapSpinner.style.display = 'flex';
+                            try {
+                                const collectionsToDelete = ["topup_history", "purchase_history"];
+                                for (const coll of collectionsToDelete) {
+                                    const snapshot = await getDocs(collection(db, coll));
+                                    const batch = writeBatch(db);
+                                    snapshot.forEach(doc => batch.delete(doc.ref));
+                                    await batch.commit();
+                                }
+                                allRekapData = []; // Clear cached data
+                                showToast('Rekap berhasil direset!', 'success');
+                                await fetchAndRenderRekap('all');
+                            } catch (error) {
+                                console.error("Error resetting rekap:", error);
+                                showToast('Gagal mereset rekap.', 'error');
+                            } finally {
+                                dom.rekapSpinner.style.display = 'none';
+                            }
+                        }
+                    );
+                } else {
+                    showToast('PIN salah!', 'error');
+                }
+            };
+        };
+
         // --- SETTINGS MANAGEMENT FUNCTIONS ---
         const updateMaintenanceStatusInFirestore = async (isActive) => {
              const message = document.getElementById('maintenance-message')?.value || appSettings.maintenance?.message || '';
@@ -1989,6 +2390,58 @@
             } catch (error) { showToast('Gagal mengirim pesan.', 'error'); }
         };
 
+        // --- FLOATING TRANSACTION MODAL ---
+        const checkAndShowFloatingTransaction = async () => {
+            if (isFloatingModalShown) return;
+
+            const q = query(collection(db, "users"), where("pendingTransaction", ">", 0), limit(1));
+            const subQuery = query(collection(db, "users"), where("pendingSubscription", "!=", null), limit(1));
+            const saleQuery = query(collection(db, "users"), where("akunJualStatus.status", "==", "Di Proses"), limit(1));
+            
+            try {
+                const [querySnapshot, subSnapshot, saleSnapshot] = await Promise.all([getDocs(q), getDocs(subQuery), getDocs(saleQuery)]);
+                let pendingUserDoc = null;
+
+                if (!querySnapshot.empty) {
+                    pendingUserDoc = querySnapshot.docs[0];
+                } else if (!subSnapshot.empty) {
+                    pendingUserDoc = subSnapshot.docs[0];
+                } else if (!saleSnapshot.empty){
+                    pendingUserDoc = saleSnapshot.docs[0];
+                }
+
+                if (pendingUserDoc) {
+                    const user = { id: pendingUserDoc.id, ...pendingUserDoc.data() };
+                    const cardHTML = createTransactionCardHTML(user);
+                    
+                    document.getElementById('floating-transaction-content').innerHTML = cardHTML;
+                    
+                    const acceptBtn = document.getElementById('floating-accept-btn');
+                    const rejectBtn = document.getElementById('floating-reject-btn');
+                    
+                    // Detach old listeners
+                    acceptBtn.replaceWith(acceptBtn.cloneNode(true));
+                    rejectBtn.replaceWith(rejectBtn.cloneNode(true));
+                    
+                    // Add new listeners
+                    document.getElementById('floating-accept-btn').addEventListener('click', () => {
+                         if (user.pendingTransaction > 0) handleAcceptTransaction(user.id, true);
+                         else if (user.pendingSubscription) handleAcceptSubscription(user.id, true);
+                         else if (user.akunJualStatus) handleAcceptAccountSale(user.id, true);
+                    });
+                     document.getElementById('floating-reject-btn').addEventListener('click', () => {
+                         if (user.pendingTransaction > 0) handleRejectTransaction(user.id, true);
+                         else if (user.pendingSubscription) handleRejectSubscription(user.id, true);
+                         else if (user.akunJualStatus) handleRejectAccountSale(user.id, true);
+                    });
+
+                    dom.floatingTransactionModal.style.display = 'flex';
+                    isFloatingModalShown = true;
+                }
+            } catch (error) {
+                console.error("Error checking for floating transaction:", error);
+            }
+        };
 
         // --- UNIVERSAL FUNCTIONS ---
         const showConfirmation = (message, title, btnClass, callback) => {
@@ -2035,8 +2488,12 @@
             document.getElementById('refresh-transactions-btn').addEventListener('click', fetchAndRenderTransactions);
             document.getElementById('refresh-stok-akun-btn').addEventListener('click', fetchStokAkun);
             document.getElementById('refresh-stok-kredensial-btn').addEventListener('click', fetchStokKredensial);
+            document.getElementById('reset-rekap-btn').addEventListener('click', handleResetRekap);
             
             document.getElementById('add-user-btn').addEventListener('click', () => dom.addUserModal.style.display = 'flex');
+            document.getElementById('quick-add-user-btn').addEventListener('click', () => dom.addUserModal.style.display = 'flex');
+            document.getElementById('quick-add-stok-btn').addEventListener('click', () => dom.addStokAkunModal.style.display = 'flex');
+            
             dom.searchInput.addEventListener('input', () => { currentPage = 1; filterAndDisplayUsers(); });
             document.getElementById('prev-page-btn').addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderUserCards(); } });
             document.getElementById('next-page-btn').addEventListener('click', () => { const totalPages = Math.ceil(displayedUsers.length / rowsPerPage); if (currentPage < totalPages) { currentPage++; renderUserCards(); } });
@@ -2051,7 +2508,6 @@
             document.getElementById('add-stok-kredensial-form').addEventListener('submit', handleSaveNewStokKredensial);
             document.getElementById('edit-stok-kredensial-form').addEventListener('submit', handleUpdateStokKredensial);
             
-            // Listener baru
             document.getElementById('quick-add-credential-btn').addEventListener('click', () => dom.addStokKredensialModal.style.display = 'flex');
             document.getElementById('main-menu-maintenance-toggle').addEventListener('change', (e) => updateMaintenanceStatusInFirestore(e.target.checked));
             document.getElementById('maintenance-toggle').addEventListener('change', (e) => updateMaintenanceStatusInFirestore(e.target.checked));
@@ -2072,7 +2528,14 @@
                 });
             });
 
-            document.querySelectorAll('.cancel-modal-btn').forEach(btn => btn.addEventListener('click', () => btn.closest('.modal').style.display = 'none'));
+            document.querySelectorAll('.cancel-modal-btn').forEach(btn => btn.addEventListener('click', (e) => {
+                const modal = e.target.closest('.modal');
+                modal.style.display = 'none';
+                if (modal.id === 'floating-transaction-modal') {
+                    isFloatingModalShown = true; // Mark as shown so it doesn't pop up again
+                }
+            }));
+
             document.getElementById('confirm-cancel-btn').addEventListener('click', () => {
                 dom.confirmModal.style.display = 'none';
                 const confirmBtn = document.getElementById('confirm-ok-btn');
@@ -2102,14 +2565,60 @@
                     dateInput.value = currentUTCDate.toISOString().split('T')[0];
                 });
             });
+
+            // Filter listeners
+            document.getElementById('rekap-filters').addEventListener('click', (e) => {
+                if(e.target.classList.contains('filter-btn')) {
+                    document.querySelectorAll('#rekap-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    fetchAndRenderRekap(e.target.dataset.filter);
+                }
+            });
+            document.getElementById('stok-akun-filters').addEventListener('click', (e) => {
+                if(e.target.classList.contains('filter-btn')) {
+                    document.querySelectorAll('#stok-akun-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    renderStokAkunCards(e.target.dataset.filter);
+                }
+            });
+            document.getElementById('stok-kredensial-filters').addEventListener('click', (e) => {
+                if(e.target.classList.contains('filter-btn')) {
+                    document.querySelectorAll('#stok-kredensial-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    renderStokKredensialCards(e.target.dataset.filter);
+                }
+            });
+            document.getElementById('online-users-card').addEventListener('click', () => {
+                dom.onlineUsersModal.style.display = 'flex';
+            });
         }
         
+        async function handleBanToggle(docId, isBanned) {
+            const userRef = doc(db, "users", docId);
+            try {
+                await updateDoc(userRef, { isBanned: isBanned });
+                const statusText = document.getElementById(`ban-status-text-${docId}`);
+                if(statusText) statusText.textContent = isBanned ? 'Banned' : 'Normal';
+                showToast(`User status updated to ${isBanned ? 'Banned' : 'Normal'}.`, 'success');
+            } catch (error) {
+                showToast('Failed to update user status.', 'error');
+                // Revert toggle on error
+                const toggleInput = document.getElementById(`ban-toggle-${docId}`);
+                if(toggleInput) toggleInput.checked = !isBanned;
+            }
+        }
+
         function addCardButtonListeners() {
             dom.userCardContainer.querySelectorAll('.edit-user-btn').forEach(button => button.addEventListener('click', (e) => openEditUserModal(e.currentTarget.dataset.docId)));
             dom.userCardContainer.querySelectorAll('.delete-user-btn').forEach(button => button.addEventListener('click', (e) => handleDeleteUser(e.currentTarget.dataset.docId, e.currentTarget.dataset.username)));
             dom.userCardContainer.querySelectorAll('.copy-btn').forEach(button => button.addEventListener('click', (e) => {
                 navigator.clipboard.writeText(e.currentTarget.dataset.text).then(() => showToast('Device ID copied!', 'success')).catch(() => showToast('Failed to copy.', 'error'));
             }));
+             dom.userCardContainer.querySelectorAll('.ban-toggle-input').forEach(toggle => {
+                toggle.addEventListener('change', (e) => {
+                    handleBanToggle(e.target.dataset.docId, e.target.checked);
+                });
+            });
         }
 
         function addTransactionCardButtonListeners() {
@@ -2158,6 +2667,7 @@
             if (user) {
                 dom.loginPage.style.display = 'none';
                 dom.adminPanel.style.display = 'flex';
+                isFloatingModalShown = false; // Reset on login
                 cleanupListeners(); // Hapus listener lama jika ada (untuk mencegah duplikasi)
                 setupRealtimeListeners(); // Siapkan listener baru
                 showMainMenu();
