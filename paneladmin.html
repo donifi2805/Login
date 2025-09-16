@@ -1267,6 +1267,8 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, getDoc, deleteField, orderBy, query, onSnapshot, writeBatch, where, limit } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+        // --- [MODIFIKASI 1] Impor fungsi-fungsi Realtime Database ---
+        import { getDatabase, ref, onChildChanged, onChildRemoved } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB3KJT9eh42V6ytLoY5e4ozzDXY4sHhado",
@@ -1275,11 +1277,15 @@
             storageBucket: "donitata1717-f10f7.appspot.com",
             messagingSenderId: "760325542999",
             appId: "1:760325542999:web:be97c17580f64407e33f12",
+            // --- [MODIFIKASI 2] Tambahkan databaseURL untuk RTDB ---
+            databaseURL: "https://donitata1717-f10f7-default-rtdb.asia-southeast1.firebasedatabase.app"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
+        // --- [MODIFIKASI 3] Inisialisasi Realtime Database ---
+        const rtdb = getDatabase(app);
 
         // State variables
         let allUsers = [], displayedUsers = [], currentPage = 1, allStokAkun = [], allStokKredensial = [], allRekapData = [];
@@ -2460,6 +2466,39 @@
             document.getElementById('confirm-ok-btn').addEventListener('click', handleConfirm, { once: true });
         };
 
+        // --- [MODIFIKASI 4] FUNGSI BARU UNTUK SINKRONISASI PRESENCE ---
+        function syncPresenceFromRtdbToFirestore() {
+            const statusRef = ref(rtdb, 'status');
+
+            // Listener jika status anak berubah (misal: dari online ke offline)
+            onChildChanged(statusRef, (snapshot) => {
+                const uid = snapshot.key;
+                const statusData = snapshot.val();
+                if (uid && statusData.status === 'offline') {
+                    console.log(`RTDB change detected for ${uid}: offline. Syncing to Firestore.`);
+                    const firestoreDocRef = doc(db, 'presence', uid);
+                    // Update Firestore dengan timestamp baru
+                    setDoc(firestoreDocRef, {
+                        status: 'offline',
+                        last_seen: serverTimestamp()
+                    }, { merge: true });
+                }
+            });
+
+            // Listener jika data anak dihapus (misal: saat user dihapus)
+            onChildRemoved(statusRef, (snapshot) => {
+                const uid = snapshot.key;
+                if (uid) {
+                    console.log(`RTDB data for ${uid} removed. Syncing to Firestore.`);
+                    const firestoreDocRef = doc(db, 'presence', uid);
+                    setDoc(firestoreDocRef, {
+                        status: 'offline',
+                        last_seen: serverTimestamp()
+                    }, { merge: true });
+                }
+            });
+        }
+
         // --- AUTH & EVENT LISTENERS SETUP ---
         function setupEventListeners() {
             document.getElementById('login-form').addEventListener('submit', (e) => {
@@ -2670,6 +2709,7 @@
                 isFloatingModalShown = false; // Reset on login
                 cleanupListeners(); // Hapus listener lama jika ada (untuk mencegah duplikasi)
                 setupRealtimeListeners(); // Siapkan listener baru
+                syncPresenceFromRtdbToFirestore(); // <-- [MODIFIKASI 5] PANGGIL FUNGSI DI SINI
                 showMainMenu();
             } else {
                 dom.loginPage.style.display = 'flex';
