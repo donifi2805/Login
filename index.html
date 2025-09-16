@@ -1352,32 +1352,55 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             });
         }
         
-// --- ONLINE PRESENCE SYSTEM (SUDAH DIPERBAIKI) ---
+// --// --- ONLINE PRESENCE SYSTEM (FINAL & ANDAL) ---
         function setupPresenceSystem() {
             if (!loggedInUser?.docId) return;
 
-            // Menentukan lokasi penulisan status di FIRESTORE, di koleksi 'presence'
+            // 1. Referensi ke Firestore (seperti sebelumnya, untuk dibaca oleh panel admin)
             const firestoreStatusRef = doc(db, 'presence', loggedInUser.docId);
 
-            // Menyiapkan data untuk status 'online' dan 'offline'
-            const isOnlineForFirestore = {
-                status: 'online',
-                last_seen: serverTimestamp(), // Menggunakan stempel waktu dari server Firestore
-                username: loggedInUser.username
-            };
+            // 2. Referensi ke Realtime Database (RTDB) untuk deteksi koneksi
+            const rtdbStatusRef = ref(rtdb, `/status/${loggedInUser.docId}`);
+            
+            // Objek data yang akan ditulis
             const isOfflineForFirestore = {
                 status: 'offline',
-                last_seen: serverTimestamp(), // Menggunakan stempel waktu dari server Firestore
+                last_seen: serverTimestamp(), // Timestamp Firestore
                 username: loggedInUser.username
             };
-
-            // Saat fungsi ini dijalankan (setelah login), langsung set status user menjadi 'online' di Firestore.
-            setDoc(firestoreStatusRef, isOnlineForFirestore);
-
-            // Jika user menutup tab browser, set statusnya menjadi 'offline'.
-            // Ini adalah pengaman tambahan.
-            window.addEventListener('beforeunload', () => {
-                setDoc(firestoreStatusRef, isOfflineForFirestore, { merge: true });
+            const isOnlineForFirestore = {
+                status: 'online',
+                last_seen: serverTimestamp(), // Timestamp Firestore
+                username: loggedInUser.username
+            };
+            
+            // 3. Monitor status koneksi ke Realtime Database
+            const connectedRef = ref(rtdb, '.info/connected');
+            onValue(connectedRef, (snapshot) => {
+                // Jika snapshot.val() adalah true, berarti klien terhubung ke RTDB
+                if (snapshot.val() === true) {
+                    // Beri "wasiat" ke server RTDB. Jika koneksi putus,
+                    // server akan otomatis menulis data ini ke RTDB.
+                    onDisconnect(rtdbStatusRef).set({ 
+                        status: 'offline', 
+                        last_seen: dbServerTimestamp() // Timestamp RTDB
+                    }).then(() => {
+                        // Setelah wasiat berhasil diatur, set status saat ini menjadi online
+                        
+                        // Tulis status 'online' ke FIRESTORE (untuk panel admin)
+                        setDoc(firestoreStatusRef, isOnlineForFirestore);
+                        
+                        // Tulis juga status 'online' ke RTDB
+                        set(rtdbStatusRef, {
+                           status: 'online',
+                           last_seen: dbServerTimestamp()
+                        });
+                    });
+                } else {
+                    // Ini akan berjalan jika koneksi terputus saat user masih di dalam aplikasi
+                    // (misalnya, internet mati). Kita update Firestore.
+                    setDoc(firestoreStatusRef, isOfflineForFirestore, { merge: true });
+                }
             });
         }
 
@@ -2005,9 +2028,6 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             showPage('topup'); 
             const opts = document.getElementById('topup-options-view'); 
             const pend = document.getElementById('topup-pending-view'); 
-            const userRef = doc(db, "users", loggedInUser.docId); 
-            const docSnap = await getDoc(userRef); 
-            if (docSnap.exists()) loggedInUser = { ...docSnap.data(), docId: docSnap.id }; 
             if (loggedInUser.pendingTransaction > 0) { 
                 opts.style.display = 'none'; 
                 pend.style.display = 'block'; 
