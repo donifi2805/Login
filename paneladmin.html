@@ -1265,9 +1265,8 @@
     
 <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, getDoc, deleteField, orderBy, query, onSnapshot, writeBatch, where, limit } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, getDoc, deleteField, orderBy, query, onSnapshot, writeBatch, where, limit, runTransaction } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
-        // --- [MODIFIKASI 1] Impor fungsi-fungsi Realtime Database ---
         import { getDatabase, ref, onChildChanged, onChildRemoved } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
         const firebaseConfig = {
@@ -1277,14 +1276,12 @@
             storageBucket: "donitata1717-f10f7.appspot.com",
             messagingSenderId: "760325542999",
             appId: "1:760325542999:web:be97c17580f64407e33f12",
-            // --- [MODIFIKASI 2] Tambahkan databaseURL untuk RTDB ---
             databaseURL: "https://donitata1717-f10f7-default-rtdb.asia-southeast1.firebasedatabase.app"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        // --- [MODIFIKASI 3] Inisialisasi Realtime Database ---
         const rtdb = getDatabase(app);
 
         // State variables
@@ -1372,7 +1369,7 @@
             const unsubscribeUsers = onSnapshot(usersRef, (querySnapshot) => {
                 const pendingCount = querySnapshot.docs.reduce((count, doc) => {
                     const user = doc.data();
-                    if ((user.pendingTransaction && user.pendingTransaction > 0) || user.pendingSubscription || (user.akunJualStatus && user.akunJualStatus.status === 'Di Proses')) {
+                    if ((user.pendingTransaction && user.pendingTransaction > 0) || user.pendingSubscription || user.pendingAkunPurchase || (user.akunJualStatus && user.akunJualStatus.status === 'Di Proses')) {
                         return count + 1;
                     }
                     return count;
@@ -1496,7 +1493,7 @@
                 }
                 
                 let pendingIndicatorHTML = '';
-                if ((user.pendingTransaction && user.pendingTransaction > 0) || user.pendingSubscription || user.akunJualStatus) {
+                if ((user.pendingTransaction && user.pendingTransaction > 0) || user.pendingSubscription || user.pendingAkunPurchase || user.akunJualStatus) {
                     pendingIndicatorHTML = '<i class="fas fa-bell pending-indicator" title="Pending Transaction"></i>';
                 }
                 
@@ -1570,14 +1567,20 @@
 
         const renderTransactionCards = () => {
             dom.pendingTransactionContainer.innerHTML = '';
-            const pendingUsers = allUsers.filter(user => (user.pendingTransaction && user.pendingTransaction > 0) || user.pendingSubscription);
+            
+            // MODIFIED FILTER
+            const pendingUsers = allUsers.filter(user => 
+                (user.pendingTransaction && user.pendingTransaction > 0) || 
+                user.pendingSubscription || 
+                user.pendingAkunPurchase
+            );
             const pendingAccountSales = allUsers.filter(user => user.akunJualStatus && user.akunJualStatus.status === 'Di Proses');
 
             let contentRendered = false;
 
             if (pendingUsers.length > 0) {
                 contentRendered = true;
-                dom.pendingTransactionContainer.innerHTML += `<h2 class="section-heading">Pending Top-ups & Subscriptions</h2>`;
+                dom.pendingTransactionContainer.innerHTML += `<h2 class="section-heading">Pending Top-ups, Subscriptions & Purchases</h2>`;
                 pendingUsers.forEach(user => {
                     const cardHTML = createTransactionCardHTML(user);
                     dom.pendingTransactionContainer.innerHTML += cardHTML;
@@ -1618,6 +1621,17 @@
             } else if (user.pendingTransaction > 0) {
                 transactionDetailsHTML = `<h4>Pending Top-up</h4><p class="transaction-amount">Rp ${user.pendingTransaction.toLocaleString('id-ID')}</p>`;
                 actionButtonsHTML = `<button class="action-button btn-success" data-action="accept-topup" data-doc-id="${user.id}"><i class="fas fa-check"></i> Accept</button><button class="action-button btn-danger" data-action="reject-topup" data-doc-id="${user.id}"><i class="fas fa-times"></i> Reject</button>`;
+            } else if (user.pendingAkunPurchase) { // MODIFIED: ADDED THIS BLOCK
+                const purchase = user.pendingAkunPurchase;
+                transactionDetailsHTML = `
+                    <h4>Pending Beli Akun (QRIS)</h4>
+                    <p style="font-size: 0.9em; margin-bottom: 5px;">Paket: <strong>${purchase.usernameTampilan || 'N/A'}</strong></p>
+                    <p class="transaction-amount">Rp ${(purchase.uniqueAmount).toLocaleString('id-ID')}</p>
+                `;
+                actionButtonsHTML = `
+                    <button class="action-button btn-success" data-action="accept-purchase" data-doc-id="${user.id}"><i class="fas fa-check"></i> Accept Purchase</button>
+                    <button class="action-button btn-danger" data-action="reject-purchase" data-doc-id="${user.id}"><i class="fas fa-times"></i> Reject</button>
+                `;
             } else if (user.akunJualStatus && user.akunJualStatus.status === 'Di Proses') {
                 const saleData = user.akunJualStatus;
                 const accountListHTML = saleData.accounts.map(acc => `<li>${acc}</li>`).join('');
@@ -1874,6 +1888,95 @@
             );
         };
         
+        // --- NEW FUNCTIONS FOR ACCOUNT PURCHASE ---
+        const handleAcceptAkunPurchase = (docId) => {
+            const user = allUsers.find(u => u.id === docId);
+            if (!user || !user.pendingAkunPurchase) return;
+            const purchaseData = user.pendingAkunPurchase;
+
+            const confirmAction = async () => {
+                showToast('Memproses pembelian akun... Mohon tunggu.', 'success');
+                const userRef = doc(db, "users", docId);
+                try {
+                    await runTransaction(db, async (transaction) => {
+                        const offeringDocRef = doc(db, "stokAkun", purchaseData.offeringId);
+                        const offeringDoc = await transaction.get(offeringDocRef);
+                        if (!offeringDoc.exists() || offeringDoc.data().ownedBy) {
+                            throw new Error("Penawaran akun ini sudah tidak tersedia.");
+                        }
+
+                        const kredensialQuery = query(collection(db, "stokKredensial"), where("gameType", "==", offeringDoc.data().gameType), where("ownedBy", "==", null), limit(1));
+                        const kredensialSnapshot = await getDocs(kredensialQuery); // Use getDocs, not transaction.get for queries
+                        if (kredensialSnapshot.empty) {
+                            throw new Error("Stok kredensial untuk game ini habis. Hubungi developer.");
+                        }
+                        const kredensialDoc = kredensialSnapshot.docs[0];
+                        const kredensialDocRef = kredensialDoc.ref;
+                        
+                        transaction.update(kredensialDocRef, { 
+                            ownedBy: user.username, 
+                            usernameTampilan: purchaseData.newUsername, 
+                            jumlahUB: offeringDoc.data().jumlahUB,
+                            gameType: offeringDoc.data().gameType 
+                        });
+
+                        const purchaseHistoryRef = doc(collection(db, "purchase_history"));
+                        transaction.set(purchaseHistoryRef, { 
+                            userId: docId, 
+                            username: user.username, 
+                            game: offeringDoc.data().gameType, 
+                            rpCost: purchaseData.uniqueAmount, 
+                            ubAmount: `Akun: ${purchaseData.usernameTampilan}`, 
+                            status: "Success (QRIS)", 
+                            timestamp: serverTimestamp() 
+                        });
+
+                        transaction.update(userRef, { 
+                            pendingAkunPurchase: deleteField() 
+                        });
+                    });
+
+                    showToast('Pembelian akun berhasil dikonfirmasi!', 'success');
+                } catch (error) {
+                    console.error("Gagal mengkonfirmasi pembelian akun:", error);
+                    showToast(`Error: ${error.message}`, 'error');
+                    // We don't revert here because the transaction already failed and rolled back.
+                } finally {
+                    await fetchAndRenderTransactions();
+                }
+            };
+
+            showConfirmation(
+                `Konfirmasi pembelian paket "${purchaseData.usernameTampilan}" oleh ${user.username}?`,
+                'Terima Pembelian Akun',
+                'btn-success',
+                confirmAction
+            );
+        };
+
+        const handleRejectAkunPurchase = (docId) => {
+            const user = allUsers.find(u => u.id === docId);
+            if (!user || !user.pendingAkunPurchase) return;
+
+            const confirmAction = async () => {
+                try {
+                    await updateDoc(doc(db, "users", docId), { pendingAkunPurchase: deleteField() });
+                    showToast('Permintaan pembelian akun ditolak.', 'success');
+                    await fetchAndRenderTransactions();
+                } catch (error) {
+                    showToast('Gagal menolak permintaan.', 'error');
+                }
+            };
+            
+            showConfirmation(
+                `Tolak permintaan pembelian akun dari ${user.username}?`,
+                'Tolak Pembelian Akun',
+                'btn-danger',
+                confirmAction
+            );
+        };
+        // --- END OF NEW FUNCTIONS ---
+
         const handleAcceptAccountSale = (docId, isFromFloating = false) => {
             const user = allUsers.find(u => u.id === docId);
             if (!user || !user.akunJualStatus) return;
@@ -2433,11 +2536,13 @@
                     document.getElementById('floating-accept-btn').addEventListener('click', () => {
                          if (user.pendingTransaction > 0) handleAcceptTransaction(user.id, true);
                          else if (user.pendingSubscription) handleAcceptSubscription(user.id, true);
+                         else if (user.pendingAkunPurchase) handleAcceptAkunPurchase(user.id, true); // ADDED
                          else if (user.akunJualStatus) handleAcceptAccountSale(user.id, true);
                     });
                      document.getElementById('floating-reject-btn').addEventListener('click', () => {
                          if (user.pendingTransaction > 0) handleRejectTransaction(user.id, true);
                          else if (user.pendingSubscription) handleRejectSubscription(user.id, true);
+                         else if (user.pendingAkunPurchase) handleRejectAkunPurchase(user.id, true); // ADDED
                          else if (user.akunJualStatus) handleRejectAccountSale(user.id, true);
                     });
 
@@ -2466,18 +2571,15 @@
             document.getElementById('confirm-ok-btn').addEventListener('click', handleConfirm, { once: true });
         };
 
-        // --- [MODIFIKASI 4] FUNGSI BARU UNTUK SINKRONISASI PRESENCE ---
         function syncPresenceFromRtdbToFirestore() {
             const statusRef = ref(rtdb, 'status');
 
-            // Listener jika status anak berubah (misal: dari online ke offline)
             onChildChanged(statusRef, (snapshot) => {
                 const uid = snapshot.key;
                 const statusData = snapshot.val();
                 if (uid && statusData.status === 'offline') {
                     console.log(`RTDB change detected for ${uid}: offline. Syncing to Firestore.`);
                     const firestoreDocRef = doc(db, 'presence', uid);
-                    // Update Firestore dengan timestamp baru
                     setDoc(firestoreDocRef, {
                         status: 'offline',
                         last_seen: serverTimestamp()
@@ -2485,7 +2587,6 @@
                 }
             });
 
-            // Listener jika data anak dihapus (misal: saat user dihapus)
             onChildRemoved(statusRef, (snapshot) => {
                 const uid = snapshot.key;
                 if (uid) {
@@ -2674,6 +2775,9 @@
                         case 'reject-sub': handleRejectSubscription(docId); break;
                         case 'accept-sale': handleAcceptAccountSale(docId); break;
                         case 'reject-sale': handleRejectAccountSale(docId); break;
+                        // MODIFIED: ADDED THESE CASES
+                        case 'accept-purchase': handleAcceptAkunPurchase(docId); break;
+                        case 'reject-purchase': handleRejectAkunPurchase(docId); break;
                     }
                 });
             });
@@ -2709,7 +2813,7 @@
                 isFloatingModalShown = false; // Reset on login
                 cleanupListeners(); // Hapus listener lama jika ada (untuk mencegah duplikasi)
                 setupRealtimeListeners(); // Siapkan listener baru
-                syncPresenceFromRtdbToFirestore(); // <-- [MODIFIKASI 5] PANGGIL FUNGSI DI SINI
+                syncPresenceFromRtdbToFirestore();
                 showMainMenu();
             } else {
                 dom.loginPage.style.display = 'flex';
