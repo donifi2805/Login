@@ -208,9 +208,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 #sell-status-modal .status-account-list { list-style: none; padding: 0; margin-top: 15px; max-height: 50vh; overflow-y: auto; }
 #sell-status-modal .status-account-item { display: flex; justify-content: space-between; align-items: center; background-color: var(--bg-primary); padding: 10px; border-radius: 6px; margin-bottom: 8px; }#sell-status-modal .status-value { font-weight: 700; }
 #sell-status-modal .status-value.processed { color: var(--accent-cyan); }
-#sell-status-modal .status-value.completed { color: var(--accent-green); }
-
-/* --- Start: Rework Tampilan Toko UB --- */
+#sell-status-modal .status-value.completed { color: var(--accent-green); }/* --- Start: Rework Tampilan Toko UB --- */
 #buy-ub-container {
     padding: 10px 15px;
     max-width: 450px;
@@ -528,6 +526,11 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 <button type=submit id=find-account-btn class="action-button btn-primary" style="font-size: 0.8em; padding: 7px;">Cari & Tambah Akun</button>
 </form>
 </div>
+<div id="device-id-tutorial-container" style="max-width:300px; margin: 10px auto 0 auto;">
+<button id="show-device-id-modal-btn" class="action-button btn-secondary" style="font-size: 0.8em; padding: 7px; background-color: var(--bg-tertiary);">
+<i class="ph-bold ph-question"></i> Cara Mendapatkan Device ID
+</button>
+</div>
 </div>
 <div id="search-account-section" style="margin-bottom: 20px; max-width: 450px; margin-left: auto; margin-right: auto;">
     <div class="input-group">
@@ -552,8 +555,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             </button>
         </div>
     </div>
-</div>
-<div id=stok-akun-container class=content-container>
+</div><div id=stok-akun-container class=content-container>
 <div class="stok-akun-header-controls">
     <h2>Beli Akun</h2>
     <p class=subtitle>Daftar akun yang tersedia. Beli akun menggunakan saldo atau pembayaran langsung.</p>
@@ -1189,6 +1191,14 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             document.querySelectorAll('#all-profiles-grid .profile-card').forEach(card => {
                 card.classList.toggle('hidden', card.dataset.gameName !== gameName);
             });
+            const tutorialContainer = document.getElementById('device-id-tutorial-container');
+            if (tutorialContainer) {
+                if (gameName === 'BUSSID') {
+                    tutorialContainer.style.display = 'block';
+                } else {
+                    tutorialContainer.style.display = 'none';
+                }
+            }
         }
         function showLoginScreen() { dom.appLayout.style.display = 'none'; dom.authWrapper.style.display = 'flex'; document.getElementById('login-container').style.display = 'block'; document.getElementById('register-container').style.display = 'none'; document.getElementById('forgot-password-container').style.display = 'none';}
         function showRegisterScreen() { dom.appLayout.style.display = 'none'; dom.authWrapper.style.display = 'flex'; document.getElementById('login-container').style.display = 'none'; document.getElementById('register-container').style.display = 'block'; document.getElementById('forgot-password-container').style.display = 'none'; }
@@ -3340,7 +3350,9 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 
             dom.akunPurchaseModal.closeBtn.addEventListener('click', () => hideModal(dom.akunPurchaseModal.overlay));
             dom.akunPurchaseModal.overlay.addEventListener('click', e => { if (e.target === dom.akunPurchaseModal.overlay) hideModal(dom.akunPurchaseModal.overlay); });
-            dom.akunPurchaseModal.form.addEventListener('submit', handleExecuteAkunPurchase);document.getElementById('close-device-id-modal-btn').addEventListener('click', () => hideModal(document.getElementById('device-id-modal')));
+            dom.akunPurchaseModal.form.addEventListener('submit', handleExecuteAkunPurchase);
+            document.getElementById('show-device-id-modal-btn').addEventListener('click', () => showModal(document.getElementById('device-id-modal')));
+            document.getElementById('close-device-id-modal-btn').addEventListener('click', () => hideModal(document.getElementById('device-id-modal')));
             document.getElementById('device-id-modal').addEventListener('click', (e) => { if (e.target.id === 'device-id-modal') hideModal(e.target); });
             document.getElementById('change-password-btn').addEventListener('click', () => showModal(document.getElementById('change-password-modal')));
             document.getElementById('close-password-modal').addEventListener('click', () => hideModal(document.getElementById('change-password-modal')));
