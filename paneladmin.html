@@ -1095,6 +1095,20 @@
                         <input type="number" id="edit-stok-akun-price" class="input-field" required>
                     </div>
                 </div>
+                 <div class="form-grid">
+                    <div class="input-group">
+                        <label for="edit-stok-akun-stok">Stok</label>
+                        <input type="number" id="edit-stok-akun-stok" class="input-field" value="0" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="edit-stok-akun-terjual">Terjual</label>
+                        <input type="number" id="edit-stok-akun-terjual" class="input-field" value="0" required>
+                    </div>
+                 </div>
+                 <div class="input-group">
+                    <label for="edit-stok-akun-rating">Rating (0-5)</label>
+                    <input type="number" id="edit-stok-akun-rating" class="input-field" value="0" min="0" max="5" required>
+                </div>
                 <div class="input-group">
                     <label for="edit-stok-akun-detailInfo">Detail Info Akun (opsional)</label>
                     <textarea id="edit-stok-akun-detailInfo" class="input-field" rows="3" placeholder="Info tambahan..."></textarea>
@@ -1139,6 +1153,20 @@
                         <label for="add-stok-akun-price">Harga (Cth: 25000)</label>
                         <input type="number" id="add-stok-akun-price" class="input-field" required>
                     </div>
+                </div>
+                <div class="form-grid">
+                     <div class="input-group">
+                        <label for="add-stok-akun-stok">Stok</label>
+                        <input type="number" id="add-stok-akun-stok" class="input-field" value="1" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="add-stok-akun-terjual">Terjual</label>
+                        <input type="number" id="add-stok-akun-terjual" class="input-field" value="0" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="add-stok-akun-rating">Rating (0-5)</label>
+                    <input type="number" id="add-stok-akun-rating" class="input-field" value="5" min="0" max="5" required>
                 </div>
                 <div class="input-group">
                     <label for="add-stok-akun-detailInfo">Detail Info Akun (opsional)</label>
@@ -2096,6 +2124,9 @@
                         <div class="info-item"><span class="info-label">Jenis Login</span><span class="info-value"><span>${akun.loginType}</span></span></div>
                         <div class="info-item"><span class="info-label">Jumlah UB</span><span class="info-value"><span>${(akun.jumlahUB || 0).toLocaleString('id-ID')}</span></span></div>
                         <div class="info-item"><span class="info-label">Harga</span><span class="info-value" style="color: var(--success-primary);"><span>${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(akun.price || 0)}</span></span></div>
+                        <div class="info-item"><span class="info-label">Stok</span><span class="info-value"><span>${akun.stok || 0}</span></span></div>
+                        <div class="info-item"><span class="info-label">Terjual</span><span class="info-value"><span>${akun.terjual || 0}</span></span></div>
+                        <div class="info-item"><span class="info-label">Rating</span><span class="info-value"><span>${akun.rating || 0} / 5</span></span></div>
                         ${claimedByHTML}
                     </div>
                     <div class="card-actions">
@@ -2118,6 +2149,9 @@
                 document.getElementById('edit-stok-akun-jumlahUB').value = akun.jumlahUB || 0;
                 document.getElementById('edit-stok-akun-price').value = akun.price || 0;
                 document.getElementById('edit-stok-akun-detailInfo').value = akun.detailInfo || '';
+                document.getElementById('edit-stok-akun-stok').value = akun.stok || 0;
+                document.getElementById('edit-stok-akun-terjual').value = akun.terjual || 0;
+                document.getElementById('edit-stok-akun-rating').value = akun.rating || 0;
                 dom.editStokAkunModal.style.display = 'flex';
             }
         };
@@ -2131,7 +2165,10 @@
                 loginType: document.getElementById('edit-stok-akun-loginType').value,
                 jumlahUB: Number(document.getElementById('edit-stok-akun-jumlahUB').value),
                 price: Number(document.getElementById('edit-stok-akun-price').value),
-                detailInfo: document.getElementById('edit-stok-akun-detailInfo').value
+                detailInfo: document.getElementById('edit-stok-akun-detailInfo').value,
+                stok: Number(document.getElementById('edit-stok-akun-stok').value),
+                terjual: Number(document.getElementById('edit-stok-akun-terjual').value),
+                rating: Number(document.getElementById('edit-stok-akun-rating').value)
             };
             try {
                 await updateDoc(doc(db, "stokAkun", akunId), updatedData);
@@ -2150,6 +2187,9 @@
                 jumlahUB: Number(document.getElementById('add-stok-akun-jumlahUB').value),
                 price: Number(document.getElementById('add-stok-akun-price').value),
                 detailInfo: document.getElementById('add-stok-akun-detailInfo').value,
+                stok: Number(document.getElementById('add-stok-akun-stok').value),
+                terjual: Number(document.getElementById('add-stok-akun-terjual').value),
+                rating: Number(document.getElementById('add-stok-akun-rating').value),
                 createdAt: serverTimestamp(),
                 ownedBy: null
             };
