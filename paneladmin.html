@@ -704,7 +704,582 @@
             border-radius: 50%;
             box-shadow: 0 0 8px var(--online-green);
         }
-    </style>
+    /* --- Styles for Live Chat View --- */
+#live-chat-view {
+    display: none; /* Defaultnya tersembunyi */
+    height: calc(100vh - 150px); /* Sesuaikan tinggi agar pas di layar */
+}
+
+.chat-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr; /* Kolom kiri (daftar chat) dan kolom kanan (jendela chat) */
+    height: 100%;
+    gap: 20px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+#chat-session-list {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-right: 1px solid var(--border-color);
+    background: var(--bg-primary);
+}
+
+#chat-list-header {
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    font-size: 1.1em;
+    color: var(--accent-primary);
+}
+
+#chat-session-list-items {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.chat-session-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.chat-session-item:hover {
+    background-color: var(--bg-secondary);
+}
+
+.chat-session-item.active {
+    background-color: var(--accent-primary);
+    color: white;
+}
+
+.chat-session-item .session-username {
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+.chat-session-item .unread-indicator {
+    width: 10px;
+    height: 10px;
+    background-color: var(--online-green); /* MOD: Ganti ke Hijau */
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--online-green); /* MOD: Ganti ke Hijau */
+    display: none; /* Tampil jika ada pesan baru */
+}
+
+.chat-session-item.has-unread .unread-indicator {
+    display: block;
+}
+.chat-session-item.has-unread .session-username {
+    color: var(--online-green); /* MOD: Ganti ke Hijau */
+}
+.chat-session-item.active.has-unread .session-username {
+    color: white; /* Tetap putih jika aktif */
+}
+
+#chat-window-admin {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#chat-window-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    font-size: 1.1em;
+    color: white;
+}
+
+#chat-messages-admin {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    font-size: 0.9em;
+}
+
+.chat-message-admin-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+}
+
+.chat-message-admin-container.admin-message {
+    align-self: flex-end;
+    align-items: flex-end;
+}
+
+.chat-message-admin-container.user-message {
+    align-self: flex-start;
+    align-items: flex-start;
+}
+
+.chat-message-bubble {
+    padding: 10px 15px;
+    border-radius: 18px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.admin-message .chat-message-bubble {
+    background: var(--accent-primary);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.user-message .chat-message-bubble {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-bottom-left-radius: 4px;
+}
+
+.chat-message-bubble img.chat-message-image {
+    max-width: 250px;
+    height: auto;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.chat-message-sender {
+    font-size: 0.8em;
+    font-weight: 600;
+    color: var(--accent-secondary);
+    margin-bottom: 4px;
+}
+.admin-message .chat-message-sender {
+    color: var(--subscription-cyan);
+}
+
+#chat-input-area-admin {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-top: 1px solid var(--border-color);
+    gap: 10px;
+}
+
+#chat-text-admin {
+    flex-grow: 1;
+    resize: none;
+}
+
+.card-actions .action-button.btn-start-chat {
+    background: var(--subscription-cyan); /* Warna berbeda */
+    flex-grow: 0; /* Jangan memanjang */
+    padding: 8px 12px; /* Lebih kecil */
+    font-size: 0.9em;
+}
+
+/* Responsive Chat Layout */
+@media (max-width: 1024px) {
+/* Responsive Chat Layout */
+@media (max-width: 1024px) {
+    .chat-layout {
+        grid-template-columns: 240px 1fr; /* Kecilkan sidebar */
+        gap: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    #live-chat-view {
+        height: calc(100vh - 120px); /* Sesuaikan tinggi untuk mobile */
+    }
+    .chat-layout {
+        grid-template-columns: 1fr; /* Tumpuk */
+        height: 100%;
+    }
+    #chat-session-list {
+        height: 200px; /* Daftar chat jadi horizontal scroll atau area kecil */
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+    #chat-window-admin {
+        height: 100%; /* Jendela chat ambil sisa ruang */
+    }
+    #chat-session-list-items {
+        display: flex;
+        flex-direction: row; /* Ubah jadi horizontal */
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 5px;
+        gap: 5px;
+    }
+    .chat-session-item {
+        flex-shrink: 0; /* Jangan ciutkan item */
+        width: 120px; /* Lebar tetap */
+        flex-direction: column;
+        gap: 5px;
+        padding: 10px;
+    }
+}/* --- CSS Utama Jendela Chat Mengambang --- */
+.floating-chat-container {
+    display: none; /* Sembunyi by default */
+    position: fixed;
+    bottom: 0;
+    right: 30px; /* Posisi di kanan bawah */
+    width: 370px;
+    max-width: 90vw;
+    height: 500px;
+    max-height: 80vh;
+    z-index: 1002; /* Di atas modal biasa */
+    flex-direction: column;
+    transition: all 0.3s ease;
+    /* Style baru dari Mod 8 dipindahkan ke sini */
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-bottom: 0;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 -5px 25px rgba(0,0,0,0.4);
+}
+.floating-chat-container.minimized {
+    height: 50px; /* Hanya header */
+    bottom: 0;
+    transform: translateY(0);
+}
+.floating-chat-container.minimized .chat-messages-admin-panel,
+.floating-chat-container.minimized .chat-input-area-admin-panel {
+    display: none;
+}/* --- New/Improved Styles for Chat List Full View (FIXED) --- */
+.chat-list-full-view {
+    border: none;
+    border-radius: 12px;
+    background: none;
+    overflow: hidden;
+    height: calc(100vh - 220px);
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    gap: 10px;
+}
+
+#chat-list-header {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 15px;
+    padding: 0 5px;
+}
+
+#chat-session-list-items {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-session-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.chat-session-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    border-color: var(--accent-secondary);
+}
+
+.chat-session-item.active {
+    border-color: var(--accent-primary);
+    background: rgba(59, 130, 246, 0.1);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+}
+
+.chat-session-item.has-unread {
+    border-left: 5px solid var(--online-green); /* MOD: Ganti ke Hijau */
+    padding-left: 15px;
+}
+.chat-session-item.has-unread:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 5px;
+    background-color: var(--online-green); /* MOD: Ganti ke Hijau */
+}
+
+.chat-session-item .session-username {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: block;
+}
+
+.chat-session-item.active .session-username {
+    color: var(--accent-primary);
+}
+
+.chat-session-item .session-last-message {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 5px;
+    max-width: 100%;
+}
+
+.chat-session-item.active .session-last-message {
+    color: var(--text-secondary);
+}
+
+.new-chat-user-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: var(--text-primary);
+}
+.new-chat-user-item:last-child { border-bottom: none; }
+.new-chat-user-item:hover { background-color: var(--bg-secondary); }
+.new-chat-user-item i { margin-right: 10px; color: var(--accent-primary); }
+
+/* === START PERBAIKAN CSS JENDELA MENGAMBANG === */
+
+#floating-chat-header {
+    background: var(--accent-primary);
+    color: white;
+    font-weight: 600;
+    border-radius: 12px 12px 0 0;
+    cursor: pointer;
+    padding: 12px 18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    /* TAMBAHKAN INI UNTUK LAYOUT HEADER */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.floating-chat-container.minimized #floating-chat-header {
+    border-radius: 12px;
+}
+
+#floating-chat-username {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chat-window-controls { 
+    /* TAMBAHKAN INI */
+    display: flex; 
+    gap: 5px; 
+}
+.chat-control-btn {
+    /* TAMBAHKAN INI - PERBAIKAN TOMBOL PUTIH */
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1em;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+.chat-control-btn:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Styling untuk pesan admin/user di jendela mengambang */
+.chat-messages-admin-panel {
+    background: var(--bg-primary); 
+    padding: 15px 20px;
+    /* TAMBAHKAN INI - PERBAIKAN POSISI INPUT */
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    font-size: 0.9em;
+}
+
+/* TAMBAHKAN INI - PERBAIKAN POSISI LABEL NAMA */
+.chat-messages-admin-panel .chat-message-admin-container { 
+    display: flex; 
+    flex-direction: column; 
+    max-width: 80%; 
+}
+.chat-messages-admin-panel .admin-message { align-self: flex-end; align-items: flex-end; }
+.chat-messages-admin-panel .user-message { align-self: flex-start; align-items: flex-start; }
+.chat-messages-admin-panel .chat-message-sender { 
+    font-size: 0.8em; 
+    font-weight: 600; 
+    color: var(--text-secondary); 
+    margin-bottom: 4px; 
+}
+.chat-messages-admin-panel .admin-message .chat-message-sender { 
+    color: var(--subscription-cyan); 
+}
+/* ========================================= */
+
+.chat-messages-admin-panel .chat-message-bubble {
+    border-radius: 20px;
+    /* TAMBAHKAN INI */
+    line-height: 1.5;
+    word-wrap: break-word;
+    padding: 10px 15px; /* Pastikan padding ada */
+}
+
+.chat-messages-admin-panel .admin-message .chat-message-bubble {
+    background: var(--accent-primary);
+    color: white;
+    border-bottom-right-radius: 6px;
+}
+
+.chat-messages-admin-panel .user-message .chat-message-bubble {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-bottom-left-radius: 6px;
+}
+
+/* TAMBAHKAN INI */
+.chat-messages-admin-panel .chat-message-bubble img.chat-message-image { 
+    max-width: 250px; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    margin-top: 5px; 
+}
+
+/* Input area chat */
+.chat-input-area-admin-panel {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    padding: 15px 20px;
+    /* TAMBAHKAN INI */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chat-input-area-admin-panel textarea {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 20px; /* Buat lebih rounded */
+    padding: 10px 15px;
+    color: var(--text-primary);
+    /* TAMBAHKAN INI */
+    flex-grow: 1;
+    resize: none;
+}
+.chat-input-area-admin-panel textarea:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.chat-input-area-admin-panel .action-button {
+    /* PERBAIKI TOMBOL KIRIM */
+    background: var(--accent-primary);
+    color: white;
+    border-radius: 50%; /* Buat jadi bulat */
+    padding: 0;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0; /* Jaga agar tidak gepeng */
+    font-size: 1.1em;
+}
+.chat-input-area-admin-panel .action-button:hover:not(:disabled) {
+    background: var(--accent-secondary);
+}
+
+/* Modifikasi tampilan modal secara umum jika belum ada */
+.modal-content {
+    background: var(--bg-secondary);
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    border: 1px solid var(--border-color);
+}
+.modal-content h2 {
+    color: var(--text-primary);
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.modal-content label {
+    color: var(--text-secondary);
+}
+
+.modal-content .input-field {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+.modal-content .input-field:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* Warna background untuk pesan "Memuat user..." di modal */
+#new-chat-user-list {
+    background: var(--bg-primary); /* Pastikan ini sesuai */
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}/* --- Styles for Chat Message Deletion (MODIFIED) --- */
+.chat-message-bubble {
+    position: relative;
+    /* Beri sedikit ruang tambahan di kanan untuk tombol hapus */
+    padding-right: 30px !important; /* Paksa padding untuk semua */
+}
+/* Hapus rule spesifik untuk admin-message */
+/* .admin-message .chat-message-bubble { ... } */
+
+.chat-delete-btn {
+    position: absolute;
+    top: 2px;
+    right: 5px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.9em;
+    opacity: 0; /* Sembunyi by default */
+    transition: opacity 0.2s;
+}
+/* Tampilkan tombol hapus di SEMUA pesan bubble (user dan admin) */
+.chat-message-bubble:hover .chat-delete-btn {
+    opacity: 0.7; /* Tampil saat hover di bubble */
+}
+.chat-delete-btn:hover {
+    color: var(--danger-primary);
+    opacity: 1;
+}
+/* Hapus rule yang menyembunyikan tombol di pesan admin */
+/* .admin-message .chat-delete-btn { display: none; } */
+/* --- End of Live Chat View Styles --- */
+</style>
 </head>
 <body>
 
@@ -751,6 +1326,11 @@
                         <span>Transactions</span> 
                     </button>
                     <button class="menu-grid-button menu-rekap" data-view="rekap"> <i class="fas fa-receipt"></i> <span>Rekap</span> </button>
+<button class="menu-grid-button menu-live-chat" data-view="liveChat">
+            <span class="notification-badge" id="chat-notification-badge" style="display: none;">0</span>
+            <i class="fas fa-headset"></i> 
+            <span>Live Chat</span> 
+        </button>
                     <button class="menu-grid-button menu-stok-penawaran" data-view="stokAkun"> <i class="fas fa-archive"></i> <span>Stok Penawaran</span> </button>
                     <button class="menu-grid-button menu-stok-kredensial" data-view="stokKredensial"> <i class="fas fa-key"></i> <span>Stok Kredensial</span> </button>
                     <button class="menu-grid-button menu-settings" data-view="settings"> <i class="fas fa-cogs"></i> <span>Settings</span> </button>
@@ -767,9 +1347,25 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div><div id="live-chat-view">
+    <header class="view-header">
+        <button class="action-button btn-secondary back-to-menu-btn"><i class="fas fa-arrow-left"></i> Menu</button>
+        <h1>Live Chat</h1>
+        <div class="actions">
+            <button id="new-chat-message-btn" class="action-button btn-success"><i class="fas fa-plus"></i> Pesan Baru</button>
+        </div>
+    </header>
+    
+    <div id="chat-session-list" class="chat-list-full-view">
+        <div id="chat-list-header">Active Chats</div>
+        <div id="chat-session-list-items">
+            <p style="padding: 15px; text-align: center; color: var(--text-secondary);">Memuat sesi...</p>
+        </div>
+    </div>
+    
+    </div>
 
-            <div id="user-management-view" style="display: none;">
+<div id="user-management-view" style="display: none;">
                 <header class="view-header">
                      <button class="action-button btn-secondary back-to-menu-btn"><i class="fas fa-arrow-left"></i> Menu</button>
                     <h1>User Management</h1>
@@ -1262,7 +1858,7 @@
         </div>
     </div>
     
-    <div id="confirm-modal" class="modal">
+    <div id="confirm-modal" class="modal" style="z-index: 1003;">
         <div class="modal-content" style="max-width: 450px; text-align: center;">
             <h2 id="confirm-title" style="color: var(--danger-primary);"><i class="fas fa-exclamation-triangle"></i> Confirmation</h2>
             <p id="confirm-message" style="font-size: 1.1em; color: var(--text-primary); margin: 20px 0;">Are you sure?</p>
@@ -1290,12 +1886,50 @@
     </div>
 
     <div id="toast-container"></div>
+<div id="floating-chat-window" class="floating-chat-container">
+    <div id="floating-chat-header">
+        <span id="floating-chat-username">Memuat...</span>
+        <div class="chat-window-controls">
+            <button id="floating-chat-clear" class="chat-control-btn" title="Hapus Riwayat Chat"><i class="fas fa-trash-alt"></i></button>
+            <button id="floating-chat-minimize"
+<button id="floating-chat-minimize" class="chat-control-btn" title="Minimize"><i class="fas fa-window-minimize"></i></button>
+            <button id="floating-chat-close" class="chat-control-btn" title="Close"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+    <div id="floating-chat-messages" class="chat-messages-admin-panel">
+        <p style="text-align:center; color: var(--text-secondary);">Memuat pesan...</p>
+    </div>
+    <div id="floating-chat-input-area" class="chat-input-area-admin-panel">
+        <input type="file" id="admin-chat-file-input" accept="image/*" style="display: none;">
+            <button type="button" id="admin-chat-attach-btn" class="action-button" style="border-radius: 50%; width: 44px; height: 44px; padding: 0; background: var(--bg-tertiary); flex-shrink: 0; margin-right: 5px;" title="Kirim Gambar">
+                <i class="fas fa-paperclip"></i>
+            </button>
+            <textarea id="floating-chat-text" class="input-field" rows="2" placeholder="Ketik balasan..." disabled></textarea>
+        <button id="floating-chat-send" class="action-button btn-primary" disabled><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<div id="new-chat-modal" class="modal">
+    <div class="modal-content" style="max-width: 450px;">
+        <h2><i class="fas fa-user-plus"></i> Mulai Chat Baru</h2>
+        <div class="input-group">
+            <label for="new-chat-search">Cari User</label>
+            <input type="text" id="new-chat-search" class="input-field" placeholder="Ketik nama user...">
+        </div>
+        <ul id="new-chat-user-list" style="list-style: none; padding: 0; max-height: 40vh; overflow-y: auto; background: var(--bg-primary); border-radius: 8px;">
+            <p style="text-align: center; padding: 20px; color: var(--text-secondary);">Memuat user...</p>
+        </ul>
+        <div class="modal-actions">
+            <button type="button" class="action-button btn-secondary cancel-modal-btn">Tutup</button>
+        </div>
+    </div>
+</div>
     
 <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, getDoc, deleteField, orderBy, query, onSnapshot, writeBatch, where, limit, runTransaction } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
-        import { getDatabase, ref, onChildChanged, onChildRemoved } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+        import { getDatabase, ref, onValue, onChildChanged, onChildRemoved, push, serverTimestamp as dbServerTimestamp, set, remove } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB3KJT9eh42V6ytLoY5e4ozzDXY4sHhado",
@@ -1352,6 +1986,8 @@
                 stokKredensial: document.getElementById('stok-kredensial-management-view'),
                 settings: document.getElementById('settings-view'),
                 rekap: document.getElementById('rekap-view')
+, // <-- Pastikan ada koma di baris sebelumnya
+            liveChat: document.getElementById('live-chat-view') // <-- TAMBAHKAN INI
             }
         };
 
@@ -1366,12 +2002,12 @@
 
         // --- VIEW MANAGEMENT ---
         const showMainMenu = () => {
-            Object.values(dom.views).forEach(view => view.style.display = 'none');
-            dom.mainMenuView.style.display = 'block';
-            document.querySelector('.header-title').innerHTML = '<i class="fas fa-gamepad"></i> Auth Tools';
-            updateMainMenuStats();
-            checkAndShowFloatingTransaction();
-        };
+        Object.values(dom.views).forEach(view => view.style.display = 'none');
+        dom.mainMenuView.style.display = 'block';
+        document.querySelector('.header-title').innerHTML = '<i class="fas fa-gamepad"></i> Auth Tools';
+        updateMainMenuStats();
+        // checkAndShowFloatingTransaction(); // Dihapus agar tidak auto-popup
+    };
 
         const showView = async (viewName) => {
             Object.values(dom.views).forEach(view => view.style.display = 'none');
@@ -1388,6 +2024,9 @@
             else if (viewName === 'stokKredensial') await fetchStokKredensial();
             else if (viewName === 'settings') await loadAndDisplaySettings();
             else if (viewName === 'rekap') await fetchAndRenderRekap('all');
+else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
+        loadChatSessions(); // Panggil fungsi untuk memuat daftar chat
+    }
         };
 
         // --- REALTIME LISTENERS ---
@@ -1410,11 +2049,16 @@
                     badge.style.display = 'flex';
                     statPending.textContent = pendingCount;
                 } else {
-                    badge.style.display = 'none';
-                    statPending.textContent = 0;
-                }
-            });
-            unsubscribeListeners.push(unsubscribeUsers);
+                badge.style.display = 'none';
+                statPending.textContent = 0;
+            }
+
+            // Cek apakah ada pending trx dan modal belum muncul
+            if (pendingCount > 0 && !isFloatingModalShown) {
+                checkAndShowFloatingTransaction();
+            }
+        });
+        unsubscribeListeners.push(unsubscribeUsers);
 
             // Listener untuk Status Maintenance
             const settingsRef = doc(db, "settings", "appConfig");
@@ -1566,7 +2210,8 @@
                         </div>
                         <div class="card-actions">
                             <button class="action-button btn-primary edit-user-btn" data-doc-id="${user.id}"><i class="fas fa-edit"></i> Edit</button>
-                            <button class="action-button btn-danger delete-user-btn" data-doc-id="${user.id}" data-username="${user.username}"><i class="fas fa-trash"></i> Delete</button>
+                            <button class="action-button btn-start-chat" data-action="start-chat" data-username="${user.username}"><i class="fas fa-comment-dots"></i> Chat</button>
+<button class="action-button btn-danger delete-user-btn" data-doc-id="${user.id}" data-username="${user.username}"><i class="fas fa-trash"></i> Delete</button>
                         </div>
                     </div>
                 `;
@@ -2638,9 +3283,462 @@
                     }, { merge: true });
                 }
             });
+        }// --- START: LIVE CHAT MANAGEMENT FUNCTIONS ---
+let activeChatSessionId = null;
+let allChatSessions = {}; // Objek untuk menyimpan data sesi chat
+let unsubscribeChatList = null; // Listener untuk daftar chat
+let unsubscribeMessages = null; // Listener untuk pesan di chat aktif
+let allChatUsers = []; // Cache untuk daftar user (untuk "Pesan Baru")
+let didFetchChatUsers = false;
+
+// DOM Referensi baru untuk chat
+const chatDom = {
+    floatingWindow: document.getElementById('floating-chat-window'),
+    chatHeader: document.getElementById('floating-chat-header'),
+    chatUsername: document.getElementById('floating-chat-username'),
+    chatMessages: document.getElementById('floating-chat-messages'),
+    chatText: document.getElementById('floating-chat-text'),
+    chatSend: document.getElementById('floating-chat-send'),
+    chatMinimize: document.getElementById('floating-chat-minimize'),
+    chatClose: document.getElementById('floating-chat-close'),
+    chatClear: document.getElementById('floating-chat-clear'),
+    
+    newChatModal: document.getElementById('new-chat-modal'),
+    newChatSearch: document.getElementById('new-chat-search'),
+    newChatUserList: document.getElementById('new-chat-user-list'),
+
+    mainChatListContainer: document.getElementById('chat-session-list-items') // Ini adalah list di halaman utama
+};
+
+// Fungsi untuk membersihkan username agar aman sebagai key Firebase RTDB
+const sanitizeUsernameForFirebaseKey = (username) => username.replace(/[.#$[\]]/g, '_');
+
+// Fungsi untuk memuat daftar sesi chat dari RTDB
+const loadChatSessions = () => {
+    const chatListRef = ref(rtdb, 'chats');
+
+    if (unsubscribeChatList) unsubscribeChatList(); // Hapus listener lama
+
+    unsubscribeChatList = onValue(chatListRef, (snapshot) => {
+        allChatSessions = snapshot.val() || {};
+        renderChatSessionList();
+        updateChatNotificationBadge();
+    }, (error) => {
+        console.error("Error loading chat sessions:", error);
+        showToast('Gagal memuat daftar chat.', 'error');
+        chatDom.mainChatListContainer.innerHTML = '<p style="color:var(--danger-primary); padding: 15px;">Gagal memuat sesi.</p>';
+    });
+};
+
+// Fungsi untuk merender daftar sesi chat di halaman utama
+const renderChatSessionList = () => {
+    const listContainer = chatDom.mainChatListContainer;
+    listContainer.innerHTML = ''; // Kosongkan daftar
+
+    const sortedSessionIds = Object.keys(allChatSessions).sort((a, b) => {
+        const lastMsgA = getLastMessageData(allChatSessions[a]);
+        const lastMsgB = getLastMessageData(allChatSessions[b]);
+        return (lastMsgB?.timestamp || 0) - (lastMsgA?.timestamp || 0);
+    });
+
+    if (sortedSessionIds.length === 0) {
+         listContainer.innerHTML = '<p style="padding: 15px; text-align: center; color: var(--text-secondary);">Belum ada chat.</p>';
+         return;
+    }
+
+    sortedSessionIds.forEach(sessionId => {
+        const sessionData = allChatSessions[sessionId];
+        const lastMessage = getLastMessageData(sessionData);
+        if (!lastMessage) return; // Jangan render sesi yang kosong (cth: _init)
+
+        const username = lastMessage.username || sessionId.replace(/_/g, '.');
+        const lastMessagePreview = getLastMessagePreview(lastMessage); // Mendapatkan 1 baris chat terbaru
+
+        const item = document.createElement('div');
+        item.className = 'chat-session-item';
+        item.dataset.sessionId = sessionId;
+
+        const hasUnread = lastMessage.sender === 'user';
+        if (hasUnread) item.classList.add('has-unread');
+        
+        // Cek apakah chat ini sedang dibuka di jendela mengambang
+        if (sessionId === activeChatSessionId && chatDom.floatingWindow.style.display === 'flex') {
+            item.classList.add('active');
+            if (hasUnread) item.classList.remove('has-unread'); // Dianggap terbaca jika sedang dibuka
         }
 
-        // --- AUTH & EVENT LISTENERS SETUP ---
+        item.innerHTML = `
+            <div style="flex-grow: 1; min-width: 0;"> <span class="session-username">${username}</span>
+                <p class="session-last-message">${lastMessagePreview}</p> </div>
+            <span class="unread-indicator"></span>
+        `;
+        listContainer.appendChild(item);
+    });
+};
+
+// Helper untuk mendapatkan OBJEK pesan terakhir
+const getLastMessageData = (sessionData) => {
+    if (!sessionData) return null;
+    const messageIds = Object.keys(sessionData).filter(id => id !== '_init'); // Filter _init
+    if (messageIds.length === 0) return null;
+
+    let latestMessage = null;
+    let latestTimestamp = 0;
+
+    messageIds.forEach(id => {
+        const msg = sessionData[id];
+        if (msg && (msg.timestamp || 0) > latestTimestamp) {
+            latestTimestamp = msg.timestamp;
+            latestMessage = msg;
+        }
+    });
+    return latestMessage;
+};
+
+// Helper untuk mendapatkan 1 BARIS PREVIEW pesan terakhir
+const getLastMessagePreview = (lastMessage) => {
+    if (!lastMessage) return "Belum ada pesan.";
+    let preview = "";
+    if (lastMessage.sender === 'admin') {
+        preview += "Anda: ";
+    }
+    if (lastMessage.text) {
+        preview += lastMessage.text;
+    } else if (lastMessage.image) {
+        preview = "[Gambar]";
+        if (lastMessage.sender === 'admin') preview = "Anda: [Gambar]";
+    }
+    return preview;
+};
+
+// Fungsi untuk memperbarui badge notifikasi chat
+const updateChatNotificationBadge = () => {
+    let unreadCount = 0;
+    Object.keys(allChatSessions).forEach(sessionId => {
+        // Jangan hitung sesi yang sedang aktif
+        if (sessionId === activeChatSessionId && chatDom.floatingWindow.style.display === 'flex' && !chatDom.floatingWindow.classList.contains('minimized')) {
+            return;
+        }
+        const lastMessage = getLastMessageData(allChatSessions[sessionId]);
+        if (lastMessage?.sender === 'user') {
+            unreadCount++;
+        }
+    });
+
+    const badge = document.getElementById('chat-notification-badge');
+    if (unreadCount > 0) {
+        badge.textContent = unreadCount;
+        badge.style.display = 'flex';
+    } else {
+        badge.style.display = 'none';
+    }
+};
+
+// Fungsi untuk MEMBUKA JENDELA CHAT MENGAMBANG
+const openFloatingChat = (sessionId) => {
+    if (activeChatSessionId === sessionId && !chatDom.floatingWindow.classList.contains('minimized')) {
+         chatDom.floatingWindow.style.display = 'flex'; // Pastikan terlihat
+         return; // Sudah aktif
+    }
+
+    // Hapus listener pesan lama jika ada
+    if (unsubscribeMessages) unsubscribeMessages();
+
+    activeChatSessionId = sessionId;
+
+    // Update tampilan daftar sesi (tandai yang aktif)
+    document.querySelectorAll('.chat-session-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.sessionId === sessionId);
+        if(item.dataset.sessionId === sessionId) {
+            item.classList.remove('has-unread');
+        }
+    });
+    updateChatNotificationBadge(); // Hitung ulang notif
+
+    // Tampilkan jendela & atur header
+    const sessionData = allChatSessions[sessionId];
+    const lastMessage = getLastMessageData(sessionData);
+    const username = lastMessage?.username || sessionId.replace(/_/g, '.');
+    
+    chatDom.floatingWindow.style.display = 'flex';
+    chatDom.floatingWindow.classList.remove('minimized');
+    chatDom.chatUsername.textContent = `Chat with ${username}`;
+    chatDom.chatMessages.innerHTML = '<p style="text-align:center; color: var(--text-secondary);">Memuat pesan...</p>';
+    chatDom.chatText.disabled = false;
+    chatDom.chatSend.disabled = false;
+    chatDom.chatText.focus();
+
+    // Setup listener baru untuk pesan di sesi ini
+    const messagesRef = ref(rtdb, `chats/${sessionId}`);
+    unsubscribeMessages = onValue(messagesRef, (snapshot) => {
+        chatDom.chatMessages.innerHTML = ''; // Kosongkan
+        const messages = snapshot.val();
+        if (messages) {
+            // Urutkan pesan berdasarkan timestamp
+            const sortedKeys = Object.keys(messages).sort((a, b) => (messages[a]?.timestamp || 0) - (messages[b]?.timestamp || 0));
+            sortedKeys.forEach(key => {
+                if (key !== '_init') {
+                    displayAdminChatMessage(messages[key], key); // Kirim 'key' untuk ID pesan
+                }
+            });
+        } else {
+             chatDom.chatMessages.innerHTML = '<p style="text-align:center; color: var(--text-secondary);">Belum ada pesan.</p>';
+        }
+    }, (error) => {
+        console.error(`Error loading messages for ${sessionId}:`, error);
+        chatDom.chatMessages.innerHTML = '<p style="color:var(--danger-primary); text-align:center;">Gagal memuat pesan.</p>';
+    });
+};
+
+// Fungsi untuk MENUTUP JENDELA CHAT MENGAMBANG
+const closeFloatingChat = () => {
+    chatDom.floatingWindow.style.display = 'none';
+    if (unsubscribeMessages) unsubscribeMessages(); // Hentikan listener
+    unsubscribeMessages = null;
+    activeChatSessionId = null;
+
+    // Hapus status 'active' dari daftar chat
+    document.querySelectorAll('.chat-session-item.active').forEach(item => {
+        item.classList.remove('active');
+    });
+    updateChatNotificationBadge(); // Hitung ulang
+};
+
+// Fungsi untuk MINIMIZE JENDELA CHAT
+const minimizeFloatingChat = () => {
+    chatDom.floatingWindow.classList.toggle('minimized');
+    // Jika di-maximize (bukan minimize), update notif (karena dianggap terbaca)
+    if (!chatDom.floatingWindow.classList.contains('minimized')) {
+        updateChatNotificationBadge();
+        chatDom.chatText.focus();
+    }
+};
+
+// Fungsi untuk menampilkan satu pesan di jendela chat admin
+// MODIFIKASI: Tambahkan messageId untuk tombol hapus
+const displayAdminChatMessage = (msg, messageId) => {
+    if (!msg || !msg.sender) return; // Abaikan jika data tidak lengkap
+
+    const container = document.createElement('div');
+    container.className = 'chat-message-admin-container';
+    container.classList.add(msg.sender === 'admin' ? 'admin-message' : 'user-message');
+
+    const senderSpan = document.createElement('span');
+    senderSpan.className = 'chat-message-sender';
+    senderSpan.textContent = msg.sender === 'admin' ? 'Admin' : (msg.username || 'User');
+    container.appendChild(senderSpan);
+
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-message-bubble';
+    
+    // Tombol Hapus (hanya untuk pesan user)
+    bubble.innerHTML = `
+        <button class="chat-delete-btn" data-message-id="${messageId}" title="Hapus pesan">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    `;
+
+    if (msg.text) {
+        // Buat text node agar aman dari HTML injection
+        const textNode = document.createTextNode(msg.text);
+        bubble.appendChild(textNode);
+    } else if (msg.image) {
+        const img = document.createElement('img');
+        img.src = msg.image;
+        img.className = 'chat-message-image';
+        img.alt = 'User image';
+        bubble.appendChild(img);
+    }
+    
+    container.appendChild(bubble);
+    chatDom.chatMessages.appendChild(container);
+    chatDom.chatMessages.scrollTop = chatDom.chatMessages.scrollHeight; // Auto-scroll
+};
+
+// Fungsi untuk mengirim balasan dari admin (via jendela mengambang)
+// MODIFIKASI: Diubah untuk menangani Teks atau Gambar
+const sendAdminReply = (content, type = 'text') => {
+    if (!content || !activeChatSessionId) return;
+
+    const message = {
+        sender: 'admin',
+        timestamp: dbServerTimestamp() // Gunakan serverTimestamp dari RTDB
+    };
+
+    if (type === 'text') {
+        message.text = content;
+    } else if (type === 'image') {
+        message.image = content;
+    }
+
+    const messageRef = ref(rtdb, `chats/${activeChatSessionId}`);
+    push(messageRef, message) // Gunakan push dari RTDB
+        .then(() => {
+            if (type === 'text') {
+                chatDom.chatText.value = ''; // Kosongkan input jika berhasil
+            }
+        })
+        .catch((error) => {
+            console.error("Error sending admin reply:", error);
+            showToast('Gagal mengirim balasan.', 'error');
+        });
+};
+
+// Fungsi untuk menangani klik tombol "Mulai Chat" dari User Management
+const handleStartChatButtonClick = (username) => {
+    if (!username) return;
+
+    const targetSessionId = sanitizeUsernameForFirebaseKey(username);
+    showView('liveChat'); // Pindah ke view chat (jika belum)
+
+    const checkSessionAndOpen = () => {
+        if (allChatSessions[targetSessionId] !== undefined) {
+             openFloatingChat(targetSessionId); // Buka chat mengambang
+        } else {
+            // Jika sesi belum ada, buat entri dummy agar muncul di list
+            const dummyRef = ref(rtdb, `chats/${targetSessionId}/_init`);
+            set(dummyRef, { timestamp: dbServerTimestamp() }); 
+            
+            // Langsung buka jendela mengambang
+            activeChatSessionId = targetSessionId; // Set ID
+            
+            chatDom.floatingWindow.style.display = 'flex';
+            chatDom.floatingWindow.classList.remove('minimized');
+            chatDom.chatUsername.textContent = `Chat with ${username}`;
+            chatDom.chatMessages.innerHTML = '<p style="text-align:center; color: var(--text-secondary);">Mulai percakapan...</p>';
+            chatDom.chatText.disabled = false;
+            chatDom.chatSend.disabled = false;
+            chatDom.chatText.focus();
+            
+            // Kita belum setup listener pesan karena belum ada pesan
+            // Listener akan dibuat saat openFloatingChat dipanggil (setelah pesan pertama)
+            // Atau kita bisa setup listener kosong
+            if (unsubscribeMessages) unsubscribeMessages();
+            const messagesRef = ref(rtdb, `chats/${targetSessionId}`);
+            unsubscribeMessages = onValue(messagesRef, (snapshot) => {
+                 chatDom.chatMessages.innerHTML = '';
+                 const messages = snapshot.val();
+                 if (!messages || Object.keys(messages).filter(k => k !== '_init').length === 0) {
+                     chatDom.chatMessages.innerHTML = '<p style="text-align:center; color: var(--text-secondary);">Mulai percakapan...</p>';
+                     return;
+                 }
+                 const sortedKeys = Object.keys(messages).sort((a, b) => (messages[a]?.timestamp || 0) - (messages[b]?.timestamp || 0));
+                 sortedKeys.forEach(key => {
+                    if (key !== '_init') {
+                        displayAdminChatMessage(messages[key], key);
+                    }
+                 });
+            });
+        }
+    };
+
+    checkSessionAndOpen();
+};
+
+// --- FUNGSI BARU UNTUK MODAL "PESAN BARU" ---
+
+const openNewChatModal = async () => {
+    chatDom.newChatModal.style.display = 'flex';
+    chatDom.newChatSearch.value = '';
+    
+    // Cek cache dulu
+    if (didFetchChatUsers) {
+        populateNewChatUserList();
+        return;
+    }
+
+    // Jika belum, fetch dari Firestore
+    chatDom.newChatUserList.innerHTML = '<p style="text-align: center; padding: 20px; color: var(--text-secondary);">Memuat user...</p>';
+    try {
+        if (allUsers.length === 0) { // Jika allUsers (dari user management) kosong, fetch
+            const querySnapshot = await getDocs(collection(db, "users"));
+            allChatUsers = querySnapshot.docs.map(doc => ({ id: doc.id, username: doc.data().username }));
+        } else {
+            allChatUsers = allUsers.map(user => ({ id: user.id, username: user.username }));
+        }
+        
+        allChatUsers.sort((a, b) => a.username.localeCompare(b.username)); // Urutkan
+        didFetchChatUsers = true;
+        populateNewChatUserList();
+    } catch (error) {
+        console.error("Error fetching users for chat:", error);
+        chatDom.newChatUserList.innerHTML = '<p style="text-align: center; padding: 20px; color: var(--danger-primary);">Gagal memuat user.</p>';
+    }
+};
+
+const populateNewChatUserList = (filter = '') => {
+    chatDom.newChatUserList.innerHTML = '';
+    const lowerFilter = filter.toLowerCase();
+    
+    const filteredUsers = allChatUsers.filter(user => user.username.toLowerCase().includes(lowerFilter));
+    
+    if (filteredUsers.length === 0) {
+        chatDom.newChatUserList.innerHTML = '<p style="text-align: center; padding: 20px; color: var(--text-secondary);">User tidak ditemukan.</p>';
+        return;
+    }
+    
+    filteredUsers.forEach(user => {
+        const li = document.createElement('li');
+        li.className = 'new-chat-user-item'; // Buat style untuk ini jika perlu
+        li.style.cssText = 'padding: 12px 15px; border-bottom: 1px solid var(--border-color); cursor: pointer;';
+        li.dataset.username = user.username;
+        li.innerHTML = `<i class="fas fa-user" style="margin-right: 10px; color: var(--accent-primary);"></i> ${user.username}`;
+        
+        // Hover effect
+        li.onmouseover = () => li.style.backgroundColor = 'var(--bg-secondary)';
+        li.onmouseout = () => li.style.backgroundColor = 'transparent';
+        
+        chatDom.newChatUserList.appendChild(li);
+    });
+};
+
+// --- FUNGSI BARU UNTUK HAPUS PESAN ---
+
+const handleDeleteMessage = (sessionId, messageId) => {
+    if (!sessionId || !messageId) return;
+    
+    showConfirmation(
+        'Yakin ingin menghapus pesan ini? Pesan akan hilang di sisi user juga.',
+        'Hapus Pesan',
+        'btn-danger',
+        () => {
+            const messageRef = ref(rtdb, `chats/${sessionId}/${messageId}`);
+            remove(messageRef)
+                .then(() => {
+                    showToast('Pesan dihapus.', 'success');
+                })
+                .catch((error) => {
+                    showToast('Gagal menghapus pesan.', 'error');
+                    console.error("Error removing message:", error);
+                });
+        }
+    );
+};
+
+const handleClearChat = (sessionId) => {
+    if (!sessionId) return;
+    
+    showConfirmation(
+        'YAKIN ingin menghapus SELURUH riwayat chat ini? Tindakan ini tidak dapat dibatalkan.',
+        'Hapus Riwayat Chat',
+        'btn-danger',
+        () => {
+            const sessionRef = ref(rtdb, `chats/${sessionId}`);
+            set(sessionRef, null) // Hapus semua data di bawah node sesi ini
+                .then(() => {
+                    showToast('Riwayat chat dibersihkan.', 'success');
+                    closeFloatingChat(); // Tutup jendela chat yang sudah kosong
+                })
+                .catch((error) => {
+                    showToast('Gagal membersihkan chat.', 'error');
+                    console.error("Error clearing chat:", error);
+                });
+        }
+    );
+};
+
+// --- END: LIVE CHAT MANAGEMENT FUNCTIONS ---
+// --- AUTH & EVENT LISTENERS SETUP ---
         function setupEventListeners() {
             document.getElementById('login-form').addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -2844,9 +3942,110 @@
                 if (deleteBtn) handleDeleteStokKredensial(deleteBtn.dataset.docId, deleteBtn.dataset.email);
                 if (resetBtn) handleResetOwner(resetBtn.dataset.docId, resetBtn.dataset.type);
             });
-        }
-        
-        onAuthStateChanged(auth, (user) => {
+        }// --- START: Live Chat Event Listeners ---
+document.getElementById('floating-chat-send').addEventListener('click', () => {
+    const messageText = chatDom.chatText.value.trim();
+    if (messageText) sendAdminReply(messageText, 'text');
+});
+document.getElementById('floating-chat-text').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { // Kirim jika Enter ditekan (tanpa Shift)
+        e.preventDefault();
+        const messageText = chatDom.chatText.value.trim();
+        if (messageText) sendAdminReply(messageText, 'text');
+    }
+});
+
+// Listener untuk tombol attach file
+document.getElementById('admin-chat-attach-btn').addEventListener('click', () => {
+    document.getElementById('admin-chat-file-input').click();
+});
+
+document.getElementById('admin-chat-file-input').addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+        showToast("Hanya file gambar yang diizinkan.", 'error');
+        return;
+    }
+    if (file.size > 3700000) { // Batas ~3.5MB
+        showToast("Ukuran gambar terlalu besar. Maksimal ~3.5 MB.", 'error');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const base64String = e.target.result;
+        showToast('Mengirim gambar...', 'success');
+        sendAdminReply(base64String, 'image');
+    };
+    reader.onerror = (e) => {
+        console.error("Gagal membaca file:", e);
+        showToast("Gagal memuat gambar.", 'error');
+    };
+    reader.readAsDataURL(file);
+    event.target.value = null; // Reset input file
+});
+
+// Listener untuk tombol di header chat
+document.getElementById('floating-chat-header').addEventListener('click', (e) => {
+    // Hanya minimize jika klik di header, BUKAN di tombol
+    if (e.target.id === 'floating-chat-header' || e.target.id === 'floating-chat-username') {
+        minimizeFloatingChat();
+    }
+});
+document.getElementById('floating-chat-minimize').addEventListener('click', minimizeFloatingChat);
+document.getElementById('floating-chat-close').addEventListener('click', closeFloatingChat);
+document.getElementById('floating-chat-clear').addEventListener('click', () => {
+    if (activeChatSessionId) {
+        handleClearChat(activeChatSessionId);
+    }
+});
+
+// Listener untuk tombol "Pesan Baru" & daftar chat (Delegasi event)
+dom.views.liveChat.addEventListener('click', (e) => {
+    const newChatBtn = e.target.closest('#new-chat-message-btn');
+    const sessionItem = e.target.closest('.chat-session-item');
+    
+    if (newChatBtn) {
+        openNewChatModal();
+    } else if (sessionItem) {
+        const sessionId = sessionItem.dataset.sessionId;
+        openFloatingChat(sessionId);
+    }
+});
+
+// Listener untuk modal "Pesan Baru"
+document.getElementById('new-chat-search').addEventListener('input', (e) => {
+    populateNewChatUserList(e.target.value);
+});
+document.getElementById('new-chat-user-list').addEventListener('click', (e) => {
+    const userItem = e.target.closest('.new-chat-user-item');
+    if (userItem) {
+        const username = userItem.dataset.username;
+        handleStartChatButtonClick(username); // Fungsi ini akan membuka chat
+        document.getElementById('new-chat-modal').style.display = 'none'; // Tutup modal
+    }
+});
+
+// Listener untuk tombol hapus per pesan (delegasi event)
+document.getElementById('floating-chat-messages').addEventListener('click', (e) => {
+    const deleteBtn = e.target.closest('.chat-delete-btn');
+    if (deleteBtn && activeChatSessionId) {
+        const messageId = deleteBtn.dataset.messageId;
+        handleDeleteMessage(activeChatSessionId, messageId);
+    }
+});
+
+// Listener untuk tombol "Mulai Chat" di kartu user (User Management View)
+dom.views.users.addEventListener('click', (e) => {
+    const startChatButton = e.target.closest('[data-action="start-chat"]');
+    if (startChatButton) {
+        const username = startChatButton.dataset.username;
+        handleStartChatButtonClick(username);
+    }
+});
+// --- END: Live Chat Event Listeners ---
+onAuthStateChanged(auth, (user) => {
             if (user) {
                 dom.loginPage.style.display = 'none';
                 dom.adminPanel.style.display = 'flex';
