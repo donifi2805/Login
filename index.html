@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel=stylesheet>
 <script src=https://unpkg.com/@phosphor-icons/web></script>
 <style>
-:root{--bg-primary:#111827;--bg-secondary:#1f2937;--bg-tertiary:#374151;--border-color:#4b5563;--text-primary:#f9fafb;--text-secondary:#d1d5db;--accent-blue:#3b82f6;--accent-green:#22c55e;--accent-red:#ef4444;--accent-cyan:#06b6d4;--premium-gold:#fbbf24}*{margin:0;padding:0;box-sizing:border-box}html,body{font-family:'Inter',sans-serif;background-color:var(--bg-primary);color:var(--text-primary);-webkit-user-select:none;user-select:none;font-size:10px}#app-layout{display:none;flex-direction:column;min-height:100vh;width:100%; transition: filter 0.3s ease-in-out;}
+:root{--bg-primary:#111827;--bg-secondary:#1f2937;--bg-tertiary:#374151;--border-color:#4b5563;--text-primary:#f9fafb;--text-secondary:#d1d5db;--accent-blue:#3b82f6;--accent-green:#22c55e;--accent-red:#ef4444;--accent-cyan:#06b6d4;--premium-gold:#fbbf24}*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;font-family:'Inter',sans-serif;background-color:var(--bg-primary);color:var(--text-primary);-webkit-user-select:none;user-select:none;font-size:10px}#app-layout{display:none;flex-direction:column;min-height:100vh;width:100%; transition: filter 0.3s ease-in-out;}
 
 /* --- Start: Pre-loader --- */
 #preloader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-primary); z-index: 20000; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease-out; }
@@ -302,6 +302,54 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
     white-space: pre-wrap; /* To respect newlines from admin input */
 }
 .subscription-card ul li .ph-x-circle { color: var(--accent-red); }
+/* --- Start: Live Chat Widget --- */
+#live-chat-widget * { box-sizing: border-box; font-family: Arial, sans-serif; }
+#chat-bubble-container { position: fixed; bottom: 25px; right: 25px; z-index: 999; display: none; flex-direction: column; align-items: center; cursor: pointer; }
+#chat-bubble { width: 60px; height: 60px; background-color: var(--accent-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); transition: transform 0.2s ease; }
+#chat-bubble:hover { transform: scale(1.1); }
+#chat-bubble-text { font-size: 11px; color: var(--text-primary); margin-top: 4px; font-weight: 500; text-shadow: 0 0 8px rgba(255,255,255,0.9); pointer-events: none; }
+#chat-window { position: fixed; bottom: 100px; right: 25px; width: 340px; max-width: 90%; height: 450px; background: #fff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; flex-direction: column; z-index: 10001; overflow: hidden; font-size:10px; }
+.chat-hidden { display: none !important; }
+#chat-header { background: var(--accent-blue); color: white; padding: 15px; border-top-left-radius: 10px; border-top-right-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+#chat-header span { font-weight: bold; font-size: 0.9em; }
+#chat-close { 
+    cursor: pointer; 
+    font-size: 20px; /* Sedikit lebih besar */
+    font-weight: bold; 
+    width: 26px; /* Memberi lebar */
+    height: 26px; /* Memberi tinggi */
+    border-radius: 50%; /* Membuatnya bulat */
+    background-color: rgba(0, 0, 0, 0.2); /* Latar belakang tembus pandang */
+    display: flex; /* Untuk menengahkan 'x' */
+    align-items: center;
+    justify-content: center;
+    line-height: 1; /* Memperbaiki posisi vertikal 'x' */
+    transition: background-color 0.2s ease, transform 0.2s ease; /* Transisi halus */
+}
+#chat-close:hover {
+    background-color: rgba(0, 0, 0, 0.4); /* Lebih gelap saat disentuh */
+    transform: scale(1.1); /* Sedikit membesar */
+}
+#chat-messages { flex-grow: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; font-size: 10px; }
+.chat-message { padding: 10px 14px; border-radius: 18px; max-width: 80%; line-height: 1.4; word-wrap: break-word; color: #333; }
+.chat-message.user { background: var(--accent-blue); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+.chat-message.admin { background: #e9e9eb; color: #333; align-self: flex-start; border-bottom-left-radius: 4px; }
+img.chat-message-image { width: 150px; height: auto; border-radius: 10px; cursor: pointer; border: 1px solid #eee; }
+img.chat-message-image.user { align-self: flex-end; }
+img.chat-message-image.admin { align-self: flex-start; }
+#chat-input-area { display: flex; align-items: center; padding: 10px; border-top: 1px solid #eee; background: #fff; position: relative; }
+#chat-loading-indicator { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid var(--accent-blue); border-radius: 50%; animation: spin 1s linear infinite; z-index: 10; }
+@keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+#chat-attach-button { background: none; border: none; cursor: pointer; padding: 8px; margin-right: 5px; }
+#chat-attach-button:hover { opacity: 0.7; }
+#chat-file-input { display: none; }
+#chat-text { flex-grow: 1; border: 1px solid #ccc; border-radius: 20px; padding: 10px 15px; margin-right: 10px; font-size: 9px; color: #333; }
+#chat-text:disabled, #chat-send:disabled, #chat-attach-button:disabled { opacity: 0.5; cursor: not-allowed; }
+#chat-send { background: var(--accent-blue); color: white; border: none; border-radius: 20px; padding: 10px 20px; cursor: pointer; font-weight: bold; font-size: 10px; }
+#image-preview-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; z-index: 10004; }
+#modal-close { position: absolute; top: 20px; right: 30px; font-size: 40px; color: white; cursor: pointer; }
+#preview-image { max-width: 90%; max-height: 90%; object-fit: contain; }
+/* --- End: Live Chat Widget --- */
 </style>
 
     <meta name="theme-color" content="#000000">
@@ -1002,7 +1050,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 </div><script type=module>
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, query, collection, where, getDocs, updateDoc, getDoc, addDoc, serverTimestamp, orderBy, limit, setDoc, deleteDoc, Timestamp, runTransaction, deleteField } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
-        import { getDatabase, ref, onValue, onDisconnect, set, serverTimestamp as dbServerTimestamp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+        import { getDatabase, ref, onValue, onDisconnect, set, serverTimestamp as dbServerTimestamp, push, onChildAdded, get } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
         
         const firebaseConfig = { apiKey: "AIzaSyB3KJT9eh42V6ytLoY5e4ozzDXY4sHhado", authDomain: "donitata1717-f10f7.firebaseapp.com", projectId: "donitata1717-f10f7", storageBucket: "donitata1717-f10f7.appspot.com", messagingSenderId: "760325542999", appId: "1:760325542999:web:be97c17580f64407e33f12", databaseURL: "https://donitata1717-f10f7-default-rtdb.asia-southeast1.firebasedatabase.app" };
         const app = initializeApp(firebaseConfig);
@@ -1014,6 +1062,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
         const TELEGRAM_CHAT_ID = "7348139166";
         const formBotToken = "7899731117:AAEpxfFIMiTR_Y-L8ad-VRR5qBF1y5kg4t4";
         const formChatId = "7348139166";
+const CHAT_NOTIF_BOT_TOKEN = "8313365155:AAGrDtEwhjfu72rbiqD__BT5nUaJy9IfRq4"; // Token untuk notif live chat
 
         const gameConfigs = {
             "BUSSID": { name: "BUSSID", icon: "🚌", host: '4ae9.playfabapi.com', titleId: '4AE9', profileImage: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjyQYodaXJAK1A9Bi0YOIU2BhQubEYchhFx-2PZYB8hOIopqXIQ1FXK_goAxP0GPaXyXk6L5jnO3aOL6EuzkEgGxa2tohs7YJazYrVPZ8czUi8BSjWWkrTKVCTwk7wmhEZRWFPP1U2S-FjXUwDbi9duZ9ejBNm0xTLBFblyee8yY_Jk2MLtQj6v3E_bePI/s1600/Bussid.png' },
@@ -1037,6 +1086,11 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
         let initialContentLoaded = false;
         let userToResetPasswordId = null;
         let accountsToSell = [];
+// --- Start: Live Chat Widget Vars ---
+let chatSessionId = null; // Will be set on login
+let chatsRef = null; // Will be set on login
+let chatBubbleContainer, chatWindow, chatClose, chatMessages, chatText, chatSend, chatAttachButton, chatFileInput, imagePreviewModal, previewImage, modalClose, chatLoadingIndicator;
+// --- End: Live Chat Widget Vars ---
         
         const eyeIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639l4.433-7.447A1 1 0 017 4h10a1 1 0 01.531.175l4.433 7.447a1.012 1.012 0 010 .639l-4.433 7.447A1 1 0 0117 20H7a1 1 0 01-.531-.175L2.036 12.322z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>`;
         const eyeSlashIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.243 4.243l-4.243-4.243" /></svg>`;
@@ -1461,6 +1515,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
                     
                     setupPresenceSystem();
                     checkAndShowWelcomeMessage();
+activateLiveChat(loggedInUser.username); // <-- PANGGIL FUNGSI CHAT
                     
                     setupRealtimeBalanceListener();
                 } else {
@@ -1528,7 +1583,6 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             if (loggedInUser) {
                 const firestoreStatusRef = doc(db, 'presence', loggedInUser.docId);
                 setDoc(firestoreStatusRef, { status: 'offline', last_seen: serverTimestamp() }, { merge: true });
-                sendTelegramMessage(`👋 *Logout*\n*Username:* \`${loggedInUser.username}\``, userActionBotToken);
             }
             if (balanceListenerUnsubscribe) { balanceListenerUnsubscribe(); balanceListenerUnsubscribe = null; }
             if (stokAkunUnsubscribe) { stokAkunUnsubscribe(); stokAkunUnsubscribe = null; }
@@ -1538,7 +1592,11 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             initialContentLoaded = false;
             isSubscriptionExpired = false;
             accountsToSell = [];
-            showToast('Logout berhasil.', "success");
+            if (chatBubbleContainer) chatBubbleContainer.style.display = 'none'; // <-- SEMBUNYIKAN CHAT
+        if (chatWindow) chatWindow.classList.add('chat-hidden'); // <-- SEMBUNYIKAN JENDELA CHAT
+        chatSessionId = null; // <-- RESET SESI
+        chatsRef = null; // <-- RESET REFERENSI
+showToast('Logout berhasil.', "success");
             setTimeout(showLoginScreen, 500);
         }
         async function getSingleGameProfile(gp) {
@@ -3148,8 +3206,313 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             };
         });
 
-        function initializeAppLogic() {
+        // --- Start: Live Chat Widget Functions ---
+
+function displayChatMessage(msg) {
+    if (!chatMessages) return;
+
+    // --- START MODIFIKASI: Tambah Nama Pengirim (User & Admin) ---
+    if (msg.sender === 'user' || msg.sender === 'admin') {
+        const senderName = msg.sender === 'admin' ? 'ADMIN' : (msg.username || 'User');
+        const senderDiv = document.createElement('div');
+        senderDiv.textContent = senderName;
+        senderDiv.style.fontSize = '0.8em';
+        senderDiv.style.fontWeight = 'bold';
+        senderDiv.style.marginBottom = '2px';
+        
+        if (msg.sender === 'admin') {
+            senderDiv.style.color = 'var(--accent-cyan)'; // Warna untuk Admin
+            senderDiv.style.alignSelf = 'flex-start';
+            senderDiv.style.margin = '0 0 -8px 15px'; // Atur margin
+        } else {
+            // Ini untuk user
+            senderDiv.style.color = '#bbb'; // Warna untuk nama user
+            senderDiv.style.alignSelf = 'flex-end';
+            senderDiv.style.margin = '0 15px -8px 0'; // Atur margin
+        }
+        chatMessages.appendChild(senderDiv);
+    }
+    // --- END MODIFIKASI ---
+
+    if (msg.text) {
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('chat-message');
+        msgDiv.classList.add(msg.sender === 'user' ? 'user' : 'admin');
+        msgDiv.textContent = msg.text;
+        chatMessages.appendChild(msgDiv);
+    } else if (msg.image) {
+        const img = document.createElement('img');
+        img.src = msg.image;
+        img.classList.add('chat-message-image');
+        img.classList.add(msg.sender === 'user' ? 'user' : 'admin');
+        img.addEventListener('click', () => showChatImagePreview(msg.image));
+        chatMessages.appendChild(img);
+    }
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function sendChatMessage(content, type = 'text') {
+    if (!content) return Promise.reject("Konten kosong");
+    if (!loggedInUser) return Promise.reject("User not logged in"); // <-- TAMBAHAN
+
+    const message = {
+        sender: 'user',
+        username: loggedInUser.username, // <-- TAMBAHAN
+        timestamp: dbServerTimestamp() // Updated for v11
+    };
+    if (type === 'text') {
+        message.text = content;
+    } else if (type === 'image') {
+        message.image = content;
+    }
+    // Use push() from v11
+    return push(chatsRef, message);
+}
+
+function setChatLoading(isLoading) {
+    if (!chatLoadingIndicator) return;
+    if (isLoading) {
+        chatLoadingIndicator.classList.remove('chat-hidden');
+        chatText.disabled = true;
+        chatSend.disabled = true;
+        chatAttachButton.disabled = true;
+    } else {
+        chatLoadingIndicator.classList.add('chat-hidden');
+        chatText.disabled = false;
+        chatSend.disabled = false;
+        chatAttachButton.disabled = false;
+        chatText.focus();
+    }
+}
+
+function sendChatTextMessage() {
+    const text = chatText.value.trim();
+    if (text === '') return;
+
+    // --- MODIFIKASI: Kirim Notif Telegram ---
+    if (loggedInUser && loggedInUser.username) {
+        const notifMessage = `💬 *Pesan Chat Baru dari User*\n\n*Username:* \`${loggedInUser.username}\`\n*Pesan:*\n${text}`;
+        // Panggil sendTelegramMessage dengan token baru. Penting: jangan di 'await' agar tidak memblokir pengiriman chat.
+        sendTelegramMessage(notifMessage, CHAT_NOTIF_BOT_TOKEN);
+    }
+    // --- END MODIFIKASI ---
+
+    setChatLoading(true);
+    sendChatMessage(text, 'text')
+        .then(() => {
+            chatText.value = '';
+        })
+        .catch((error) => {
+            console.error("Gagal mengirim pesan: ", error);
+            showToast("Gagal mengirim pesan.", "error");
+        })
+        .finally(() => {
+            setChatLoading(false);
+        });
+}
+
+function handleChatImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+        showToast("Hanya file gambar yang diizinkan.", "error");
+        return;
+    }
+    if (file.size > 3700000) { 
+        showToast("Ukuran gambar terlalu besar. Maksimal ~3.5 MB.", "error");
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const base64String = e.target.result;
+        setChatLoading(true);
+        sendChatMessage(base64String, 'image')
+            .catch((error) => {
+                console.error("Gagal mengunggah gambar: ", error);
+                showToast("Gagal mengunggah gambar.", "error");
+            })
+            .finally(() => {
+                setChatLoading(false);
+            });
+    };
+    reader.onerror = (e) => {
+        console.error("Gagal membaca file:", e);
+        showToast("Gagal memuat gambar.", "error");
+    };
+    reader.readAsDataURL(file);
+    event.target.value = null;
+}
+
+function showChatImagePreview(base64src) {
+    previewImage.src = base64src;
+    imagePreviewModal.classList.remove('chat-hidden');
+}
+
+function closeChatImagePreview() {
+    imagePreviewModal.classList.add('chat-hidden');
+    previewImage.src = "";
+}
+
+// --- Drag and Drop Logic for Chat Bubble ---
+let isChatDragging = false, hasChatMoved = false, chatOffsetX, chatOffsetY;
+
+function startChatDrag(e) {
+    hasChatMoved = false; isChatDragging = true;
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
+    const rect = chatBubbleContainer.getBoundingClientRect();
+    chatOffsetX = clientX - rect.left; chatOffsetY = clientY - rect.top;
+    chatBubbleContainer.style.cursor = 'grabbing';
+    chatBubbleContainer.style.top = `${rect.top}px`;
+    chatBubbleContainer.style.left = `${rect.left}px`;
+    chatBubbleContainer.style.bottom = 'auto'; chatBubbleContainer.style.right = 'auto';
+    document.addEventListener('mousemove', onChatDrag);
+    document.addEventListener('mouseup', endChatDrag);
+    document.addEventListener('touchmove', onChatDrag, { passive: false });
+    document.addEventListener('touchend', endChatDrag);
+    if (e.type === 'touchstart') e.preventDefault();
+}
+
+function onChatDrag(e) {
+    if (!isChatDragging) return;
+    hasChatMoved = true; e.preventDefault(); 
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
+    let newTop = clientY - chatOffsetY; let newLeft = clientX - chatOffsetX;
+    const containerWidth = chatBubbleContainer.offsetWidth;
+    const containerHeight = chatBubbleContainer.offsetHeight;
+    newTop = Math.max(10, Math.min(newTop, window.innerHeight - containerHeight - 10));
+    newLeft = Math.max(10, Math.min(newLeft, window.innerWidth - containerWidth - 10));
+    chatBubbleContainer.style.top = `${newTop}px`;
+    chatBubbleContainer.style.left = `${newLeft}px`;
+}
+
+function endChatDrag() {
+    isChatDragging = false;
+    document.removeEventListener('mousemove', onChatDrag);
+    document.removeEventListener('mouseup', endChatDrag);
+    document.removeEventListener('touchmove', onChatDrag);
+    document.removeEventListener('touchend', endChatDrag);
+    chatBubbleContainer.style.cursor = 'pointer';
+    if (!hasChatMoved) {
+        chatWindow.classList.remove('chat-hidden');
+        chatBubbleContainer.classList.add('chat-hidden');
+    }
+}
+
+function initializeChatWidget() {
+    // Assign DOM elements
+    chatBubbleContainer = document.getElementById('chat-bubble-container');
+    chatWindow = document.getElementById('chat-window');
+    chatClose = document.getElementById('chat-close');
+    chatMessages = document.getElementById('chat-messages');
+    chatText = document.getElementById('chat-text');
+    chatSend = document.getElementById('chat-send');
+    chatAttachButton = document.getElementById('chat-attach-button');
+    chatFileInput = document.getElementById('chat-file-input');
+    imagePreviewModal = document.getElementById('image-preview-modal');
+    previewImage = document.getElementById('preview-image');
+    modalClose = document.getElementById('modal-close');
+    chatLoadingIndicator = document.getElementById('chat-loading-indicator');
+
+    // Add event listeners (NO FIREBASE LISTENER HERE)
+    if (chatClose) chatClose.addEventListener('click', () => {
+        chatWindow.classList.add('chat-hidden');
+        chatBubbleContainer.classList.remove('chat-hidden');
+    });
+
+    if (chatBubbleContainer) chatBubbleContainer.addEventListener('mousedown', startChatDrag);
+    if (chatBubbleContainer) chatBubbleContainer.addEventListener('touchstart', startChatDrag, { passive: false });
+
+    if (chatSend) chatSend.addEventListener('click', sendChatTextMessage);
+    if (chatText) chatText.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            sendChatTextMessage();
+        }
+    });
+    if (chatAttachButton) chatAttachButton.addEventListener('click', () => {
+        chatFileInput.click();
+    });
+    if (chatFileInput) chatFileInput.addEventListener('change', handleChatImageUpload);
+    if (modalClose) modalClose.addEventListener('click', closeChatImagePreview);
+    if (imagePreviewModal) imagePreviewModal.addEventListener('click', (e) => {
+        if (e.target === imagePreviewModal) {
+            closeChatImagePreview();
+        }
+    });
+
+    // Firebase listener (v11) - MOVED TO A NEW FUNCTION
+}
+// --- End: Live Chat Widget Functions ---
+// --- BARU: Fungsi untuk mengaktifkan chat SETELAH login ---
+function activateLiveChat(username) {
+    if (!username) return;
+
+    // 1. Set Chat Session ID
+    chatSessionId = username.replace(/[.#$[\]]/g, '_');
+
+    // 2. Buat referensi database
+    chatsRef = ref(rtdb, 'chats/' + chatSessionId);
+    
+    // 3. Tambahkan flag untuk melacak pemuatan awal
+    let isInitialChatLoadComplete = false;
+
+    // 4. Aktifkan Firebase listener (v11)
+    onChildAdded(chatsRef, (snapshot) => {
+        const msgKey = snapshot.key;
+        const msg = snapshot.val();
+
+        if (!msg) return; // Abaikan data kosong
+
+        const isChatWindowHidden = chatWindow.classList.contains('chat-hidden');
+
+        // --- MODIFIKASI UTAMA ---
+        // Hanya jalankan logika auto-open JIKA pemuatan awal telah selesai
+        if (isInitialChatLoadComplete) { 
+            if (msgKey === '_adminTrigger') {
+                // Ini adalah "ping" atau notifikasi dari admin
+                if (isChatWindowHidden) {
+                    // Buka jendela chat
+                    chatWindow.classList.remove('chat-hidden');
+                    chatBubbleContainer.classList.add('chat-hidden');
+                }
+                // Hapus trigger agar tidak aktif lagi saat reload
+                const triggerRef = ref(rtdb, `chats/${chatSessionId}/_adminTrigger`);
+                set(triggerRef, null); // Hapus node
+                return; // Jangan tampilkan trigger ini sebagai pesan
+            }
+
+            // Jika pesan baru datang dari 'admin' dan jendela chat tertutup, buka!
+            if (msg.sender === 'admin' && isChatWindowHidden) {
+                chatWindow.classList.remove('chat-hidden');
+                chatBubbleContainer.classList.add('chat-hidden');
+            }
+        }
+        // --- END MODIFIKASI UTAMA ---
+
+        // Tampilkan pesan (baik dari user maupun admin)
+        displayChatMessage(msg);
+    });
+    
+    // 5. Setelah listener terpasang, gunakan get() HANYA untuk menandai kapan pemuatan awal selesai
+    // Ini akan mengambil semua data, dan setelah selesai, kita tahu 
+    // pesan 'onChildAdded' berikutnya adalah pesan BARU.
+    get(chatsRef).then(() => {
+        // Beri sedikit jeda agar semua event onChildAdded dari history selesai diproses
+        setTimeout(() => {
+            isInitialChatLoadComplete = true;
+        }, 500); // 500ms buffer, bisa disesuaikan
+    });
+
+    // 6. Tampilkan gelembung chat
+    if (chatBubbleContainer) {
+        chatBubbleContainer.style.display = 'flex';
+    }
+}
+function initializeAppLogic() {
             window.copyToClipboard = copyToClipboard;
+initializeChatWidget();
             
             setupRealtimeAppSettings();
 
@@ -3428,5 +3791,41 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
             document.body.style.opacity = 1;
         }
     </script>
+<div id="live-chat-widget">
+    <div id="chat-bubble-container">
+        <div id="chat-bubble">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="white">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12zM7 9h10v2H7zm4 3H7v2h4zm0-3h-2v2h2z"/>
+            </svg>
+        </div>
+        <span id="chat-bubble-text">Live Chat Admin</span>
+    </div>
+
+    <div id="chat-window" class="chat-hidden">
+        <div id="chat-header">
+            <span>Ada yang bisa dibantu?Pesan ini langsung terhubung ke whatsapp admin</span>
+            <span id="chat-close">&times;</span>
+        </div>
+        <div id="chat-messages">
+            <div class="chat-message admin">Halo BRO! Silakan mau nanya apa?.</div>
+        </div>
+        <div id="chat-input-area">
+            <div id="chat-loading-indicator" class="chat-hidden"></div>
+            <input type="file" id="chat-file-input" accept="image/*">
+            <button id="chat-attach-button" title="Kirim gambar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                </svg>
+            </button>
+            <input type="text" id="chat-text" placeholder="Ketik pesan...">
+            <button id="chat-send">Kirim</button>
+        </div>
+    </div>
+</div>
+<div id="image-preview-modal" class="chat-hidden">
+    <span id="modal-close">&times;</span>
+    <img id="preview-image" src="" alt="Preview Gambar">
+</div>
 </body>
 </html>
