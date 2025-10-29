@@ -366,6 +366,30 @@
         .status-premium { background-color: rgba(251, 191, 36, 0.2); color: var(--premium-gold); }
         .status-langganan { background-color: rgba(6, 182, 212, 0.2); color: var(--subscription-cyan); }
         
+        /* --- START: Admin Status Header Toggle --- */
+        .admin-status-toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-left: 15px;
+            border-left: 1px solid var(--border-color);
+            margin-left: 5px;
+        }
+        .admin-status-label {
+            font-size: 0.9em;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        /* Override untuk toggle di header */
+        .admin-header-toggle label {
+            background: var(--danger-primary); /* Merah saat Offline */
+        }
+        .admin-header-toggle input:checked + label {
+            background: var(--online-green); /* Hijau terang saat Online */
+        }
+        /* --- END: Admin Status Header Toggle --- */
+
         /* --- KOMPONEN UMUM --- */
         .form-container {
             background: var(--bg-secondary); border: 1px solid var(--border-color);
@@ -1299,7 +1323,15 @@
             <h2 class="header-title"><i class="fas fa-gamepad"></i> Auth Tools</h2>
             <div class="header-actions">
                 <button id="logout-btn" class="action-button btn-danger"><i class="fas fa-sign-out-alt"></i> Logout</button>
-            </div>
+                <div class="admin-status-toggle-container">
+                    <span class="admin-status-label">Offline</span>
+                    <div class="toggle-switch admin-header-toggle">
+                        <input type="checkbox" id="admin-online-toggle">
+                        <label for="admin-online-toggle"></label>
+                    </div>
+                    <span class="admin-status-label">Online</span>
+                </div>
+                </div>
         </header>
 
         <main class="main-content">
@@ -1929,7 +1961,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, getDoc, deleteField, orderBy, query, onSnapshot, writeBatch, where, limit, runTransaction } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
-        import { getDatabase, ref, onValue, onChildChanged, onChildRemoved, push, serverTimestamp as dbServerTimestamp, set, remove } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+        import { getDatabase, ref, onValue, onChildChanged, onChildRemoved, push, serverTimestamp as dbServerTimestamp, set, remove, get } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB3KJT9eh42V6ytLoY5e4ozzDXY4sHhado",
@@ -1945,6 +1977,10 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
         const rtdb = getDatabase(app);
+
+        // --- START: Admin Status Ref ---
+        const adminStatusRef = ref(rtdb, 'appStatus/adminOnline');
+        // --- END: Admin Status Ref ---
 
         // State variables
         let allUsers = [], displayedUsers = [], currentPage = 1, allStokAkun = [], allStokKredensial = [], allRekapData = [];
@@ -3869,6 +3905,20 @@ const handleClearChat = (sessionId) => {
             document.getElementById('online-users-card').addEventListener('click', () => {
                 dom.onlineUsersModal.style.display = 'flex';
             });
+
+            // --- START: Event Listener Toggle Status Admin ---
+            document.getElementById('admin-online-toggle').addEventListener('change', (e) => {
+                const isOnline = e.target.checked;
+                set(adminStatusRef, isOnline)
+                    .then(() => {
+                        showToast(`Status diubah ke ${isOnline ? 'Online' : 'Offline'}.`, 'success');
+                    })
+                    .catch((err) => {
+                        showToast('Gagal mengubah status.', 'error');
+                        e.target.checked = !isOnline; // Kembalikan toggle jika gagal
+                    });
+            });
+            // --- END: Event Listener Toggle Status Admin ---
         }
         
         async function handleBanToggle(docId, isBanned) {
@@ -4053,6 +4103,16 @@ onAuthStateChanged(auth, (user) => {
                 cleanupListeners(); // Hapus listener lama jika ada (untuk mencegah duplikasi)
                 setupRealtimeListeners(); // Siapkan listener baru
                 syncPresenceFromRtdbToFirestore();
+
+                // --- START: Baca Status Admin Saat Login ---
+                get(adminStatusRef).then((snapshot) => {
+                    const isOnline = snapshot.val();
+                    document.getElementById('admin-online-toggle').checked = (isOnline === true);
+                }).catch((err) => {
+                    console.error("Gagal membaca status admin: ", err);
+                });
+                // --- END: Baca Status Admin Saat Login ---
+
                 showMainMenu();
             } else {
                 dom.loginPage.style.display = 'flex';
