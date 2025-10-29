@@ -303,6 +303,53 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 }
 .subscription-card ul li .ph-x-circle { color: var(--accent-red); }
 /* --- Start: Live Chat Widget --- */
+#admin-status-container {
+    /* Dihapus: position: fixed, bottom, right, z-index */
+    position: relative; /* Menjadi relatif terhadap bubble-container */
+    margin-top: 4px; /* Memberi jarak dari teks "Live Chat Admin" */
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-secondary);
+    padding: 4px 8px; /* Dikecilkan agar lebih pas */
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    font-size: 1.0em; /* Disesuaikan ukurannya */
+    font-weight: 600;
+    transition: all 0.3s ease;
+    pointer-events: none; /* Agar tidak mengganggu klik pada bubble */
+}
+#admin-status-dot {
+    width: 8px; /* Dikecilkan */
+    height: 8px; /* Dikecilkan */
+    border-radius: 50%;
+    margin-right: 5px; /* Disesuaikan */
+    transition: all 0.3s ease;
+}
+#admin-status-container.online {
+    background-color: rgba(34, 197, 94, 0.1);
+    border-color: var(--accent-green);
+}
+#admin-status-container.online #admin-status-dot {
+    background-color: var(--accent-green);
+    box-shadow: 0 0 6px var(--accent-green);
+}
+#admin-status-container.online #admin-status-text {
+    color: var(--text-primary);
+}
+#admin-status-container.offline {
+     background-color: rgba(239, 68, 68, 0.1);
+     border-color: var(--accent-red);
+}
+#admin-status-container.offline #admin-status-dot {
+    background-color: var(--accent-red);
+}
+#admin-status-container.offline #admin-status-text {
+    color: var(--text-secondary);
+}
+
+#live-chat-widget * { box-sizing: border-box; font-family: Arial, sans-serif; }
+/* --- Start: Live Chat Widget --- */
 #live-chat-widget * { box-sizing: border-box; font-family: Arial, sans-serif; }
 #chat-bubble-container { position: fixed; bottom: 25px; right: 25px; z-index: 999; display: none; flex-direction: column; align-items: center; cursor: pointer; }
 #chat-bubble { width: 60px; height: 60px; background-color: var(--accent-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); transition: transform 0.2s ease; }
@@ -3510,9 +3557,31 @@ function activateLiveChat(username) {
         chatBubbleContainer.style.display = 'flex';
     }
 }
+function setupAdminStatusListener() {
+            const adminStatusContainer = document.getElementById('admin-status-container');
+            const adminStatusText = document.getElementById('admin-status-text');
+            
+            if (adminStatusContainer && adminStatusText) {
+                const adminStatusRef = ref(rtdb, 'appStatus/adminOnline');
+                onValue(adminStatusRef, (snapshot) => {
+                    const isOnline = snapshot.val(); // Ini akan bernilai true atau false
+                    if (isOnline === true) { // Cek eksplisit
+                        adminStatusContainer.classList.remove('offline');
+                        adminStatusContainer.classList.add('online');
+                        adminStatusText.textContent = 'Admin Online';
+                    } else { // Ini akan menangani false, null, atau undefined
+                        adminStatusContainer.classList.remove('online');
+                        adminStatusContainer.classList.add('offline');
+                        adminStatusText.textContent = 'Admin Offline';
+                    }
+                });
+            }
+        }
+
 function initializeAppLogic() {
             window.copyToClipboard = copyToClipboard;
 initializeChatWidget();
+            setupAdminStatusListener(); // <-- PANGGIL FUNGSI BARU DI SINI
             
             setupRealtimeAppSettings();
 
@@ -3792,6 +3861,7 @@ initializeChatWidget();
         }
     </script>
 <div id="live-chat-widget">
+<div id="live-chat-widget">
     <div id="chat-bubble-container">
         <div id="chat-bubble">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="white">
@@ -3800,7 +3870,12 @@ initializeChatWidget();
             </svg>
         </div>
         <span id="chat-bubble-text">Live Chat Admin</span>
-    </div>
+        
+        <div id="admin-status-container" class="offline">
+            <div id="admin-status-dot"></div>
+            <span id="admin-status-text">Admin Offline</span>
+        </div>
+        </div>
 
     <div id="chat-window" class="chat-hidden">
         <div id="chat-header">
