@@ -483,6 +483,31 @@ img.chat-message-image.admin { align-self: flex-start; }
 </form>
 <p class=switch-link>Sudah punya akun? <a href=# id=show-login-link-from-reg>Login</a></p>
 </div>
+<div id=otp-verification-container style=display:none>
+    <h2>Verifikasi Nomor WhatsApp</h2>
+    <p class=subtitle>Silakan minta kode OTP 5 digit kepada Admin. Kode akan dikirimkan ke nomor WhatsApp Anda.</p>
+    <p class=subtitle style="font-weight: bold; color: var(--text-primary);">Nomor WhatsApp: <span id="otp-wa-display"></span></p>
+    
+    <form id="otp-verify-form">
+        <div class=input-group>
+            <i class="ph-bold ph-key input-icon"></i>
+            <input type=text id="otp-input" class=input-field placeholder="Masukkan 5 Digit Kode OTP" required maxlength=5 inputmode=numeric pattern="\d*">
+        </div>
+        <button type=submit id="verify-otp-btn" class="action-button btn-primary">Verifikasi</button>
+    </form>
+    
+    <div class="switch-link" style="margin-top: 20px;">
+        <button id="resend-otp-btn" class="action-button btn-secondary" style="width: 100%;" disabled>
+            Minta OTP Baru (<span id="otp-timer">50</span>s)
+        </button>
+    </div>
+    
+    <div class="switch-link" style="margin-top: 10px;">
+        <button id="cancel-otp-btn" class="action-button btn-red" style="width: 100%;">Batalkan Pendaftaran</button>
+    </div>
+    
+    <p class=switch-link>Salah nomor? <a href=# id=show-register-link-from-otp>Kembali ke Pendaftaran</a></p>
+</div>
 <div id=forgot-password-container>
 <div id=verify-user-view>
 <h2>Lupa Kata Sandi</h2>
@@ -1133,6 +1158,91 @@ const CHAT_NOTIF_BOT_TOKEN = "8313365155:AAGrDtEwhjfu72rbiqD__BT5nUaJy9IfRq4"; /
         let initialContentLoaded = false;
         let userToResetPasswordId = null;
         let accountsToSell = [];
+        let pendingRegistrationData = null;
+        let otpTimerInterval = null;
+
+        function startOtpTimer() {
+            let timeLeft = 50;
+            const timerEl = document.getElementById('otp-timer');
+            const resendBtn = document.getElementById('resend-otp-btn');
+            
+            timerEl.textContent = timeLeft;
+            resendBtn.disabled = true;
+
+            if (otpTimerInterval) clearInterval(otpTimerInterval);
+
+            otpTimerInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(otpTimerInterval);
+                    resendBtn.disabled = false;
+                    resendBtn.innerHTML = 'Minta OTP Baru';
+                } else {
+                    resendBtn.innerHTML = `Minta OTP Baru (<span id="otp-timer">${timeLeft}</span>s)`;
+                }
+            }, 1000);
+        }
+
+        async function handleOtpVerification(event) {
+            event.preventDefault();
+            const otpInput = document.getElementById('otp-input').value.trim();
+            if (otpInput.length !== 5) {
+                showToast("Kode OTP harus 5 digit.", "error");
+                return;
+            }
+            
+            if (!pendingRegistrationData) {
+                showToast("Data pendaftaran tidak ditemukan. Silakan ulangi.", "error");
+                return;
+            }
+            
+            const btn = document.getElementById('verify-otp-btn');
+            btn.disabled = true; btn.innerText = "Memverifikasi...";
+
+            try {
+                // 1. Ambil OTP yang valid dari RTDB
+                const otpRef = ref(rtdb, 'settings/activeOTP');
+                const snapshot = await get(otpRef);
+
+                if (snapshot.exists() && snapshot.val() === otpInput) {
+                    // 2. OTP BENAR
+                    showToast("Verifikasi berhasil! Mendaftarkan akun...", "success");
+                    
+                    // 3. Hapus OTP agar tidak bisa dipakai lagi
+                    await set(otpRef, null);
+
+                    // 4. Lanjutkan pendaftaran (data sudah ada di pendingRegistrationData)
+                    // Tambahkan createdAt yang sebelumnya tidak bisa disimpan di variabel
+                    const finalUserData = {
+                        ...pendingRegistrationData,
+                        createdAt: serverTimestamp() // Tambahkan timestamp saat ini
+                    };
+                    
+                    await addDoc(collection(db, "users"), finalUserData);
+                    
+                    showToast("Pendaftaran berhasil! Silakan masuk.", "success");
+                    sendTelegramMessage(`🎉 *Pendaftaran Baru (via OTP)*\n*Username:* \`${pendingRegistrationData.username}\`\n*Email:* \`${pendingRegistrationData.email}\``, userActionBotToken);
+                    
+                    pendingRegistrationData = null;
+                    localStorage.removeItem('pendingRegistration'); // Hapus sesi pendaftaran
+                    if (otpTimerInterval) clearInterval(otpTimerInterval);
+                    
+                    document.getElementById('otp-verify-form').reset();
+                    document.getElementById('otp-verification-container').style.display = 'none';
+                    document.getElementById('register-form').reset();
+                    showLoginScreen();
+
+                } else {
+                    // 5. OTP SALAH
+                    throw new Error("Kode OTP salah atau sudah kadaluarsa.");
+                }
+            } catch (e) {
+                console.error("Error saat verifikasi OTP: ", e);
+                showToast(e.message, "error");
+            } finally {
+                btn.disabled = false; btn.innerText = "Verifikasi";
+            }
+        }
 // --- Start: Live Chat Widget Vars ---
 let chatSessionId = null; // Will be set on login
 let chatsRef = null; // Will be set on login
@@ -1575,58 +1685,129 @@ activateLiveChat(loggedInUser.username); // <-- PANGGIL FUNGSI CHAT
                 btn.disabled = false; btn.innerText = "Masuk";
             }
         }async function register(event) {
-            event.preventDefault();
-            const btn = event.target.querySelector('button');
-            btn.disabled = true; btn.innerText = "Mendaftar...";
-            const username = document.getElementById('reg-username').value.trim();
-            const email = document.getElementById('reg-email').value.trim();
-            const whatsapp = document.getElementById('reg-whatsapp').value.trim();
-            const password = document.getElementById('reg-password').value;
-            if (!username || !email || !whatsapp || !password) {
-                showToast("Semua kolom harus diisi!", "error");
-                btn.disabled = false; btn.innerText = "Daftar";
-                return;
+    event.preventDefault();
+    const btn = event.target.querySelector('button');
+    btn.disabled = true; btn.innerText = "Memeriksa...";
+
+    const username = document.getElementById('reg-username').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const whatsapp = document.getElementById('reg-whatsapp').value.trim();
+    const password = document.getElementById('reg-password').value;
+
+    if (!username || !email || !whatsapp || !password) {
+        showToast("Semua kolom harus diisi!", "error");
+        btn.disabled = false; btn.innerText = "Daftar";
+        return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showToast("Format email tidak valid!", "error");
+        btn.disabled = false; btn.innerText = "Daftar";
+        return;
+    }
+
+    try {
+        // --- AWAL MODIFIKASI: Pengecekan Status OTP ---
+        let isOtpEnabled = true; // Defaultnya, OTP aktif
+        try {
+            const appConfigRef = doc(db, "settings", "appConfig");
+            const configSnap = await getDoc(appConfigRef);
+            if (configSnap.exists() && configSnap.data().otp?.isActive === false) {
+                isOtpEnabled = false; // OTP dinonaktifkan oleh admin
             }
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                showToast("Format email tidak valid!", "error");
-                btn.disabled = false; btn.innerText = "Daftar";
-                return;
-            }
-            try {
-                const usernameQuery = query(collection(db, "users"), where("username", "==", username));
-                const emailQuery = query(collection(db, "users"), where("email", "==", email));
-                const [usernameSnapshot, emailSnapshot] = await Promise.all([getDocs(usernameQuery), getDocs(emailQuery)]);
-                if (!usernameSnapshot.empty) { showToast("Username sudah digunakan.", "error"); return; }
-                if (!emailSnapshot.empty) { showToast("Email sudah terdaftar.", "error"); return; }
-                await addDoc(collection(db, "users"), {
-                    username: username,
-                    email: email,
-                    whatsapp: whatsapp,
-                    password: password,
-                    saldo: 0,
-                    accountType: 'USER',
-                    loginCount: 0,
-                    isBanned: false,
-                    masaAktifHingga: null,
-                    pendingTransaction: 0,
-                    pendingSubscription: null,
-                    pendingAkunPurchase: null,
-                    otherAccountsList: [],
-                    akunJualStatus: null,
-                });
-                showToast("Pendaftaran berhasil! Silakan masuk.", "success");
-                sendTelegramMessage(`🎉 *Pendaftaran Baru*\n*Username:* \`${username}\`\n*Email:* \`${email}\``, userActionBotToken);
-                event.target.reset();
-                showLoginScreen();
-            } catch (e) {
-                console.error("Error saat pendaftaran: ", e);
-                showToast("Gagal mendaftar. Coba lagi nanti.", "error");
-            } finally {
-                btn.disabled = false; btn.innerText = "Daftar";
-            }
+        } catch (e) {
+            console.warn("Tidak dapat mengambil config OTP, menganggap OTP aktif.", e);
         }
-        function logout() {
+
+        // --- Lanjut validasi duplikat ---
+        btn.innerText = "Memvalidasi...";
+        const usernameQuery = query(collection(db, "users"), where("username", "==", username));
+        const emailQuery = query(collection(db, "users"), where("email", "==", email));
+        const [usernameSnapshot, emailSnapshot] = await Promise.all([getDocs(usernameQuery), getDocs(emailQuery)]);
+
+        if (!usernameSnapshot.empty) { 
+            showToast("Username sudah digunakan.", "error"); 
+            btn.disabled = false; btn.innerText = "Daftar";
+            return; 
+        }
+        if (!emailSnapshot.empty) { 
+            showToast("Email sudah terdaftar.", "error"); 
+            btn.disabled = false; btn.innerText = "Daftar";
+            return; 
+        }
+
+        // --- Simpan data untuk pendaftaran ---
+        pendingRegistrationData = {
+            username: username,
+            email: email,
+            whatsapp: whatsapp,
+            password: password,
+            saldo: 0,
+            accountType: 'USER',
+            loginCount: 0,
+            isBanned: false,
+            masaAktifHingga: null,
+            pendingTransaction: 0,
+            pendingSubscription: null,
+            pendingAkunPurchase: null,
+            otherAccountsList: [],
+            akunJualStatus: null,
+        };
+
+        if (isOtpEnabled) {
+            // --- AWAL LOGIKA BARU: Tampilkan layar OTP ---
+
+            // 1. Kirim notif ke Admin
+            // 1. Kirim notif ke Admin
+                const notifMessage = `🔔 *Permintaan OTP Baru*\n*Username:* \`${username}\`\n*Email:* \`${email}\`\n*WA:* \`${whatsapp}\`\n\n*Kirim OTP ke:*\nhttps://wa.me/${whatsapp}\n\nMohon berikan kode OTP.`;
+            sendTelegramMessage(notifMessage, CHAT_NOTIF_BOT_TOKEN); // Ganti ke bot notif chat/otp
+// --- MODIFIKASI: Simpan data pendaftaran ke localStorage ---
+            try {
+                localStorage.setItem('pendingRegistration', JSON.stringify(pendingRegistrationData));
+            } catch (e) {
+                console.error("Gagal menyimpan ke localStorage:", e);
+                showToast("Gagal menyimpan sesi pendaftaran. Coba lagi.", "error");
+                return; // Hentikan jika tidak bisa menyimpan
+            }
+            // --- AKHIR MODIFIKASI ---
+
+            // 2. Tampilkan view OTP
+            document.getElementById('register-container').style.display = 'none';
+            document.getElementById('otp-wa-display').textContent = whatsapp;
+            document.getElementById('otp-verification-container').style.display = 'block';
+
+            // 3. Mulai timer
+            startOtpTimer();
+
+            showToast("Permintaan terkirim! Silakan hubungi admin.", "success");
+            btn.disabled = false; btn.innerText = "Daftar"; // Reset tombol reg
+            // --- AKHIR LOGIKA BARU ---
+        } else {
+            // --- LOGIKA LAMA: Langsung daftarkan jika OTP mati ---
+            btn.innerText = "Mendaftar...";
+            await addDoc(collection(db, "users"), {
+                ...pendingRegistrationData,
+                createdAt: serverTimestamp() // Tambah timestamp
+            });
+
+            showToast("Pendaftaran berhasil! Silakan masuk.", "success");
+            sendTelegramMessage(`🎉 *Pendaftaran Baru (Tanpa OTP)*\n*Username:* \`${username}\`\n*Email:* \`${email}\``, userActionBotToken);
+
+            pendingRegistrationData = null; // Hapus data pending
+            event.target.reset();
+            showLoginScreen();
+        }
+    } catch (e) {
+        console.error("Error saat pendaftaran: ", e);
+        showToast("Gagal mendaftar. Coba lagi nanti.", "error");
+    } finally {
+        // Pastikan tombol reset jika bukan skenario OTP
+        if (document.getElementById('otp-verification-container').style.display !== 'block') {
+             btn.disabled = false; btn.innerText = "Daftar";
+        }
+    }
+}
+            function logout() {
             if (loggedInUser) {
                 const firestoreStatusRef = doc(db, 'presence', loggedInUser.docId);
                 setDoc(firestoreStatusRef, { status: 'offline', last_seen: serverTimestamp() }, { merge: true });
@@ -3157,7 +3338,11 @@ showToast('Logout berhasil.', "success");
                         }
                     } else {
                         if(maintenanceNotice) maintenanceNotice.style.display = 'none';
-                        if(loginContainer && !loggedInUser) loginContainer.style.display = 'block';
+                        // Cek juga apakah OTP sedang aktif
+                        const otpContainer = document.getElementById('otp-verification-container');
+                        if(loginContainer && !loggedInUser && (!otpContainer || otpContainer.style.display === 'none')) {
+                            loginContainer.style.display = 'block';
+                        }
 
                         if (loggedInUser) {
                            hideModal(maintenanceModal);
@@ -3582,6 +3767,32 @@ function initializeAppLogic() {
             window.copyToClipboard = copyToClipboard;
 initializeChatWidget();
             setupAdminStatusListener(); // <-- PANGGIL FUNGSI BARU DI SINI
+// --- MODIFIKASI: Cek pendaftaran pending saat load ---
+            const pendingReg = localStorage.getItem('pendingRegistration');
+            if (pendingReg) {
+                try {
+                    pendingRegistrationData = JSON.parse(pendingReg);
+                    if (pendingRegistrationData && pendingRegistrationData.whatsapp) {
+                        // Tampilkan layar OTP, sembunyikan sisanya
+                        dom.authWrapper.style.display = 'flex';
+                        document.getElementById('login-container').style.display = 'none';
+                        document.getElementById('register-container').style.display = 'none';
+                        document.getElementById('forgot-password-container').style.display = 'none';
+
+                        document.getElementById('otp-wa-display').textContent = pendingRegistrationData.whatsapp;
+                        document.getElementById('otp-verification-container').style.display = 'block';
+                        
+                        startOtpTimer(); // Mulai timer
+                    } else {
+                        // Data tidak valid, hapus
+                        localStorage.removeItem('pendingRegistration');
+                    }
+                } catch (e) {
+                    console.error("Gagal parse data pendaftaran:", e);
+                    localStorage.removeItem('pendingRegistration');
+                }
+            }
+            // --- AKHIR MODIFIKASI ---
             
             setupRealtimeAppSettings();
 
@@ -3855,6 +4066,46 @@ initializeChatWidget();
             window.addEventListener('online', () => { hideModal(offlineModal); refreshCurrentPageContent(); });
             
             manageSellAccountMenu();
+
+            // --- OTP VIEW LISTENERS (BARU) ---
+            
+            // Helper function to clear session
+            function clearPendingRegistration() {
+                pendingRegistrationData = null;
+                localStorage.removeItem('pendingRegistration');
+                if (otpTimerInterval) clearInterval(otpTimerInterval);
+                document.getElementById('otp-verification-container').style.display = 'none';
+            }
+
+            document.getElementById('otp-verify-form').addEventListener('submit', handleOtpVerification);
+            
+            document.getElementById('show-register-link-from-otp').addEventListener('click', (e) => {
+                e.preventDefault();
+                // Kembali ke pendaftaran, hapus data pending
+                clearPendingRegistration();
+                document.getElementById('register-container').style.display = 'block';
+                // Form pendaftaran tidak di-reset, jadi user bisa koreksi nomor WA
+            });
+
+            // Listener untuk tombol Batal Pendaftaran (BARU)
+            document.getElementById('cancel-otp-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                clearPendingRegistration();
+                showLoginScreen(); // Kembali ke login
+            });
+            
+            document.getElementById('resend-otp-btn').addEventListener('click', () => {
+            // Kirim notifikasi ke Admin
+            if (pendingRegistrationData) {
+                const { username, whatsapp } = pendingRegistrationData;
+                const notifMessage = `🔁 *Permintaan Ulang OTP*\n*Username:* \`${username}\`\n*WA:* \`${whatsapp}\`\nMohon berikan kode OTP baru.`;
+                sendTelegramMessage(notifMessage, CHAT_NOTIF_BOT_TOKEN); // Ganti ke bot notif chat/otp
+            }
+
+            showToast("Permintaan kode baru terkirim! Silakan hubungi Admin.", "success", 4000);
+            startOtpTimer(); // Mulai ulang timer 50 detik
+        });
+            // --- END OTP VIEW LISTENERS ---
 
             document.body.style.visibility = 'visible';
             document.body.style.opacity = 1;
