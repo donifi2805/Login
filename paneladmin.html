@@ -1303,6 +1303,31 @@
 /* Hapus rule yang menyembunyikan tombol di pesan admin */
 /* .admin-message .chat-delete-btn { display: none; } */
 /* --- End of Live Chat View Styles --- */
+
+/* Quick OTP Toggle on Menu */
+.quick-otp-toggle {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+.quick-otp-toggle .toggle-switch label {
+    width: 40px;
+    height: 22px;
+    background: var(--danger-primary); /* Merah saat Off */
+}
+.quick-otp-toggle .toggle-switch label::after {
+    width: 16px;
+    height: 16px;
+    top: 3px;
+    left: 3px;
+}
+.quick-otp-toggle .toggle-switch input:checked + label {
+    background: var(--success-primary); /* Hijau saat On */
+}
+.quick-otp-toggle .toggle-switch input:checked + label::after {
+    transform: translateX(18px);
+}
+
 </style>
 </head>
 <body>
@@ -1352,6 +1377,17 @@
                 </div>
                 <div class="menu-grid-container">
                     <button class="menu-grid-button menu-users" data-view="users"> <i class="fas fa-users"></i> <span>Users</span> </button>
+<button class="menu-grid-button" data-view="otpGenerator">
+    <div class="quick-otp-toggle" onclick="event.stopPropagation();">
+        <div class="toggle-switch">
+            <input type="checkbox" id="main-menu-otp-toggle">
+            <label for="main-menu-otp-toggle"></label>
+        </div>
+        <small class="toggle-label">Fitur OTP</small>
+    </div>
+    <i class="fas fa-key"></i> 
+    <span>Kode Otp</span> 
+</button>
                     <button class="menu-grid-button menu-transactions" data-view="transactions">
                         <span class="notification-badge" id="pending-trx-badge" style="display: none;">0</span>
                         <i class="fas fa-exchange-alt"></i> 
@@ -1542,6 +1578,19 @@
                             <textarea id="maintenance-message" class="input-field" rows="3" placeholder="Contoh: Perbaikan rutin hingga 10:00 WIB"></textarea>
                         </div>
                         </div>
+<div class="settings-card">
+                    <h2><i class="fas fa-key"></i> Mode Verifikasi OTP</h2>
+                    <div class="input-group" style="margin-bottom: 0;">
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="otp-toggle">
+                            <label for="otp-toggle"></label>
+                            <span>Aktifkan Verifikasi OTP Saat Pendaftaran</span>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.8em; color: var(--text-secondary); margin-top: 10px;">
+                        Jika dinonaktifkan, pengguna baru bisa mendaftar tanpa kode OTP.
+                    </p>
+                </div>
                     <div class="settings-card">
                         <h2><i class="fas fa-comment-dots"></i> Pesan Sambutan</h2>
                         <div class="settings-tabs">
@@ -1917,7 +1966,26 @@
         </div>
     </div>
 
+    <div id="otp-generator-modal" class="modal" style="z-index: 1003;">
+        <div class="modal-content" style="max-width: 450px; text-align: center;">
+            <span class="modal-close cancel-modal-btn" style="top: 10px; right: 12px; font-size: 2em; color: var(--text-secondary); cursor: pointer; line-height: 1;">×</span>
+            <h2><i class="fas fa-key" style="color:var(--premium-gold);"></i> Generator Kode OTP</h2>
+            <p class="subtitle" style="font-size: 1em; color: var(--text-primary); margin: 20px 0;">Gunakan tombol ini untuk membuat kode OTP 5 digit baru untuk pendaftaran user.</p>
+            
+            <div id="otp-display-area" style="margin-bottom: 25px; display: none;">
+                <h3 style="color: var(--text-secondary); font-size: 1.1em; margin-bottom: 10px;">Kode OTP Aktif Saat Ini:</h3>
+                <p id="generated-otp-display" style="font-size: 2.8em; font-weight: 700; color: var(--accent-green); letter-spacing: 5px; background: var(--bg-primary); padding: 15px; border-radius: 8px; border: 1px dashed var(--accent-green);"></p>
+            </div>
+            
+            <div class="modal-actions" style="justify-content: center;">
+                 <button type="button" id="generate-otp-btn" class="action-button btn-primary" style="width: 100%;"><i class="fas fa-sync-alt"></i> Generate Kode OTP Baru</button>
+            </div>
+            <p class="subtitle" style="font-size: 0.8em; color: var(--text-secondary); margin-top: 15px;">Meng-generate kode baru akan otomatis menghanguskan kode lama (jika ada).</p>
+        </div>
+    </div>
+
     <div id="toast-container"></div>
+<div id="toast-container"></div>
 <div id="floating-chat-window" class="floating-chat-container">
     <div id="floating-chat-header">
         <span id="floating-chat-username">Memuat...</span>
@@ -2104,6 +2172,16 @@ else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
                 
                 document.getElementById('maintenance-toggle').checked = isActive;
                 document.getElementById('main-menu-maintenance-toggle').checked = isActive;
+
+                // --- FIX: Sinkronisasi OTP Toggle ---
+                const isOtpActive = appSettings.otp?.isActive === false ? false : true; 
+                // Cek dulu apakah elemennya ada (jika user di menu settings)
+                const settingsOtpToggle = document.getElementById('otp-toggle');
+                if (settingsOtpToggle) {
+                    settingsOtpToggle.checked = isOtpActive;
+                }
+                document.getElementById('main-menu-otp-toggle').checked = isOtpActive;
+                // --- END FIX ---
                 
                 if(document.getElementById('maintenance-message')) {
                     document.getElementById('maintenance-message').value = appSettings.maintenance?.message || '';
@@ -3157,8 +3235,26 @@ else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
             }
         };
 
-        const loadAndDisplaySettings = async () => {
-            try {
+        // --- FUNGSI BARU: Update Status OTP ---
+    const updateOtpStatusInFirestore = async (isActive) => {
+        try {
+            // Menyimpan status OTP ke appConfig
+            await setDoc(doc(db, "settings", "appConfig"), { otp: { isActive: isActive } }, { merge: true });
+            showToast(`Verifikasi OTP ${isActive ? 'diaktifkan' : 'dinonaktifkan'}.`, 'success');
+        } catch (error) { 
+            showToast('Gagal menyimpan pengaturan OTP.', 'error');
+        }
+    };
+
+    const loadAndDisplaySettings = async () => {
+        try {
+            // Set status toggle OTP (default 'true' jika tidak ada)
+            const isOtpActive = appSettings.otp?.isActive === false ? false : true; 
+            document.getElementById('otp-toggle').checked = isOtpActive;
+            document.getElementById('main-menu-otp-toggle').checked = isOtpActive; // <-- SINKRONISASI
+
+            // Data sudah diambil oleh listener realtime, tinggal update UI
+            document.getElementById('global-message-title').value = appSettings.welcomeMessages?.global?.title || '';
                 // Data sudah diambil oleh listener realtime, tinggal update UI
                 document.getElementById('global-message-title').value = appSettings.welcomeMessages?.global?.title || '';
                 document.getElementById('global-message-content').value = appSettings.welcomeMessages?.global?.content || '';
@@ -3790,7 +3886,22 @@ const handleClearChat = (sessionId) => {
             document.querySelectorAll('.menu-grid-button').forEach(button => {
                 button.addEventListener('click', (e) => {
                     const viewName = e.currentTarget.dataset.view;
-                    showView(viewName);
+                    if (viewName === 'otpGenerator') {
+                        document.getElementById('generated-otp-display').textContent = '...';
+                        document.getElementById('otp-display-area').style.display = 'block';
+                        // Ambil OTP saat ini saat membuka
+                        get(ref(rtdb, 'settings/activeOTP')).then((snapshot) => {
+                            if (snapshot.exists()) {
+                                document.getElementById('generated-otp-display').textContent = snapshot.val();
+                            } else {
+                                document.getElementById('generated-otp-display').textContent = 'Belum Ada';
+                            }
+                        });
+                        // --- PERBAIKAN DI BAWAH INI ---
+                        document.getElementById('otp-generator-modal').style.display = 'flex';
+                    } else {
+                        showView(viewName);
+                    }
                 });
             });
 
@@ -3825,7 +3936,27 @@ const handleClearChat = (sessionId) => {
             document.getElementById('quick-add-credential-btn').addEventListener('click', () => dom.addStokKredensialModal.style.display = 'flex');
             document.getElementById('main-menu-maintenance-toggle').addEventListener('change', (e) => updateMaintenanceStatusInFirestore(e.target.checked));
             document.getElementById('maintenance-toggle').addEventListener('change', (e) => updateMaintenanceStatusInFirestore(e.target.checked));
-            document.getElementById('maintenance-message').addEventListener('input', () => {
+
+        // Listener untuk toggle OTP
+        // Listener untuk toggle OTP
+        document.getElementById('otp-toggle').addEventListener('change', (e) => {
+            const isOtpActive = e.target.checked;
+            document.getElementById('main-menu-otp-toggle').checked = isOtpActive; // <-- SINKRONISASI
+            updateOtpStatusInFirestore(isOtpActive);
+        });
+        
+        // <-- LISTENER BARU UNTUK TOGGLE DI MENU UTAMA -->
+        document.getElementById('main-menu-otp-toggle').addEventListener('change', (e) => {
+            const isOtpActive = e.target.checked;
+            // Cek jika toggle di settings ada sebelum mengubahnya
+            const settingsToggle = document.getElementById('otp-toggle');
+            if (settingsToggle) {
+                settingsToggle.checked = isOtpActive;
+            }
+            updateOtpStatusInFirestore(isOtpActive);
+        });
+
+        document.getElementById('maintenance-message').addEventListener('input', () => {
                 const isActive = document.getElementById('maintenance-toggle').checked;
                 updateMaintenanceStatusInFirestore(isActive);
             });
@@ -3919,6 +4050,36 @@ const handleClearChat = (sessionId) => {
                     });
             });
             // --- END: Event Listener Toggle Status Admin ---
+
+            // --- START: OTP Generator Listener ---
+            document.getElementById('generate-otp-btn').addEventListener('click', async (e) => {
+                const btn = e.currentTarget;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+
+                try {
+                    // 1. Generate 5-digit random code
+                    const newOtp = Math.floor(10000 + Math.random() * 90000).toString();
+                    
+                    // 2. Save to Firebase RTDB (menggantikan yang lama)
+                    const otpRef = ref(rtdb, 'settings/activeOTP');
+                    await set(otpRef, newOtp);
+                    
+                    // 3. Update display
+                    document.getElementById('generated-otp-display').textContent = newOtp;
+                    document.getElementById('otp-display-area').style.display = 'block';
+                    
+                    showToast('Kode OTP baru telah di-generate!', 'success');
+
+                } catch (error) {
+                    console.error("Error generating OTP:", error);
+                    showToast('Gagal meng-generate OTP.', 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-sync-alt"></i> Generate Kode OTP Baru';
+                }
+            });
+            // --- END: OTP Generator Listener ---
         }
         
         async function handleBanToggle(docId, isBanned) {
