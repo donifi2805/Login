@@ -572,8 +572,18 @@ img.chat-message-image.admin { align-self: flex-start; }
         <div class=sidebar-balance-card>
             <div class=balance-info>
                 <span class="balance-username" id="sidebar-username"></span>
-                <span class=balance-label id=sidebar-balance-label>Saldo</span>
-                <span class=balance-amount id=sidebar-balance-amount>Rp 0</span>
+            
+<div class="balance-status-wrapper" style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;">
+    <div class="balance-primary-info" style="flex-grow: 1;">
+        <span class=balance-label id=sidebar-balance-label>Saldo</span>
+        <span class=balance-amount id=sidebar-balance-amount>Rp 0</span>
+    </div>
+    
+    <div id="sidebar-quota-display" style="display: none; text-align: right; flex-shrink: 0;">
+        <span class=balance-label style="font-size: 0.8em; line-height: 1; font-weight: 600; color: var(--text-secondary);">Kuota Akun</span>
+        <span class=balance-amount id="sidebar-quota-amount" style="font-size: 1.1em; color: var(--premium-gold); line-height: 1.1; font-weight: 700;">0</span>
+    </div>
+</div>
             </div>
             <span id=add-balance-btn class=add-balance-icon title="Top Up Saldo">
                 <i class="ph-bold ph-plus-circle"></i>
@@ -602,6 +612,13 @@ img.chat-message-image.admin { align-self: flex-start; }
         </div>
     </div>
     <div class="account-info-item">
+<div class="account-info-item" id="account-quota-item" style="display: none;">
+        <i class="ph-bold ph-package info-icon" style="color: var(--accent-blue);"></i>
+        <div class="info-text-wrapper">
+            <span class=info-label>Sisa Kuota Akun Gratis</span>
+            <span id=account-quota class="info-value" style="color: var(--accent-blue);">0</span>
+        </div>
+    </div>
         <i class="ph-bold ph-wallet info-icon"></i>
         <div class="info-text-wrapper">
             <span class=info-label id=account-saldo-label>Status & Saldo</span>
@@ -689,6 +706,11 @@ img.chat-message-image.admin { align-self: flex-start; }
 <div class="stok-akun-header-controls">
     <h2>Beli Akun</h2>
     <p class=subtitle>Daftar akun yang tersedia. Beli akun menggunakan saldo atau pembayaran langsung.</p>
+
+<div id="stok-akun-quota-display" style="display: none; background-color: var(--bg-primary); border: 1px solid var(--accent-cyan); border-radius: 8px; padding: 12px; text-align: center; margin-bottom: 10px;">
+    <span class=balance-label style="font-size: 1.1em; color: var(--text-secondary); display: block;">Sisa Kuota Akun Gratis Anda:</span>
+    <span id="stok-akun-quota-amount" class=balance-amount style="font-size: 2.2em; color: var(--accent-cyan); font-weight: 700; display: block; line-height: 1.2;">0</span>
+</div>
     <div class="stok-akun-controls-wrapper" style="display: flex; gap: 10px; align-items: center;">
         <div class="stok-akun-filter-buttons">
             <button class="filter-btn active" id="show-available-btn">Tersedia</button>
@@ -821,12 +843,14 @@ img.chat-message-image.admin { align-self: flex-start; }
 <div class="subscription-card premium">
 <h3>Langganan Bulanan</h3>
 <p class=sub-price>
-<span class=promo-price>Rp 35.000</span>
-<span class=original-price>Rp 65.000</span>
+<span class=promo-price>Rp 65.000</span>
+<span class=original-price>Rp 85.000</span>
 <span class=sub-duration>/ bulan</span>
 </p>
 <ul>
     <li><i class="ph-bold ph-check-circle"></i><b>Semua keuntungan User Biasa.</b></li>
+    <li><i class="ph-bold ph-check-circle"></i><b>Diskon Spesial</b> (Harga Normal Rp 85.000).</li>
+    <li><i class="ph-bold ph-check-circle"></i>Mendapatkan <b>Kuota Akun Gratis</b> (terbatas).</li>
     <li><i class="ph-bold ph-check-circle"></i>Top-up UB sepuasnya <b>(GRATIS)</b>.</li>
     <li><i class="ph-bold ph-check-circle"></i>Tidak perlu isi saldo untuk Top-up UB.</li>
     <li><i class="ph-bold ph-check-circle"></i>Akses Joki via Admin <b>(GRATIS)</b>.</li>
@@ -840,9 +864,11 @@ img.chat-message-image.admin { align-self: flex-start; }
 <p class=sub-price>Rp 199.000 <span class=sub-duration>/ sekali bayar</span></p>
 <ul>
     <li><i class="ph-bold ph-check-circle"></i><b>Semua keuntungan Langganan Bulanan.</b></li>
+    <li><i class="ph-bold ph-check-circle"></i>Mendapatkan <b>Kuota Akun Gratis</b> (terbatas).</li>
     <li><i class="ph-bold ph-check-circle"></i>Akses premium <b>SELAMANYA</b>.</li>
     <li><i class="ph-bold ph-check-circle"></i><b>Satu kali bayar</b> untuk keuntungan permanen.</li>
     <li><i class="ph-bold ph-check-circle"></i>Dukungan prioritas tertinggi dari admin.</li>
+    <li><i class="ph-bold ph-check-circle"></i>Prioritas penuh untuk <b>menjadi bagian dari Admin</b>.</li>
     <li><i class="ph-bold ph-check-circle"></i>Bebas khawatir biaya bulanan.</li>
     <li><i class="ph-bold ph-x-circle"></i>Biaya awal lebih tinggi.</li>
 </ul>
@@ -1412,7 +1438,29 @@ let chatBubbleContainer, chatWindow, chatClose, chatMessages, chatText, chatSend
                 } else if (pageToShow === 'subscription') {
                     updateSubscriptionPage();
                 } else if (pageToShow === 'stokAkun') {
+                    // --- MODIFIKASI DIMULAI ---
+                    const headerControls = document.querySelector('#stok-akun-container .stok-akun-header-controls');
+                    const title = headerControls.querySelector('h2');
+                    const subtitle = headerControls.querySelector('p.subtitle');
+                    const quotaDisplay = document.getElementById('stok-akun-quota-display');
+                    const quotaAmount = document.getElementById('stok-akun-quota-amount');
+
+                    const isFreeAccess = (loggedInUser.accountType === 'PREMIUM' || loggedInUser.accountType === 'Langganan') && checkSubscriptionStatus();
+
+                    if (isFreeAccess) {
+                        if (title) title.style.display = 'none';
+                        if (subtitle) subtitle.style.display = 'none';
+                        if (quotaAmount) quotaAmount.textContent = loggedInUser.akunGratisQuota || 0;
+                        if (quotaDisplay) quotaDisplay.style.display = 'block';
+                    } else {
+                        // Tampilkan untuk User biasa
+                        if (title) title.style.display = 'block';
+                        if (subtitle) subtitle.style.display = 'block';
+                        if (quotaDisplay) quotaDisplay.style.display = 'none';
+                    }
+                    
                     setupStokAkunListeners();
+                    // --- MODIFIKASI SELESAI ---
                 }
             }
         }function filterProfileCards(gameName) {
@@ -1489,41 +1537,62 @@ let chatBubbleContainer, chatWindow, chatClose, chatMessages, chatText, chatSend
         }
 
         function updateHeaderInfo() {
-             if (!loggedInUser) return;
-            // Update username
-            document.getElementById('sidebar-username').textContent = loggedInUser.username;
-            
-            // Update balance/status
-            const balanceLabelEl = document.getElementById('sidebar-balance-label');
-            const balanceAmountEl = document.getElementById('sidebar-balance-amount');
-            const addBalanceBtn = document.getElementById('add-balance-btn');
-            balanceAmountEl.className = 'balance-amount';
-            if (loggedInUser.accountType === 'Admin') {
-                balanceLabelEl.textContent = 'Status';
-                balanceAmountEl.textContent = 'ADMIN';
-                balanceAmountEl.classList.add('admin');
-                addBalanceBtn.style.display = 'none';
-            } else if (loggedInUser.accountType === 'PREMIUM') {
-                balanceLabelEl.textContent = 'Status';
-                balanceAmountEl.textContent = 'PREMIUM';
-                balanceAmountEl.classList.add('premium');
-                addBalanceBtn.style.display = 'none';
-                dom.nav.topup.parentElement.style.display = 'none';
-            } else if (loggedInUser.accountType === 'Langganan') {
-                const remainingDays = getRemainingDays(loggedInUser.masaAktifHingga);
-                balanceLabelEl.textContent = 'Masa Aktif';
-                balanceAmountEl.textContent = `${remainingDays} hari`;
-                balanceAmountEl.classList.add('subscription');
-                addBalanceBtn.style.display = 'none';
-                dom.nav.topup.parentElement.style.display = 'none';
-            } else {
-                balanceLabelEl.textContent = 'Saldo';
-                const balance = loggedInUser.saldo || 0;
-                balanceAmountEl.textContent = `Rp ${balance.toLocaleString('id-ID')}`;
-                addBalanceBtn.style.display = 'flex';
-                dom.nav.topup.parentElement.style.display = 'list-item';
-            }
-        }
+     if (!loggedInUser) return;
+    // Update username
+    document.getElementById('sidebar-username').textContent = loggedInUser.username;
+    
+    // Update balance/status
+    const balanceLabelEl = document.getElementById('sidebar-balance-label');
+    const balanceAmountEl = document.getElementById('sidebar-balance-amount');
+    const addBalanceBtn = document.getElementById('add-balance-btn');
+    
+    // --- ELEMEN BARU UNTUK KUOTA ---
+    const quotaDisplayEl = document.getElementById('sidebar-quota-display');
+    const quotaAmountEl = document.getElementById('sidebar-quota-amount');
+    // --- AKHIR ELEMEN BARU ---
+
+    balanceAmountEl.className = 'balance-amount';
+    if (quotaDisplayEl) quotaDisplayEl.style.display = 'none'; // Sembunyikan secara default
+
+    if (loggedInUser.accountType === 'Admin') {
+        balanceLabelEl.textContent = 'Status';
+        balanceAmountEl.textContent = 'ADMIN';
+        balanceAmountEl.classList.add('admin');
+        addBalanceBtn.style.display = 'none';
+    } else if (loggedInUser.accountType === 'PREMIUM') {
+        balanceLabelEl.textContent = 'Status';
+        balanceAmountEl.textContent = 'PREMIUM';
+        balanceAmountEl.classList.add('premium');
+        addBalanceBtn.style.display = 'none';
+        dom.nav.topup.parentElement.style.display = 'none';
+        
+        // --- TAMPILKAN KUOTA ---
+        if (quotaAmountEl) quotaAmountEl.textContent = loggedInUser.akunGratisQuota || 0;
+        if (quotaDisplayEl) quotaDisplayEl.style.display = 'block';
+        // --- AKHIR TAMPILKAN KUOTA ---
+
+    } else if (loggedInUser.accountType === 'Langganan') {
+        const remainingDays = getRemainingDays(loggedInUser.masaAktifHingga);
+        balanceLabelEl.textContent = 'Masa Aktif';
+        balanceAmountEl.textContent = `${remainingDays} hari`;
+        balanceAmountEl.classList.add('subscription');
+        addBalanceBtn.style.display = 'none';
+        dom.nav.topup.parentElement.style.display = 'none';
+
+        // --- TAMPILKAN KUOTA ---
+        if (quotaAmountEl) quotaAmountEl.textContent = loggedInUser.akunGratisQuota || 0;
+        if (quotaDisplayEl) quotaDisplayEl.style.display = 'block';
+        // --- AKHIR TAMPILKAN KUOTA ---
+
+    } else {
+        // User Biasa
+        balanceLabelEl.textContent = 'Saldo';
+        const balance = loggedInUser.saldo || 0;
+        balanceAmountEl.textContent = `Rp ${balance.toLocaleString('id-ID')}`;
+        addBalanceBtn.style.display = 'flex';
+        dom.nav.topup.parentElement.style.display = 'list-item';
+    }
+}
         function setupRealtimeBalanceListener() {
             if (!loggedInUser?.docId) return;
             if (balanceListenerUnsubscribe) balanceListenerUnsubscribe();
@@ -1846,25 +1915,39 @@ showToast('Logout berhasil.', "success");
             const saldoEl = document.getElementById('account-saldo');
             const saldoLabelEl = document.getElementById('account-saldo-label');
             saldoEl.className = 'info-value';
+            
+            // --- MODIFIKASI: Tampilkan Kuota Akun Gratis ---
+            const quotaItem = document.getElementById('account-quota-item');
+            const quotaEl = document.getElementById('account-quota');
 
             if (loggedInUser.accountType === 'Admin') {
                 saldoLabelEl.textContent = 'Status Akun';
                 saldoEl.textContent = 'ADMIN';
                 saldoEl.classList.add('admin');
+                quotaItem.style.display = 'none'; // Admin tidak pakai kuota
             } else if (loggedInUser.accountType === 'PREMIUM') {
                 saldoLabelEl.textContent = 'Status Akun';
                 saldoEl.textContent = 'PREMIUM';
                 saldoEl.classList.add('premium');
+                // Tampilkan kuota
+                quotaItem.style.display = 'flex';
+                quotaEl.textContent = loggedInUser.akunGratisQuota || 0;
             } else if (loggedInUser.accountType === 'Langganan') {
                 const remainingDays = getRemainingDays(loggedInUser.masaAktifHingga);
                 saldoLabelEl.textContent = 'Masa Aktif';
                 saldoEl.textContent = `${remainingDays} hari lagi`;
                 saldoEl.classList.add('subscription');
+                // Tampilkan kuota
+                quotaItem.style.display = 'flex';
+                quotaEl.textContent = loggedInUser.akunGratisQuota || 0;
             } else {
+                // User Biasa
                 saldoLabelEl.textContent = 'Saldo Akun';
                 saldoEl.textContent = `Rp ${loggedInUser.saldo.toLocaleString('id-ID')}`;
                 saldoEl.classList.add('accent-green');
+                quotaItem.style.display = 'none'; // User biasa tidak pakai kuota
             }
+            // --- AKHIR MODIFIKASI ---
 
             const deviceIdValue = document.getElementById('account-device-id');
             const changeIdBtn = document.getElementById('change-device-id-btn');
@@ -2885,6 +2968,23 @@ showToast('Logout berhasil.', "success");
                     ratingStarsHTML += i <= ratingValue ? '<i class="ph-fill ph-star"></i>' : '<i class="ph ph-star"></i>';
                 }
 
+                // --- MODIFIKASI HARGA DIMULAI ---
+                const isFreeAccess = (loggedInUser.accountType === 'PREMIUM' || loggedInUser.accountType === 'Langganan') && checkSubscriptionStatus();
+                
+                let priceHTML = '';
+                if (isFreeAccess) {
+                    priceHTML = `
+                        <div class="info-item price" style="background-color: rgba(6, 182, 212, 0.1);">
+                            <span class="info-value" style="color: var(--accent-cyan); font-size: 0.9em; line-height: 1.2; white-space: normal; padding: 2px 0;">GRATIS<br>(Memakai Kuota Akun)</span>
+                        </div>`;
+                } else {
+                    priceHTML = `
+                        <div class="info-item price">
+                            <span class="info-value">Rp ${(price || 0).toLocaleString('id-ID')}</span>
+                        </div>`;
+                }
+                // --- MODIFIKASI HARGA SELESAI ---
+
                  return `
                     <div class="stok-akun-card ${gameType.toLowerCase()}-card ${outOfStockClass}" id="stok-akun-${id}" data-price="${price || 0}">
                         <div class="stok-habis-badge">HABIS</div>
@@ -2911,9 +3011,7 @@ showToast('Logout berhasil.', "success");
                             </div>
                         </div>
                         <div class="package-info">Paket Akun ${gameType} + Login via ${loginType}. Harga:</div>
-                        <div class="info-item price">
-                            <span class="info-value">Rp ${(price || 0).toLocaleString('id-ID')}</span>
-                        </div>
+                        ${priceHTML}
                         ${buttonHTML}
                     </div>`;
             }
@@ -3003,10 +3101,20 @@ showToast('Logout berhasil.', "success");
                     showPurchaseLoading("Mode Admin: Mempersiapkan Akun");
                     await executeServersidePurchase(offeringId, newUsername, updatePurchaseLoading);
                 } else if (userType === 'Langganan' || userType === 'PREMIUM') {
-                    // Langganan/Premium users pay via QRIS
-                    hideModal(modal.overlay); // Hide the purchase modal
-                    await generateQrisScreen(accountPrice, 'Beli Akun', { offeringId, newUsername, usernameTampilan: offeringData.usernameTampilan });
-                    return; // Stop execution here, wait for payment
+                    // --- MODIFIKASI: Cek Kuota Akun Gratis ---
+                    const kuotaGratis = loggedInUser.akunGratisQuota || 0;
+                    if (kuotaGratis > 0) {
+                        // Punya kuota, proses gratis (seperti Admin)
+                        new Audio('proses.wav').play();
+                        showPurchaseLoading(`Mode ${userType}: Mempersiapkan Akun (Sisa Kuota: ${kuotaGratis - 1})`);
+                        await executeServersidePurchase(offeringId, newUsername, updatePurchaseLoading);
+                    } else {
+                        // Kuota habis, harus bayar via QRIS (logika lama)
+                        hideModal(modal.overlay); // Hide the purchase modal
+                        await generateQrisScreen(accountPrice, 'Beli Akun', { offeringId, newUsername, usernameTampilan: offeringData.usernameTampilan });
+                        return; // Stop execution here, wait for payment
+                    }
+                    // --- AKHIR MODIFIKASI ---
                 } else {
                     // Regular users pay with saldo
                     if (loggedInUser.saldo < accountPrice) {
@@ -3044,14 +3152,32 @@ showToast('Logout berhasil.', "success");
                     const targetUB = offeringData.jumlahUB || 0;
                     const gameType = offeringData.gameType;
                     
-                    if (loggedInUser.accountType === 'USER') {
+                    // --- MODIFIKASI: Logika Pembayaran/Kuota ---
+                    const userRef = doc(db, "users", loggedInUser.docId);
+                    const userDoc = await transaction.get(userRef);
+                    const userData = userDoc.data();
+                    const userType = userData.accountType;
+
+                    if (userType === 'USER') {
+                        // User biasa, potong saldo
                         updateStatusCallback("Memverifikasi saldo Anda...");
-                        const userRef = doc(db, "users", loggedInUser.docId);
-                        const userDoc = await transaction.get(userRef);
-                        const currentUserSaldo = userDoc.data().saldo || 0;
+                        const currentUserSaldo = userData.saldo || 0;
                         if (currentUserSaldo < accountPrice) throw new Error("Saldo Anda tidak mencukupi.");
                         transaction.update(userRef, { saldo: currentUserSaldo - accountPrice });
+                    
+                    } else if (userType === 'Langganan' || userType === 'PREMIUM') {
+                        // Langganan/Premium, potong kuota
+                        updateStatusCallback("Memverifikasi kuota akun...");
+                        const currentQuota = userData.akunGratisQuota || 0;
+                        if (currentQuota <= 0) {
+                            // Ini seharusnya tidak terjadi jika client-logic benar, tapi sebagai safeguard
+                            throw new Error("Anda tidak memiliki kuota pembelian akun gratis.");
+                        }
+                        transaction.update(userRef, { akunGratisQuota: currentQuota - 1 });
+                    
                     }
+                    // Admin tidak melakukan apa-apa (gratis tanpa kuota)
+                    // --- AKHIR MODIFIKASI ---
                     
                     updateStatusCallback("Menyiapkan kredensial akun...");
                     let kredensialDoc = null;
