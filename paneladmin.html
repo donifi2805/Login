@@ -1371,8 +1371,8 @@
                 </header>
                  <div class="stat-cards" id="main-menu-stats">
                     <div class="stat-card"> <div class="icon"><i class="fas fa-users"></i></div> <div class="info"> <h3 id="stat-total-users">0</h3> <p>Total Users</p> </div> </div>
-                    <div class="stat-card clickable" id="online-users-card"> <div class="icon"><i class="fas fa-wifi"></i></div> <div class="info"> <h3 id="stat-online-users">0</h3> <p>Online Users</p> </div> </div>
-                    <div class="stat-card"> <div class="icon"><i class="fas fa-hourglass-half"></i></div> <div class="info"> <h3 id="stat-pending-trx">0</h3> <p>Pending Requests</p> </div> </div>
+                    
+                    
                     <div class="stat-card"> <div class="icon"><i class="fas fa-cash-register"></i></div> <div class="info"> <h3 id="stat-total-spent">0</h3> <p>Total Dibelanjakan</p> </div> </div>
                 </div>
                 <div class="menu-grid-container">
@@ -1444,7 +1444,14 @@
 
                 <div class="controls-container">
                     <div class="controls">
-                        <div class="search-bar"> <i class="fas fa-search"></i> <input type="text" id="search-input" class="input-field" placeholder="Search by username, whatsapp, device ID..."> </div>
+                        <div class="filter-buttons" id="user-account-type-filters">
+                
+                <button class="filter-btn active" data-filter="USER"><i class="fas fa-user"></i> User</button>
+                <button class="filter-btn" data-filter="Langganan"><i class="fas fa-star"></i> Langganan</button>
+                <button class="filter-btn" data-filter="PREMIUM"><i class="fas fa-gem"></i> Premium</button>
+                <button class="filter-btn" data-filter="Admin"><i class="fas fa-shield-halved"></i> Admin</button>
+            </div>
+<div class="search-bar"> <i class="fas fa-search"></i> <input type="text" id="search-input" class="input-field" placeholder="Search by username, whatsapp, device ID..."> </div>
                         <button id="refresh-users-btn" class="action-button btn-primary"> <i class="fas fa-sync-alt"></i> Refresh</button>
                     </div>
                 </div>
@@ -1716,7 +1723,7 @@
                     </div>
                 </div>
                 <div class="input-group"> <label for="edit-saldo">Saldo (Angka saja)</label> <input type="number" id="edit-saldo" class="input-field" required> </div>
-                <div class="input-group"> <label for="edit-pendingTransaction">Pending Transaction (Angka saja)</label> <input type="number" id="edit-pendingTransaction" class="input-field" required> </div>
+                <div class="input-group"> <label for="edit-akunGratisQuota">Kuota Akun Gratis (Langganan/Premium)</label> <input type="number" id="edit-akunGratisQuota" class="input-field" value="0"> </div>
                 <div class="input-group"> <label for="edit-whatsapp">WhatsApp</label> <input type="text" id="edit-whatsapp" class="input-field" required> </div>
                 <div class="input-group"> <label for="edit-password">Password</label> <div class="password-wrapper"> <input type="password" id="edit-password" class="input-field" required> <button type="button" class="password-toggle"><i class="fas fa-eye"></i></button> </div> </div>
                 <div class="modal-actions"> <button type="button" class="action-button btn-secondary cancel-modal-btn">Cancel</button> <button type="submit" class="action-button btn-primary"><i class="fas fa-save"></i> Save</button> </div>
@@ -2147,17 +2154,17 @@ else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
                 }, 0);
                 
                 const badge = document.getElementById('pending-trx-badge');
-                const statPending = document.getElementById('stat-pending-trx');
-                if (pendingCount > 0) {
-                    badge.textContent = pendingCount;
-                    badge.style.display = 'flex';
-                    statPending.textContent = pendingCount;
-                } else {
-                badge.style.display = 'none';
-                statPending.textContent = 0;
-            }
+            // const statPending = document.getElementById('stat-pending-trx'); // Dihapus karena bug
+            if (pendingCount > 0) {
+                badge.textContent = pendingCount;
+                badge.style.display = 'flex';
+                // statPending.textContent = pendingCount; // Dihapus karena bug
+            } else {
+            badge.style.display = 'none';
+            // statPending.textContent = 0; // Dihapus karena bug
+        }
 
-            // Cek apakah ada pending trx dan modal belum muncul
+        // Cek apakah ada pending trx dan modal belum muncul
             if (pendingCount > 0 && !isFloatingModalShown) {
                 checkAndShowFloatingTransaction();
             }
@@ -2190,29 +2197,29 @@ else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
             unsubscribeListeners.push(unsubscribeSettings);
 
             // Listener untuk Pengguna Online
-            const presenceRef = collection(db, "presence");
-            const unsubscribePresence = onSnapshot(presenceRef, (snapshot) => {
-                const onlineUsers = [];
-                snapshot.forEach(doc => {
-                    if (doc.data().status === 'online') {
-                        onlineUsers.push(doc.data().username);
-                    }
-                });
-                document.getElementById('stat-online-users').textContent = onlineUsers.length;
-                
-                const onlineList = document.getElementById('online-users-list');
-                onlineList.innerHTML = '';
-                if (onlineUsers.length > 0) {
-                    onlineUsers.forEach(username => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<span class="online-indicator"></span> ${username}`;
-                        onlineList.appendChild(li);
-                    });
-                } else {
-                    onlineList.innerHTML = '<p>Tidak ada pengguna yang online.</p>';
+        const presenceRef = collection(db, "presence");
+        const unsubscribePresence = onSnapshot(presenceRef, (snapshot) => {
+            const onlineUsers = [];
+            snapshot.forEach(doc => {
+                if (doc.data().status === 'online') {
+                    onlineUsers.push(doc.data().username);
                 }
-            });
-            unsubscribeListeners.push(unsubscribePresence);
+            }); // <-- FIX: Kurung tutup yang hilang ditambahkan di sini
+            // document.getElementById('stat-online-users').textContent = onlineUsers.length; // Dihapus karena bug
+
+            const onlineList = document.getElementById('online-users-list');
+            onlineList.innerHTML = '';
+            if (onlineUsers.length > 0) {
+                onlineUsers.forEach(username => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span class="online-indicator"></span> ${username}`;
+                    onlineList.appendChild(li);
+                });
+            } else {
+                onlineList.innerHTML = '<p>Tidak ada pengguna yang online.</p>';
+            }
+        });
+        unsubscribeListeners.push(unsubscribePresence);
         };
 
         const cleanupListeners = () => {
@@ -2238,12 +2245,24 @@ else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
         };
         
         const filterAndDisplayUsers = () => {
+            // 1. Ambil filter pencarian
             const searchTerm = dom.searchInput.value.toLowerCase();
-            displayedUsers = allUsers.filter(user => 
-                (user.username?.toLowerCase() || '').includes(searchTerm) || 
-                (user.whatsapp?.toString() || '').includes(searchTerm) || 
-                (user.device_id?.toLowerCase() || '').includes(searchTerm)
-            );
+            
+            // 2. Ambil filter tipe akun
+            const accountTypeFilter = document.querySelector('#user-account-type-filters .filter-btn.active').dataset.filter;
+
+            displayedUsers = allUsers.filter(user => {
+                // Cek filter tipe akun
+                const typeMatch = (accountTypeFilter === 'all') || (user.accountType || 'USER') === accountTypeFilter;
+                
+                // Cek filter search
+                const searchMatch = (user.username?.toLowerCase() || '').includes(searchTerm) || 
+                                    (user.whatsapp?.toString() || '').includes(searchTerm) || 
+                                    (user.device_id?.toLowerCase() || '').includes(searchTerm);
+                
+                return typeMatch && searchMatch; // Keduanya harus benar
+            });
+            
             renderUserCards();
         };
 
@@ -2468,7 +2487,7 @@ else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
                 document.getElementById('edit-username').value = user.username || '';
                 document.getElementById('edit-accountType').value = user.accountType || 'USER';
                 document.getElementById('edit-saldo').value = user.saldo || 0;
-                document.getElementById('edit-pendingTransaction').value = user.pendingTransaction || 0;
+                document.getElementById('edit-akunGratisQuota').value = user.akunGratisQuota || 0; 
                 document.getElementById('edit-whatsapp').value = user.whatsapp || '';
                 document.getElementById('edit-password').value = user.password || '';
 
@@ -2495,7 +2514,7 @@ else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
                 username: document.getElementById('edit-username').value,
                 accountType: document.getElementById('edit-accountType').value,
                 saldo: Number(document.getElementById('edit-saldo').value),
-                pendingTransaction: Number(document.getElementById('edit-pendingTransaction').value),
+                akunGratisQuota: Number(document.getElementById('edit-akunGratisQuota').value), 
                 whatsapp: document.getElementById('edit-whatsapp').value,
                 password: document.getElementById('edit-password').value,
             };
@@ -4009,9 +4028,16 @@ const handleClearChat = (sessionId) => {
                     currentUTCDate.setUTCDate(currentUTCDate.getUTCDate() + days);
                     dateInput.value = currentUTCDate.toISOString().split('T')[0];
                 });
+            });// Filter listeners
+            document.getElementById('user-account-type-filters').addEventListener('click', (e) => {
+                if(e.target.classList.contains('filter-btn')) {
+                    document.querySelectorAll('#user-account-type-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentPage = 1; // Reset ke halaman 1
+                    filterAndDisplayUsers(); // Panggil fungsi filter utama
+                }
             });
 
-            // Filter listeners
             document.getElementById('rekap-filters').addEventListener('click', (e) => {
                 if(e.target.classList.contains('filter-btn')) {
                     document.querySelectorAll('#rekap-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -4032,9 +4058,6 @@ const handleClearChat = (sessionId) => {
                     e.target.classList.add('active');
                     renderStokKredensialCards(e.target.dataset.filter);
                 }
-            });
-            document.getElementById('online-users-card').addEventListener('click', () => {
-                dom.onlineUsersModal.style.display = 'flex';
             });
 
             // --- START: Event Listener Toggle Status Admin ---
