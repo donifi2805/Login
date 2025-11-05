@@ -397,6 +397,12 @@ img.chat-message-image.admin { align-self: flex-start; }
 #modal-close { position: absolute; top: 20px; right: 30px; font-size: 40px; color: white; cursor: pointer; }
 #preview-image { max-width: 90%; max-height: 90%; object-fit: contain; }
 /* --- End: Live Chat Widget --- */
+#google-new-user-form input:invalid {
+    border-color: var(--accent-red);
+}
+#google-reg-whatsapp:invalid + #whatsapp-hint {
+    display: block;
+}
 </style>
 
     <meta name="theme-color" content="#000000">
@@ -448,6 +454,11 @@ img.chat-message-image.admin { align-self: flex-start; }
 </div>
 <button type=submit id=login-btn class="action-button btn-primary">Masuk</button>
 </form>
+<p class=switch-link style="text-align:center; margin-top:15px; margin-bottom:15px;">— atau —</p>
+<button type="button" id="google-login-btn" class="action-button btn-secondary" style="background-color: #fff; color: #4285F4; display: flex; align-items: center; justify-content: center; gap: 10px; line-height: 1; border: 1px solid #ccc;">
+    <i class="ph-fill ph-google-logo" style="font-size: 1.2em;"></i>
+    <span>Masuk dengan Google</span>
+</button>
 <ul class=promo-list>
 <li><i class="ph-bold ph-star"></i><span><b>Website No.1</b> Topup & Jual Beli Akun Bussid & Trucksid terpercaya sejak 2019.</span></li>
 <li><i class="ph-bold ph-shield-check"></i><span><b>100% Bergaransi</b> uang kembali jika ada masalah.</span></li>
@@ -647,6 +658,10 @@ img.chat-message-image.admin { align-self: flex-start; }
         </div>
     </div>
 </div><div class=account-actions>
+<button id="link-google-btn" class="action-button btn-secondary" style="display: none; background-color: #fff; color: #4285F4; display: flex; align-items: center; justify-content: center; gap: 10px; line-height: 1; border: 1px solid #ccc;">
+        <i class="ph-fill ph-google-logo" style="font-size: 1.2em;"></i>
+        <span>Tautkan Akun Google</span>
+    </button>
 <button id=change-device-id-btn class="action-button btn-secondary">Ganti Device ID</button>
 <button id=change-password-btn class="action-button btn-secondary">Ubah Sandi</button>
 <button id=account-logout-btn class="action-button btn-red">Logout</button>
@@ -878,7 +893,36 @@ img.chat-message-image.admin { align-self: flex-start; }
 </div>
 </div>
 </main>
-</div><div id=device-id-modal class=modal-overlay>
+</div><div id="google-new-user-modal" class="modal-overlay" style="z-index: 10003;">
+    <div class="modal-content" style="max-width: 400px;">
+        <h2>Lengkapi Akun Anda</h2>
+        <p class="subtitle" style="line-height: 1.5;">
+            Hampir selesai! Karena ini pertama kalinya Anda masuk dengan Google, kami perlu beberapa info tambahan untuk menyelesaikan pendaftaran Anda.
+        </p>
+        <form id="google-new-user-form" style="margin-top: 15px;">
+            <div class="input-group">
+                <i class="ph-bold ph-user-circle input-icon"></i>
+                <input type="text" id="google-reg-username" class="input-field" placeholder="Username (wajib)" required>
+            </div>
+            <div class="input-group">
+                <i class="ph-bold ph-whatsapp-logo input-icon"></i>
+                <input type="tel" id="google-reg-whatsapp" class="input-field" placeholder="Nomor WhatsApp (wajib: 62...)" required pattern="^62\d{8,13}$" title="Harus diawali dengan 62, contoh: 628123456789">
+                <p id="whatsapp-hint" style="font-size: 0.8em; color: var(--text-secondary); display: none; margin-top: 4px;">
+                    Format salah. Contoh: 628123456789
+                </p>
+            </div>
+            <div class="input-group">
+                <i class="ph-bold ph-lock-key input-icon"></i>
+                <input type="password" id="google-reg-password-cadangan" class="input-field password-input" placeholder="Sandi Cadangan (Opsional)">
+                <span class="password-toggle" id="google-reg-password-toggle"></span>
+            </div>
+            <div class="modal-actions" style="margin-top: 15px;">
+                <button type="submit" id="google-reg-submit-btn" class="action-button btn-primary">Simpan & Lanjutkan</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id=device-id-modal class=modal-overlay>
 <div class=modal-content>
 <span class=modal-close id=close-device-id-modal-btn>×</span>
 <h2>Cara Mendapatkan Device ID</h2>
@@ -1154,6 +1198,218 @@ img.chat-message-image.admin { align-self: flex-start; }
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const rtdb = getDatabase(app);
+// --- Tambahan untuk Login Google ---
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
+
+async function handleGoogleLogin() {
+    const btn = document.getElementById('google-login-btn');
+    btn.disabled = true;
+    btn.querySelector('span').textContent = 'Memeriksa...';
+
+    try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+
+        // INI BAGIAN KUNCI: Menghubungkan Auth ke Firestore
+        await cekAtauBuatUserDiFirestore(user);
+
+    } catch (error) {
+        if (error.code === 'auth/popup-closed-by-user') {
+            showToast("Login Google dibatalkan.", "info");
+        } else {
+            console.error("Gagal login Google:", error);
+            showToast("Gagal login Google: " + error.message, "error");
+        }
+    } finally {
+        if (btn) { // Pastikan tombol masih ada
+            btn.disabled = false;
+            btn.querySelector('span').textContent = 'Masuk dengan Google';
+        }
+    }
+}
+
+async function cekAtauBuatUserDiFirestore(authUser) {
+    // 1. Cari user di Firestore berdasarkan EMAIL
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("email", "==", authUser.email));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+        // --- PENGGUNA LAMA DITEMUKAN (Blok ini tidak berubah) ---
+        const userDoc = querySnapshot.docs[0];
+        loggedInUser = { ...userDoc.data(), docId: userDoc.id };
+
+        // (Ini adalah kode sukses dari fungsi login manual Anda)
+        showToast("Login Google Berhasil! Memuat data...", "success");
+        new Audio('sambutan.wav').play();
+        sendTelegramMessage(`✅ *Login Google Berhasil*\n*Username:* \`${loggedInUser.username}\`\n*Email:* \`${loggedInUser.email}\``, userActionBotToken);
+
+        const newLoginCount = (loggedInUser.loginCount || 0) + 1;
+        const userRef = doc(db, "users", loggedInUser.docId);
+        await updateDoc(userRef, { loginCount: newLoginCount });
+        loggedInUser.loginCount = newLoginCount;
+
+        setupPresenceSystem();
+        checkAndShowWelcomeMessage();
+        activateLiveChat(loggedInUser.username);
+        setupRealtimeBalanceListener();
+
+    } else {
+        // --- PENGGUNA BARU, TAMPILKAN MODAL ---
+        // Alih-alih mendaftar, kita simpan data auth & tampilkan modal
+        pendingGoogleAuthUser = authUser;
+
+        // Coba isi otomatis username dari email
+        const usernameDariEmail = authUser.email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
+        document.getElementById('google-reg-username').value = usernameDariEmail;
+
+        // Reset form & tombol
+        const btn = document.getElementById('google-reg-submit-btn');
+        btn.disabled = false;
+        btn.innerText = "Simpan & Lanjutkan";
+        document.getElementById('google-reg-whatsapp').value = '';
+        document.getElementById('google-reg-password-cadangan').value = '';
+
+        // Tampilkan modal
+        showModal(document.getElementById('google-new-user-modal'));
+
+        // Setup password toggle untuk modal baru jika belum
+        if (!document.getElementById('google-reg-password-toggle')._listenerAttached) {
+             setupPasswordToggle('google-reg-password-cadangan', 'google-reg-password-toggle');
+             document.getElementById('google-reg-password-toggle')._listenerAttached = true;
+        }
+    }
+}
+// --- Selesai Tambahan ---
+async function handleGoogleNewUserSubmit(event) {
+    event.preventDefault();
+    const btn = document.getElementById('google-reg-submit-btn');
+    btn.disabled = true;
+    btn.innerText = "Memproses...";
+
+    const username = document.getElementById('google-reg-username').value.trim();
+    const whatsapp = document.getElementById('google-reg-whatsapp').value.trim();
+    const passwordCadangan = document.getElementById('google-reg-password-cadangan').value;
+
+    const authUser = pendingGoogleAuthUser;
+
+    try {
+        if (!authUser) {
+            throw new Error("Sesi Google Anda telah berakhir. Silakan coba lagi.");
+        }
+        if (!username || !whatsapp) {
+            throw new Error("Username dan Nomor WhatsApp wajib diisi.");
+        }
+        if (!whatsapp.startsWith('62')) {
+            throw new Error("Nomor WhatsApp harus diawali dengan 62.");
+        }
+
+        // Cek duplikat username
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("username", "==", username));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+            throw new Error("Username ini sudah digunakan. Silakan pilih nama lain.");
+        }
+
+        // Tentukan sandi cadangan
+        const finalPassword = passwordCadangan || "google_login";
+
+        // Buat data pengguna baru
+        const newUserData = {
+            username: username,
+            email: authUser.email,
+            password: finalPassword,
+            whatsapp: whatsapp,
+            saldo: 0,
+            accountType: 'USER',
+            loginCount: 1,
+            isBanned: false,
+            masaAktifHingga: null,
+            pendingTransaction: 0,
+            pendingSubscription: null,
+            pendingAkunPurchase: null,
+            otherAccountsList: [],
+            akunJualStatus: null,
+            createdAt: serverTimestamp()
+        };
+
+        const docRef = await addDoc(collection(db, "users"), newUserData);
+        loggedInUser = { ...newUserData, docId: docRef.id };
+
+        // Bersihkan
+        pendingGoogleAuthUser = null;
+        hideModal(document.getElementById('google-new-user-modal'));
+        document.getElementById('google-new-user-form').reset();
+
+        // Lanjutkan alur login
+        showToast("Pendaftaran berhasil! Memuat data...", "success");
+        new Audio('sambutan.wav').play();
+        sendTelegramMessage(`🎉 *Pendaftaran Baru (via Google)*\n*Username:* \`${loggedInUser.username}\`\n*Email:* \`${loggedInUser.email}\``, userActionBotToken);
+
+        setupPresenceSystem();
+        checkAndShowWelcomeMessage();
+        activateLiveChat(loggedInUser.username);
+        setupRealtimeBalanceListener();
+
+    } catch (error) {
+        showToast(error.message, "error");
+        btn.disabled = false;
+        btn.innerText = "Simpan & Lanjutkan";
+    }
+}
+async function handleLinkGoogleAccount() {
+    const btn = document.getElementById('link-google-btn');
+    btn.disabled = true;
+    btn.querySelector('span').textContent = 'Memeriksa...';
+
+    try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const googleUser = result.user;
+        const googleEmail = googleUser.email;
+
+        // Cek apakah email Google ini sudah dipakai akun LAIN
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("email", "==", googleEmail));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+            const existingUser = querySnapshot.docs[0];
+            if (existingUser.id !== loggedInUser.docId) {
+                // Email dipakai oleh orang lain
+                throw new Error("Akun Google ini sudah tertaut ke pengguna lain.");
+            }
+            // Jika tidak, email ini sudah terdaftar di akun INI, tidak masalah.
+        }
+
+        // Tautkan akun
+        const userRef = doc(db, "users", loggedInUser.docId);
+        await updateDoc(userRef, {
+            email: googleEmail,
+            password: "google_login" // Tandai sebagai akun yang terhubung Google
+        });
+
+        // Perbarui data lokal
+        loggedInUser.email = googleEmail;
+        loggedInUser.password = "google_login";
+
+        showToast("Akun Google berhasil ditautkan!", "success");
+        displayMyAccountInfo(); // Muat ulang info akun untuk menyembunyikan tombol
+
+    } catch (error) {
+        if (error.code === 'auth/popup-closed-by-user') {
+            showToast("Proses tautan dibatalkan.", "info");
+        } else {
+            console.error("Gagal menautkan Akun Google:", error);
+            showToast("Gagal menautkan: " + error.message, "error");
+        }
+    } finally {
+        btn.disabled = false;
+        btn.querySelector('span').textContent = 'Tautkan Akun Google';
+    }
+}
         
         const TELEGRAM_BOT_TOKEN = "7899731117:AAEpxfFIMiTR_Y-L8ad-VRR5qBF1y5kg4t4"; // Token untuk notif pembayaran, jual akun, dll.
         const userActionBotToken = "8409996364:AAGoO10QZJqNEUdNOuy9vkwsdB89m_-s-TI"; // Token khusus notif login, logout, topup, daftar.
@@ -1183,9 +1439,10 @@ const CHAT_NOTIF_BOT_TOKEN = "8313365155:AAGrDtEwhjfu72rbiqD__BT5nUaJy9IfRq4"; /
         let isSubscriptionExpired = false;
         let initialContentLoaded = false;
         let userToResetPasswordId = null;
-        let accountsToSell = [];
-        let pendingRegistrationData = null;
-        let otpTimerInterval = null;
+let pendingGoogleAuthUser = null;
+let pendingRegistrationData = null;
+let accountsToSell = [];
+let otpTimerInterval = null;
 
         function startOtpTimer() {
             let timeLeft = 50;
@@ -1911,6 +2168,15 @@ showToast('Logout berhasil.', "success");
         }
         function displayMyAccountInfo() {
             if (!loggedInUser) return;
+
+            // Logika Tautkan Akun Google
+            const linkGoogleBtn = document.getElementById('link-google-btn');
+            if (loggedInUser.password === 'google_login') {
+                linkGoogleBtn.style.display = 'none'; // Sembunyikan jika sudah tertaut
+            } else {
+                linkGoogleBtn.style.display = 'flex'; // Tampilkan jika login manual
+            }
+
             document.getElementById('account-username').textContent = loggedInUser.username;
             const saldoEl = document.getElementById('account-saldo');
             const saldoLabelEl = document.getElementById('account-saldo-label');
@@ -3926,7 +4192,10 @@ initializeChatWidget();
             setupPasswordToggle('reg-password', 'reg-password-toggle');
             setupPasswordToggle('reset-new-password', 'reset-password-toggle');
             document.getElementById('login-form').addEventListener('submit', login);
-            document.getElementById('register-form').addEventListener('submit', register);
+document.getElementById('google-login-btn').addEventListener('click', handleGoogleLogin);
+            document.getElementById('google-new-user-form').addEventListener('submit', handleGoogleNewUserSubmit);
+        document.getElementById('link-google-btn').addEventListener('click', handleLinkGoogleAccount);
+document.getElementById('register-form').addEventListener('submit', register);
             document.getElementById('verify-user-form').addEventListener('submit', handleVerifyUser);
             document.getElementById('reset-password-form').addEventListener('submit', handleResetPassword);
             document.getElementById('show-register-link').addEventListener('click', (e) => { e.preventDefault(); showRegisterScreen(); });
