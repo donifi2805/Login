@@ -1,5 +1,5 @@
 // File: /api/create-transaction.js
-// Ini adalah backend Node.js yang berjalan di Vercel
+// --- VERSI TES HARDCODE (TIDAK AMAN) ---
 
 // 1. Import library Midtrans
 const midtransClient = require('midtrans-client');
@@ -21,22 +21,24 @@ export default async function handler(req, res) {
     // 3. Buat koneksi Snap ke Midtrans (secara aman)
     let snap = new midtransClient.Snap({
       isProduction: false, // Ganti ke true saat sudah live
-      // Ambil Server Key & Client Key dari Vercel Environment Variables
-      serverKey: process.env.MIDTRANS_SERVER_KEY,
-      clientKey: process.env.MIDTRANS_CLIENT_KEY
+      
+      // --- PERHATIAN: KUNCI RAHASIA DI-HARDCODE DI SINI ---
+      serverKey: "Mid-server-mwtNt4KdXhfTh_7ZlcvQ7PPY",
+      clientKey: "Mid-client-8TT0eNd07TlxaBLz", // Client key juga di-hardcode
+      // ----------------------------------------------------
+
     });
 
     // 4. Siapkan parameter transaksi
     let parameter = {
       transaction_details: {
-        order_id: `TOPUP-${userId}-${Date.now()}`, // ID order unik
+        order_id: `TOPUP-TEST-${userId}-${Date.now()}`, // ID order unik
         gross_amount: Number(amount)
       },
       customer_details: {
         first_name: username || 'Pelanggan',
         email: email || 'noreply@example.com'
       },
-      // PENTING: Kirim metadata ini agar webhook tahu siapa yang harus diupdate
       metadata: {
          userId: userId,
          amount: Number(amount)
@@ -51,8 +53,8 @@ export default async function handler(req, res) {
     res.status(200).json({ snapToken });
 
   } catch (error) {
-    // 7. Tangani jika ada error (misal: Server Key salah)
-    console.error("Midtrans Error:", error.message);
-    res.status(500).json({ message: 'Gagal membuat transaksi', error: error.message });
+    // 7. Tangani jika ada error
+    console.error("Hardcoded Midtrans Error:", error.message);
+    res.status(500).json({ message: 'Gagal membuat transaksi (Tes Hardcode)', error: error.message });
   }
 }
