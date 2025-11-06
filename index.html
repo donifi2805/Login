@@ -145,22 +145,38 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 /* --- Start: Beli Akun Card Redesign (-50% size & 2 columns) --- */
 .stok-akun-header-controls { background-color: var(--bg-secondary); padding: 12px; border-radius: 12px; margin-bottom: 15px; }
 .stok-akun-header-controls h2, .stok-akun-header-controls .subtitle { padding: 0 5px; }
-.game-column h3 { text-align: center; margin-bottom: 10px; font-size: 1.1em; color: var(--text-primary); background-color: var(--bg-secondary); padding: 8px; border-radius: 8px; }
-#beli-akun-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-#stok-akun-grid-bussid, #stok-akun-grid-trucksid {display:grid; grid-template-columns: 1fr; gap:10px}
+.game-column h3 { display: none; } /* Sembunyikan judul kolom lama */
+#beli-akun-wrapper { display: none; } /* Sembunyikan wrapper lama */
+
+/* Grid baru yang digabung */
+#stok-akun-grid-merged {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 kolom di HP */
+    gap: 8px;
+}
+/* 3 kolom di layar lebih besar */
+@media screen and (min-width: 500px) {
+    #stok-akun-grid-merged {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+}
+
+#stok-akun-grid-bussid, #stok-akun-grid-trucksid {display:grid; grid-template-columns: 1fr; gap:10px} /* Aturan ini tidak terpakai tapi biarkan saja */
 #purchased-akun-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:15px}
 
-.stok-akun-card{background-color:var(--bg-secondary);border:1px solid rgba(75,85,99,0.6);border-radius:10px;padding:8px;transition:all .3s ease;display:flex;flex-direction:column;gap:6px;font-size:.75em;box-shadow:0 4px 15px rgba(0,0,0,0.4);position:relative;overflow:hidden}
+/* Ukuran kartu diperkecil */
+.stok-akun-card{background-color:var(--bg-secondary);border:1px solid rgba(75,85,99,0.6);border-radius:8px;padding:6px;transition:all .3s ease;display:flex;flex-direction:column;gap:5px;font-size:.7em;box-shadow:0 4px 15px rgba(0,0,0,0.4);position:relative;overflow:hidden}
 .stok-akun-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px}
 .stok-akun-card.bussid-card::before{background:var(--accent-blue)}
 .stok-akun-card.trucksid-card::before{background:var(--accent-green)}
 .stok-akun-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,0.35);border-color:var(--accent-cyan)}
 .stok-akun-card.owned{border-left:3px solid var(--accent-cyan)}
-.stok-habis-badge { display: none; position: absolute; top: 8px; right: -30px; background-color: var(--accent-red); color: white; font-weight: 700; padding: 4px 30px; font-size: 0.9em; transform: rotate(45deg); box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+.stok-habis-badge { display: none; position: absolute; top: 5px; right: -30px; background-color: var(--accent-red); color: white; font-weight: 700; padding: 2px 30px; font-size: 0.9em; transform: rotate(45deg); box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 .stok-akun-card.out-of-stock .stok-habis-badge { display: block; }
-.stok-akun-card .stok-card-header{display:flex;align-items:center;gap:6px;padding-bottom:5px;border-bottom:1px solid var(--border-color);justify-content:space-between;}.stok-akun-card .stok-card-logo{width:22px;height:22px;border-radius:5px}.stok-akun-card h3{font-size:1.1em;margin:0;color:var(--text-primary)}
+.stok-akun-card .stok-card-header{display:flex;align-items:center;gap:5px;padding-bottom:4px;border-bottom:1px solid var(--border-color);justify-content:space-between;}.stok-akun-card .stok-card-logo{width:20px;height:20px;border-radius:4px}.stok-akun-card h3{font-size:1.05em;margin:0;color:var(--text-primary)}
 .stok-akun-card .info-grid{display:grid;grid-template-columns:repeat(2, 1fr);gap:4px}
-.stok-akun-card .info-item{background-color:rgba(0,0,0,0.2);padding:4px 6px;border-radius:4px}.stok-akun-card .info-label{display:flex;align-items:center;gap:4px;font-size:.7em;color:var(--text-secondary);margin-bottom:2px}.stok-akun-card .info-label i{font-size:1.2em}
+.stok-akun-card .info-item{background-color:rgba(0,0,0,0.2);padding:4px 5px;border-radius:4px}.stok-akun-card .info-label{display:flex;align-items:center;gap:4px;font-size:.7em;color:var(--text-secondary);margin-bottom:2px}.stok-akun-card .info-label i{font-size:1.2em}
 .stok-akun-card .info-value{font-size:.8em;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.stok-akun-card .price .info-value{color:var(--accent-green);font-size:1.1em}
 .stok-akun-card .rating-stars { color: var(--premium-gold); font-size: 1.1em; }
 .stok-akun-card .rating-stars .ph-star { color: var(--border-color); }
@@ -403,6 +419,159 @@ img.chat-message-image.admin { align-self: flex-start; }
 #google-reg-whatsapp:invalid + #whatsapp-hint {
     display: block;
 }
+/* --- Start: Styling Card Akun Terbeli --- */
+.purchased-card {
+    background: linear-gradient(145deg, var(--bg-secondary), #2a3a50);
+    border-color: var(--accent-cyan);
+    border-width: 1px;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.2), 0 4px 10px rgba(0,0,0,0.3);
+    gap: 10px; /* Jarak antar elemen di dalam card */
+    padding: 10px;
+    font-size: 0.8em; /* Ukuran font sedikit lebih besar dari card stok */
+}
+
+.purchased-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.purchased-card-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.purchased-header-info {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.purchased-game-type {
+    display: block;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.purchased-username {
+    display: block;
+    font-size: 1.3em;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.purchased-check-icon {
+    font-size: 2.2em;
+    color: var(--accent-green);
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+.purchased-main-info {
+    background-color: rgba(6, 182, 212, 0.1);
+    border: 1px solid var(--accent-cyan);
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-align: center;
+}
+
+.purchased-info-label {
+    display: block;
+    font-size: 0.9em;
+    color: var(--accent-cyan);
+    margin-bottom: 2px;
+}
+
+.purchased-info-value {
+    display: block;
+    font-size: 1.5em;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.purchased-credential-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.purchased-credential-item {
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-tertiary);
+    border-radius: 6px;
+    padding: 8px 10px;
+    gap: 10px;
+}
+
+/* Grup Label Baru (Ikon + Teks) */
+.purchased-credential-label-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    color: var(--text-secondary);
+    width: 90px; /* Memberi lebar tetap agar rapi */
+}
+.purchased-credential-label-group i {
+    font-size: 1.4em;
+}
+.purchased-credential-label-group span {
+    font-size: 0.95em;
+    font-weight: 500;
+}
+
+.purchased-credential-item > i:first-child {
+    /* Aturan ini tidak lagi digunakan, dikosongkan */
+    font-size: inherit;
+    color: inherit;
+    flex-shrink: inherit;
+}
+
+.purchased-credential-value {
+    flex-grow: 1;
+    font-size: 1em;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex; /* Untuk ikon login */
+    align-items: center; /* Untuk ikon login */
+    gap: 5px; /* Untuk ikon login */
+}
+
+.purchased-credential-item .copy-icon {
+    font-size: 1.4em;
+    color: var(--accent-blue);
+    cursor: pointer;
+    margin-left: auto;
+    flex-shrink: 0;
+    padding: 2px;
+}
+.purchased-credential-item .copy-icon:hover {
+    opacity: 0.8;
+}
+/* --- Styling Pesan Instruksi --- */
+.purchased-card-notice {
+    font-size: 0.9em;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    background-color: var(--bg-tertiary);
+    padding: 8px 10px;
+    border-radius: 6px;
+    margin: 0; /* Dihapus oleh gap di .purchased-card */
+    border-left: 3px solid var(--premium-gold);
+}
+/* --- End: Styling Card Akun Terbeli --- */
 </style>
 
     <meta name="theme-color" content="#000000">
@@ -738,16 +907,8 @@ img.chat-message-image.admin { align-self: flex-start; }
     </div>
 </div>
 
-<div id="beli-akun-wrapper">
-    <div class="game-column">
-        <h3>BUSSID</h3>
-        <div id="stok-akun-grid-bussid"></div>
+<div id="stok-akun-grid-merged">
     </div>
-    <div class="game-column">
-        <h3>TRUCKSID</h3>
-        <div id="stok-akun-grid-trucksid"></div>
-    </div>
-</div>
 
 <p id="purchased-akun-info" class="subtitle" style="display: none; text-align:center;">Harap simpan informasi login anda dengan aman.</p>
 <div id="purchased-akun-grid" style="display: none;"></div>
@@ -3091,136 +3252,156 @@ showToast('Logout berhasil.', "success");
         }
         
         function sortStokAkun(sortType = 'termurah') {
-            const bussidGrid = document.getElementById('stok-akun-grid-bussid');
-            const trucksidGrid = document.getElementById('stok-akun-grid-trucksid');
-            
-            const sortGrid = (grid) => {
-                const cards = Array.from(grid.querySelectorAll('.stok-akun-card'));
-                if (cards.length <= 1) return;
+    const mergedGrid = document.getElementById('stok-akun-grid-merged');
 
-                cards.sort((a, b) => {
-                    const priceA = parseFloat(a.dataset.price) || 0;
-                    const priceB = parseFloat(b.dataset.price) || 0;
-                    return sortType === 'termahal' ? priceB - priceA : priceA - priceB;
-                });
-                
-                cards.forEach(card => grid.appendChild(card));
-            };
+    const sortGrid = (grid) => {
+        const cards = Array.from(grid.querySelectorAll('.stok-akun-card'));
+        if (cards.length <= 1) return;
 
-            sortGrid(bussidGrid);
-            sortGrid(trucksidGrid);
+        cards.sort((a, b) => {
+            const priceA = parseFloat(a.dataset.price) || 0;
+            const priceB = parseFloat(b.dataset.price) || 0;
+            return sortType === 'termahal' ? priceB - priceA : priceA - priceB;
+        });
+
+        cards.forEach(card => grid.appendChild(card));
+    };
+
+    sortGrid(mergedGrid);
+}
+function setupStokAkunListeners() {
+    const mergedGrid = document.getElementById('stok-akun-grid-merged');
+    const purchasedGrid = document.getElementById('purchased-akun-grid');
+
+    if (stokAkunUnsubscribe) stokAkunUnsubscribe();
+
+    let offeringsData = [];
+    let purchasedData = [];
+    let offeringsLoaded = false;
+    let purchasedLoaded = false;
+
+    const renderAll = () => {
+        if (!offeringsLoaded || !purchasedLoaded) return;
+
+        // Render Penawaran yang Tersedia
+        mergedGrid.innerHTML = '';
+
+        if (offeringsData.length === 0) {
+            mergedGrid.innerHTML = '<p style="text-align: center; font-size: 0.8em;">Stok kosong.</p>';
+        } else {
+            // Urutkan berdasarkan harga termurah sebagai default saat render
+            const sortedData = [...offeringsData].sort((a, b) => (a.price || 0) - (b.price || 0));
+            sortedData.forEach(data => mergedGrid.innerHTML += createStokAkunCardHTML(data, false));
         }
 
-        function setupStokAkunListeners() {
-            const bussidGrid = document.getElementById('stok-akun-grid-bussid');
-            const trucksidGrid = document.getElementById('stok-akun-grid-trucksid');
-            const purchasedGrid = document.getElementById('purchased-akun-grid');
-            
-            if (stokAkunUnsubscribe) stokAkunUnsubscribe();
-
-            let offeringsData = [];
-            let purchasedData = [];
-            let offeringsLoaded = false;
-            let purchasedLoaded = false;
-
-            const renderAll = () => {
-                if (!offeringsLoaded || !purchasedLoaded) return;
-
-                // Render Penawaran yang Tersedia
-                bussidGrid.innerHTML = '';
-                trucksidGrid.innerHTML = '';
-                const availableBussid = offeringsData.filter(d => d.gameType === 'BUSSID');
-                const availableTrucksid = offeringsData.filter(d => d.gameType === 'TRUCKSID');
-                
-                if (availableBussid.length === 0) bussidGrid.innerHTML = '<p style="text-align: center; font-size: 0.8em;">Stok kosong.</p>';
-                else availableBussid.forEach(data => bussidGrid.innerHTML += createStokAkunCardHTML(data, false));
-                
-                if (availableTrucksid.length === 0) trucksidGrid.innerHTML = '<p style="text-align: center; font-size: 0.8em;">Stok kosong.</p>';
-                else availableTrucksid.forEach(data => trucksidGrid.innerHTML += createStokAkunCardHTML(data, false));
-
-                // Render Akun yang Sudah Terbeli
-                purchasedGrid.innerHTML = '';
-                if (purchasedData.length === 0) {
-                    purchasedGrid.innerHTML = '<p style="text-align: center;">Anda belum membeli akun apapun.</p>';
-                } else {
-                    purchasedData.forEach(data => purchasedGrid.innerHTML += createStokAkunCardHTML(data, true));
-                }
-
-                sortStokAkun('termurah');
-            };
-
-            const offeringsQuery = query(collection(db, "stokAkun"), where("ownedBy", "==", null), orderBy("createdAt", "desc"));
-            const purchasedQuery = query(collection(db, "stokKredensial"), where("ownedBy", "==", loggedInUser.username));
-
-            const unsubOfferings = onSnapshot(offeringsQuery, (snapshot) => {
-                offeringsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                offeringsLoaded = true;
-                renderAll();
-            }, (error) => {
-                console.error("Error fetching offerings:", error);
-                bussidGrid.innerHTML = '<p style="color:red;">Gagal memuat data.</p>';
-                trucksidGrid.innerHTML = '<p style="color:red;">Gagal memuat data.</p>';
-            });
-
-            const unsubPurchased = onSnapshot(purchasedQuery, (snapshot) => {
-                purchasedData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                purchasedLoaded = true;
-                renderAll();
-            }, (error) => {
-                 console.error("Error fetching purchased accounts:", error);
-                 purchasedGrid.innerHTML = '<p style="color:red;">Gagal memuat akun.</p>';
-            });
-
-            stokAkunUnsubscribe = () => {
-                unsubOfferings();
-                unsubPurchased();
-            };
+        // Render Akun yang Sudah Terbeli
+        purchasedGrid.innerHTML = '';
+        if (purchasedData.length === 0) {
+            purchasedGrid.innerHTML = '<p style="text-align: center;">Anda belum membeli akun apapun.</p>';
+        } else {
+            purchasedData.forEach(data => purchasedGrid.innerHTML += createStokAkunCardHTML(data, true));
         }
+
+        // Panggil sort default saat pertama kali render
+        sortStokAkun('termurah');
+    };
+
+    const offeringsQuery = query(collection(db, "stokAkun"), where("ownedBy", "==", null), orderBy("createdAt", "desc"));
+    const purchasedQuery = query(collection(db, "stokKredensial"), where("ownedBy", "==", loggedInUser.username));
+
+    const unsubOfferings = onSnapshot(offeringsQuery, (snapshot) => {
+        offeringsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        offeringsLoaded = true;
+        renderAll();
+    }, (error) => {
+        console.error("Error fetching offerings:", error);
+        mergedGrid.innerHTML = '<p style="color:red;">Gagal memuat data.</p>';
+    });
+
+    const unsubPurchased = onSnapshot(purchasedQuery, (snapshot) => {
+        purchasedData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        purchasedLoaded = true;
+        renderAll();
+    }, (error) => {
+         console.error("Error fetching purchased accounts:", error);
+         purchasedGrid.innerHTML = '<p style="color:red;">Gagal memuat akun.</p>';
+    });
+
+    stokAkunUnsubscribe = () => {
+        unsubOfferings();
+        unsubPurchased();
+    };
+}
         
         function createStokAkunCardHTML(data, isPurchased = false) {
             const { id, gameType, loginType, email, password, deviceId, usernameTampilan, jumlahUB, price, detailInfo, stok, terjual, rating } = data;
             const gameLogo = gameConfigs[gameType]?.profileImage || '';
             const loginIcon = loginType === 'Facebook' ? `<i class="ph-fill ph-facebook-logo" style="color:#1877f2;"></i>` : `<i class="ph-fill ph-google-logo" style="color:#ea4335;"></i>`;
             
+            // --- Variabel Teks Dinamis ---
+            const loginMethod = loginType === 'Google' ? 'akun Google' : 'akun Facebook';
+            const gameName = gameType === 'BUSSID' ? 'Bussid' : 'Trucksid';
+            // --- Akhir Variabel ---
+            
             if (isPurchased) {
+                 // --- START: MODIFIKASI KARTU AKUN TERBELI ---
                  return `
-                    <div class="stok-akun-card owned" id="purchased-akun-${id}" data-device-id="${deviceId}" data-game-type="${gameType}">
-                         <div class="purchased-info-grid">
-                            <div class="purchased-info-item">
-                                <span class="info-label">Username</span>
-                                <span class="info-value username-display"><i class="ph ph-spinner"></i> Memuat...</span>
+                    <div class="stok-akun-card purchased-card" id="purchased-akun-${id}" data-device-id="${deviceId}" data-game-type="${gameType}">
+                        
+                        <div class="purchased-card-header">
+                            <img src="${gameLogo}" alt="${gameType} Logo" class="purchased-card-logo">
+                            <div class="purchased-header-info">
+                                <span class="purchased-game-type">${gameType} - Milik Anda</span>
+                                <span class="purchased-username username-display" title="Username Game"><i class="ph ph-spinner ph-spin"></i> Memuat...</span>
                             </div>
-                            <div class="purchased-info-item">
-                                <span class="info-label">Jumlah UB</span>
-                                <span class="info-value ub-display"><i class="ph ph-spinner"></i></span>
+                            <i class="ph-fill ph-check-circle purchased-check-icon" title="Akun Terverifikasi"></i>
+                        </div>
+
+                        <div class="purchased-main-info">
+                            <span class="purchased-info-label">Jumlah UB</span>
+                            <span class="purchased-info-value ub-display"><i class="ph ph-spinner ph-spin"></i> Memuat...</span>
+                        </div>
+
+                        <p class="purchased-card-notice">
+                            Ini adalah akun ${gameType} milik anda. Loginkan ${loginMethod} ini di handphone anda dan login ke ${gameName} dengan ${loginMethod} ini. Pastikan ${loginMethod} anda amankan, jangan lupa ganti sandinya ya. Terimakasih...
+                        </p>
+
+                        <div class="purchased-credential-grid">
+                            <div class="purchased-credential-item">
+                                <div class="purchased-credential-label-group">
+                                    <i class="ph-bold ph-sign-in" title="Tipe Login"></i>
+                                    <span>Jenis Login</span>
+                                </div>
+                                <span class="purchased-credential-value">${loginIcon} ${loginType}</span>
+                            </div>
+                            <div class="purchased-credential-item">
+                                <div class="purchased-credential-label-group">
+                                    <i class="ph-bold ph-at" title="Email/HP"></i>
+                                    <span>Email</span>
+                                </div>
+                                <span class="purchased-credential-value">${email}</span>
+                                <i class="ph-bold ph-copy copy-icon" onclick="copyToClipboard('${email}', 'Email disalin!')" title="Salin"></i>
+                            </div>
+                            <div class="purchased-credential-item">
+                                <div class="purchased-credential-label-group">
+                                    <i class="ph-bold ph-key" title="Kata Sandi"></i>
+                                    <span>Sandi</span>
+                                </div>
+                                <span class="purchased-credential-value">${password}</span>
+                                <i class="ph-bold ph-copy copy-icon" onclick="copyToClipboard('${password}', 'Sandi disalin!')" title="Salin"></i>
+                            </div>
+                            <div class="purchased-credential-item">
+                                <div class="purchased-credential-label-group">
+                                    <i class="ph-bold ph-device-mobile" title="Device ID"></i>
+                                    <span>Device ID</span>
+                                </div>
+                                <span class="purchased-credential-value">${deviceId}</span>
+                                <i class="ph-bold ph-copy copy-icon" onclick="copyToClipboard('${deviceId}', 'Device ID disalin!')" title="Salin"></i>
                             </div>
                         </div>
-                        <div class="stok-card-header" style="padding-top: 4px;">
-                            <img src="${gameLogo}" alt="${gameType} Logo" class="stok-card-logo">
-                            <h3>${gameType} - Milik Anda</h3>
-                        </div>
-                        <div class="unlocked-grid">
-                            <div class="unlocked-item">
-                                <span class="unlocked-label">Login</span>
-                                <span class="unlocked-value">${loginIcon} ${loginType}</span>
-                            </div>
-                            <div class="unlocked-item">
-                                <span class="unlocked-label">Email/HP</span>
-                                <span class="unlocked-value">${email}</span>
-                                <i class="ph ph-copy copy-icon" onclick="copyToClipboard('${email}', 'Email disalin!')" title="Salin"></i>
-                            </div>
-                            <div class="unlocked-item">
-                                <span class="unlocked-label">Sandi</span>
-                                <span class="unlocked-value">${password}</span>
-                                <i class="ph ph-copy copy-icon" onclick="copyToClipboard('${password}', 'Sandi disalin!')" title="Salin"></i>
-                            </div>
-                            <div class="unlocked-item">
-                                <span class="unlocked-label">Device ID</span>
-                                <span class="unlocked-value">${deviceId}</span>
-                                <i class="ph ph-copy copy-icon" onclick="copyToClipboard('${deviceId}', 'Device ID disalin!')" title="Salin"></i>
-                            </div>
-                        </div>
+                        
                     </div>`;
+                // --- END: MODIFIKASI KARTU AKUN TERBELI ---
             } else {
                 const isOutOfStock = !stok || stok <= 0;
                 const outOfStockClass = isOutOfStock ? 'out-of-stock' : '';
@@ -3280,6 +3461,7 @@ showToast('Logout berhasil.', "success");
                         ${priceHTML}
                         ${buttonHTML}
                     </div>`;
+
             }
         }
         
@@ -4237,7 +4419,7 @@ document.getElementById('register-form').addEventListener('submit', register);
             document.getElementById('stok-akun-container').addEventListener('click', (e) => {
                 const availableBtn = document.getElementById('show-available-btn');
                 const purchasedBtn = document.getElementById('show-purchased-btn');
-                const beliAkunWrapper = document.getElementById('beli-akun-wrapper');
+                const beliAkunWrapper = document.getElementById('stok-akun-grid-merged');
                 const purchasedGrid = document.getElementById('purchased-akun-grid');
                 const purchasedInfo = document.getElementById('purchased-akun-info');
                 
@@ -4252,7 +4434,7 @@ document.getElementById('register-form').addEventListener('submit', register);
                     if (purchasedInfo) purchasedInfo.style.display = isAvailableView ? 'none' : 'block';
 
                     if (e.target.id === 'show-purchased-btn') {
-                        const purchasedCards = document.querySelectorAll('#purchased-akun-grid .stok-akun-card.owned');
+                        const purchasedCards = document.querySelectorAll('#purchased-akun-grid .stok-akun-card.purchased-card');
                         purchasedCards.forEach(async (card) => {
                             const deviceId = card.dataset.deviceId;
                             const gameType = card.dataset.gameType;
