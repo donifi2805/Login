@@ -1,5 +1,5 @@
 // File: /api/create-transaction.js
-// Ini adalah backend Node.js
+// Ini adalah backend Node.js yang berjalan di Vercel
 
 // 1. Import library Midtrans
 const midtransClient = require('midtrans-client');
@@ -15,19 +15,18 @@ export default async function handler(req, res) {
     const { amount, userId, username, email } = req.body;
 
     if (!amount || !userId) {
-      return res.status(400).json({ message: 'Amount and UserID are required' });
+      return res.status(400).json({ message: 'Amount or UserID are required' });
     }
 
     // 3. Buat koneksi Snap ke Midtrans (secara aman)
     let snap = new midtransClient.Snap({
       isProduction: false, // Ganti ke true saat sudah live
-      // Ambil Server Key dari Vercel Environment Variables (RAHASIA)
-      serverKey: process.env.MIDTRANS_SERVER_KEY, 
-      clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY
+      // Ambil Server Key & Client Key dari Vercel Environment Variables
+      serverKey: process.env.MIDTRANS_SERVER_KEY,
+      clientKey: process.env.MIDTRANS_CLIENT_KEY
     });
 
     // 4. Siapkan parameter transaksi
-    // PENTING: Kita gunakan userId sebagai order_id agar mudah dicari di webhook
     let parameter = {
       transaction_details: {
         order_id: `TOPUP-${userId}-${Date.now()}`, // ID order unik
@@ -37,7 +36,7 @@ export default async function handler(req, res) {
         first_name: username || 'Pelanggan',
         email: email || 'noreply@example.com'
       },
-      // Simpan userId di metadata untuk webhook
+      // PENTING: Kirim metadata ini agar webhook tahu siapa yang harus diupdate
       metadata: {
          userId: userId,
          amount: Number(amount)
@@ -52,7 +51,8 @@ export default async function handler(req, res) {
     res.status(200).json({ snapToken });
 
   } catch (error) {
+    // 7. Tangani jika ada error (misal: Server Key salah)
     console.error("Midtrans Error:", error.message);
-    res.status(500).json({ message: 'Failed to create transaction', error: error.message });
+    res.status(500).json({ message: 'Gagal membuat transaksi', error: error.message });
   }
 }
