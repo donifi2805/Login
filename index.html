@@ -591,6 +591,7 @@ img.chat-message-image.admin { align-self: flex-start; }
         });
       }
     </script>
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="Mid-client-8TT0eNd07TlxaBLz"></script>
 </head>
 <body>
 <div id="preloader-overlay">
@@ -2861,7 +2862,77 @@ showToast('Logout berhasil.', "success");
             } 
             displayTransactionHistory(); 
         }
-        async function generateQrisScreen(baseAmount, type = 'Top Up Saldo', meta = {}) { 
+        async function initiateMidtransPayment(baseAmount) {
+          if (baseAmount < 10000) {
+            showToast("Minimum top up Rp 10.000", "error");
+            return;
+          }
+          
+          const btn = document.getElementById('custom-topup-form').querySelector('button[type="submit"]');
+          const oldBtnText = btn.innerText;
+          btn.disabled = true;
+          btn.innerText = "Membuat transaksi...";
+          
+          try {
+            // 1. Panggil backend Vercel Anda (/api/create-transaction)
+            // (Ini akan kita buat di Vercel nanti)
+            const response = await fetch('/api/create-transaction', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                amount: baseAmount,
+                userId: loggedInUser.docId,
+                username: loggedInUser.username,
+                email: loggedInUser.email
+              }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              // Jika server Vercel error (misal 500), tampilkan pesan
+              throw new Error(data.message || 'Gagal membuat transaksi. Coba lagi nanti.');
+            }
+
+            const snapToken = data.snapToken;
+
+            // 2. Tampilkan popup pembayaran Midtrans menggunakan snap.js
+            snap.pay(snapToken, {
+              onSuccess: function(result) {
+                /* Pembayaran sukses! */
+                console.log('payment success!', result);
+                showToast("Pembayaran berhasil! Saldo akan segera diperbarui.", "success");
+                // Listener Firestore akan otomatis meng-update UI
+                showPage('topup'); // Kembali ke halaman topup
+              },
+              onPending: function(result) {
+                /* Pembayaran pending */
+                console.log('payment pending', result);
+                showToast("Menunggu pembayaran Anda...", "info");
+              },
+              onError: function(result) {
+                /* Pembayaran error */
+                console.log('payment error', result);
+                showToast("Pembayaran gagal atau dibatalkan.", "error");
+              },
+              onClose: function() {
+                /* Popup ditutup sebelum selesai */
+                showToast("Anda menutup popup pembayaran.", "info");
+              }
+            });
+
+          } catch (error) {
+            // Ini akan menangkap error fetch (misal /api/ tidak ditemukan)
+            showToast(error.message, "error");
+            console.error("Payment Init Error:", error);
+          } finally {
+            btn.disabled = false;
+            btn.innerText = oldBtnText;
+          }
+        }
+async function generateQrisScreen(baseAmount, type = 'Top Up Saldo', meta = {}) { 
             if (baseAmount < 10000 && type === 'Top Up Saldo') { 
                 showToast("Minimum top up Rp 10.000", "error"); 
                 return; 
@@ -4577,8 +4648,8 @@ document.getElementById('register-form').addEventListener('submit', register);
             });
             document.getElementById('close-reduce-ub-modal').addEventListener('click', () => hideModal(document.getElementById('reduce-ub-modal')));
             document.getElementById('reduce-ub-form').addEventListener('submit', (e) => { e.preventDefault(); const ubAmount = document.getElementById('reduce-ub-amount').value; executeUbTransaction(-Math.abs(parseInt(ubAmount, 10))); });
-            document.querySelectorAll('.topup-option-btn').forEach(btn => btn.addEventListener('click', () => generateQrisScreen(parseInt(btn.dataset.amount, 10))));
-            document.getElementById('custom-topup-form').addEventListener('submit', (e) => { e.preventDefault(); const amount = parseInt(document.getElementById('custom-amount-input').value, 10); if (amount) generateQrisScreen(amount); });
+            document.querySelectorAll('.topup-option-btn').forEach(btn => btn.addEventListener('click', () => initiateMidtransPayment(parseInt(btn.dataset.amount, 10))));
+            document.getElementById('custom-topup-form').addEventListener('submit', (e) => { e.preventDefault(); const amount = parseInt(document.getElementById('custom-amount-input').value, 10); if (amount) initiateMidtransPayment(amount); });
             document.getElementById('confirm-payment-btn').addEventListener('click', sendTelegramNotification);
             document.getElementById('cancel-qris-btn').addEventListener('click', cancelTopupTransaction);
             document.getElementById('check-status-again-btn').addEventListener('click', () => {
