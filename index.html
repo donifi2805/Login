@@ -4127,8 +4127,13 @@ function setupStokAkunListeners() {
                     } else {
                         if(maintenanceNotice) maintenanceNotice.style.display = 'none';
                         // Cek juga apakah OTP sedang aktif
-                        const otpContainer = document.getElementById('otp-verification-container');
-                        if(loginContainer && !loggedInUser && (!otpContainer || otpContainer.style.display === 'none')) {
+                        const otpC = document.getElementById('otp-verification-container');
+                        const regC = document.getElementById('register-container');
+                        const fogC = document.getElementById('forgot-password-container');
+                        // Bugfix: Cegah login muncul otomatis jika sedang di menu daftar/lupa sandi
+                        const isBusy = (regC?.style.display === 'block') || (fogC?.style.display === 'block') || (otpC?.style.display === 'block');
+
+                        if(loginContainer && !loggedInUser && !isBusy) {
                             loginContainer.style.display = 'block';
                         }
 
