@@ -3337,9 +3337,18 @@ dom.profileModal.currentImage.src = loggedInUser.profilePictureBase64 || 'https:
                 const base64 = await resizeAndCompressImage(fileInput.files[0], 500, 0.8);
                 const userRef = doc(db, "users", loggedInUser.docId);
                 await updateDoc(userRef, { profilePictureBase64: base64 });
+                
+                // Update state lokal & UI segera
+                loggedInUser.profilePictureBase64 = base64;
+                hideModal(document.getElementById('force-profile-picture-modal'));
+                dom.appLayout.style.pointerEvents = 'auto';
+                dom.appLayout.style.filter = 'none';
+                updateHeaderInfo();
+
                 showToast("Foto profil berhasil diupload!", "success");
             } catch (error) {
                 showToast("Gagal upload: " + error.message, "error");
+            } finally {
                 btn.disabled = false; btn.innerText = "Upload & Lanjutkan";
             }
         }
