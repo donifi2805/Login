@@ -927,27 +927,33 @@
         height: 100%;
     }
     #chat-session-list {
-        height: 200px; /* Daftar chat jadi horizontal scroll atau area kecil */
+        height: auto; /* FIX: Biarkan tinggi otomatis menyesuaikan parent */
         border-right: none;
-        border-bottom: 1px solid var(--border-color);
+        border-bottom: none; /* FIX: Hapus border, sudah di-handle .chat-list-full-view */
     }
     #chat-window-admin {
         height: 100%; /* Jendela chat ambil sisa ruang */
     }
     #chat-session-list-items {
         display: flex;
-        flex-direction: row; /* Ubah jadi horizontal */
-        overflow-x: auto;
-        overflow-y: hidden;
-        padding: 5px;
-        gap: 5px;
+        flex-direction: column; /* FIX: Tetap vertikal */
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 10px; /* FIX: Beri padding di container */
+        gap: 10px; /* FIX: Beri jarak antar item */
     }
     .chat-session-item {
-        flex-shrink: 0; /* Jangan ciutkan item */
-        width: 120px; /* Lebar tetap */
-        flex-direction: column;
-        gap: 5px;
-        padding: 10px;
+        flex-shrink: 1; 
+        width: auto; 
+        flex-direction: row; 
+        gap: 15px;
+        padding: 15px 20px;
+        
+        /* FIX: Tambahan override untuk style kartu */
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border-color);
     }
 }/* --- CSS Utama Jendela Chat Mengambang --- */
 .floating-chat-container {
@@ -1302,6 +1308,28 @@
 }
 /* Hapus rule yang menyembunyikan tombol di pesan admin */
 /* .admin-message .chat-delete-btn { display: none; } */
+/* --- Styles for Etalase View --- */
+        /* Sembunyikan H1 dan Tombol Back, tapi TAMPILKAN tombol actions (Tambah, etc) */
+        #etalase-view #stok-akun-management-view > .view-header h1,
+        #etalase-view #stok-kredensial-management-view > .view-header h1,
+        #etalase-view #stok-akun-management-view > .view-header .back-to-menu-btn,
+        #etalase-view #stok-kredensial-management-view > .view-header .back-to-menu-btn {
+            display: none;
+        }
+        /* Atur ulang header agar tombol 'actions' tetap terlihat rapi */
+        #etalase-view #stok-akun-management-view > .view-header,
+        #etalase-view #stok-kredensial-management-view > .view-header {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            justify-content: flex-end; /* Dorong tombol 'actions' ke kanan */
+        }
+
+        #etalase-view #stok-akun-management-view,
+        #etalase-view #stok-kredensial-management-view {
+            display: block; /* HAPUS !important agar JS bisa override */
+        }
+
 /* --- End of Live Chat View Styles --- */
 
 /* Quick OTP Toggle on Menu */
@@ -1399,8 +1427,8 @@
             <i class="fas fa-headset"></i> 
             <span>Live Chat</span> 
         </button>
-                    <button class="menu-grid-button menu-stok-penawaran" data-view="stokAkun"> <i class="fas fa-archive"></i> <span>Stok Penawaran</span> </button>
-                    <button class="menu-grid-button menu-stok-kredensial" data-view="stokKredensial"> <i class="fas fa-key"></i> <span>Stok Kredensial</span> </button>
+                    <button class="menu-grid-button" data-view="etalase" style="grid-column: span 3;"><i class="fas fa-store"></i> <span>Etalase Saya</span></button>
+
                     <button class="menu-grid-button menu-settings" data-view="settings"> <i class="fas fa-cogs"></i> <span>Settings</span> </button>
                 </div>
                  <div class="quick-settings-container">
@@ -1483,7 +1511,22 @@
                  <div class="spinner-overlay" id="transaction-spinner" style="display:none;"><div class="spinner"></div></div>
             </div>
             
-            <div id="stok-akun-management-view" style="display: none;">
+                        </div><div id="etalase-view" style="display: none;">
+                <header class="view-header">
+                    <button class="action-button btn-secondary back-to-menu-btn"><i class="fas fa-arrow-left"></i> Menu</button>
+                    <h1>Etalase Saya</h1>
+                    <div class="actions">
+                        <button id="refresh-etalase-btn" class="action-button btn-primary"> <i class="fas fa-sync-alt"></i> Refresh</button>
+                    </div>
+                </header>
+                <div class="controls-container">
+                    <div class="filter-buttons" id="etalase-filters">
+                        <button class="filter-btn active" data-etalase-view="kredensial"><i class="fas fa-key"></i> Stok Kredensial</button>
+                        <button class="filter-btn" data-etalase-view="penawaran"><i class="fas fa-archive"></i> Stok Penawaran</button>
+                    </div>
+                </div>
+            
+<div id="stok-akun-management-view" style="display: none;">
                  <header class="view-header">
                     <button class="action-button btn-secondary back-to-menu-btn"><i class="fas fa-arrow-left"></i> Menu</button>
                     <h1>Manajemen Stok Penawaran</h1>
@@ -1517,8 +1560,7 @@
                 <div class="controls-container">
                     <div class="controls">
                         <div class="filter-buttons" id="stok-kredensial-filters">
-                            <button class="filter-btn active" data-filter="all">Semua Kredensial</button>
-                            <button class="filter-btn" data-filter="available">Tersedia</button>
+                            <button class="filter-btn active" data-filter="available">Tersedia</button>
                             <button class="filter-btn" data-filter="used">Terpakai</button>
                         </div>
                          <button id="refresh-stok-kredensial-btn" class="action-button btn-primary"> <i class="fas fa-sync-alt"></i> Refresh</button>
@@ -1528,6 +1570,8 @@
                 </div>
                 <div class="spinner-overlay" id="stok-kredensial-spinner" style="display:none;"><div class="spinner"></div></div>
             </div>
+
+            </div> 
 
             <div id="rekap-view" style="display: none;">
                 <header class="view-header">
@@ -2096,7 +2140,8 @@
                 stokAkun: document.getElementById('stok-akun-management-view'),
                 stokKredensial: document.getElementById('stok-kredensial-management-view'),
                 settings: document.getElementById('settings-view'),
-                rekap: document.getElementById('rekap-view')
+                rekap: document.getElementById('rekap-view'),
+                etalase: document.getElementById('etalase-view') // <-- TAMBAHKAN ETALASE
 , // <-- Pastikan ada koma di baris sebelumnya
             liveChat: document.getElementById('live-chat-view') // <-- TAMBAHKAN INI
             }
@@ -2131,10 +2176,20 @@
             
             if (viewName === 'users') await fetchUsers();
             else if (viewName === 'transactions') await fetchAndRenderTransactions();
-            else if (viewName === 'stokAkun') await fetchStokAkun();
-            else if (viewName === 'stokKredensial') await fetchStokKredensial();
+            // else if (viewName === 'stokAkun') await fetchStokAkun(); // Dinonaktifkan, di-handle Etalase
+
+            // else if (viewName === 'stokKredensial') await fetchStokKredensial(); // Dinonaktifkan, di-handle Etalase
+
             else if (viewName === 'settings') await loadAndDisplaySettings();
             else if (viewName === 'rekap') await fetchAndRenderRekap('all');
+            else if (viewName === 'etalase') {
+                // Default ke kredensial
+                document.getElementById('stok-kredensial-management-view').style.display = 'block';
+                document.getElementById('stok-akun-management-view').style.display = 'none';
+                document.querySelector('#etalase-filters .filter-btn[data-etalase-view="kredensial"]').classList.add('active');
+                document.querySelector('#etalase-filters .filter-btn[data-etalase-view="penawaran"]').classList.remove('active');
+                await fetchStokKredensial(); // Muat data default
+            }
 else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
         loadChatSessions(); // Panggil fungsi untuk memuat daftar chat
     }
@@ -2998,7 +3053,7 @@ else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
                 const q = query(collection(db, "stokKredensial"), orderBy("createdAt", "desc"));
                 const querySnapshot = await getDocs(q);
                 allStokKredensial = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderStokKredensialCards('all');
+                renderStokKredensialCards('available');
             } catch (error) {
                 console.error("Error fetching stok kredensial:", error);
                 showToast('Gagal mengambil data kredensial.', 'error');
@@ -3932,6 +3987,35 @@ const handleClearChat = (sessionId) => {
             document.getElementById('refresh-transactions-btn').addEventListener('click', fetchAndRenderTransactions);
             document.getElementById('refresh-stok-akun-btn').addEventListener('click', fetchStokAkun);
             document.getElementById('refresh-stok-kredensial-btn').addEventListener('click', fetchStokKredensial);
+
+            // --- ETALASE VIEW LISTENERS ---
+            document.getElementById('etalase-filters').addEventListener('click', (e) => {
+                if (e.target.classList.contains('filter-btn')) {
+                    document.querySelectorAll('#etalase-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    const viewToShow = e.target.dataset.etalaseView;
+                    if (viewToShow === 'kredensial') {
+                        document.getElementById('stok-kredensial-management-view').style.display = 'block';
+                        document.getElementById('stok-akun-management-view').style.display = 'none';
+                        fetchStokKredensial();
+                    } else {
+                        document.getElementById('stok-kredensial-management-view').style.display = 'none';
+                        document.getElementById('stok-akun-management-view').style.display = 'block';
+                        fetchStokAkun();
+                    }
+                }
+            });
+    
+            document.getElementById('refresh-etalase-btn').addEventListener('click', () => {
+                const activeFilter = document.querySelector('#etalase-filters .filter-btn.active').dataset.etalaseView;
+                if (activeFilter === 'kredensial') {
+                    fetchStokKredensial();
+                } else {
+                    fetchStokAkun();
+                }
+            });
+
             document.getElementById('reset-rekap-btn').addEventListener('click', handleResetRekap);
             
             document.getElementById('add-user-btn').addEventListener('click', () => dom.addUserModal.style.display = 'flex');
