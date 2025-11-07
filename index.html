@@ -1592,6 +1592,7 @@ async function handleGoogleNewUserSubmit(event) {
         const newUserData = {
             username: username,
             email: authUser.email,
+            isGoogleLinked: true,
             password: finalPassword,
             whatsapp: whatsapp,
             profilePictureBase64: profileBase64,
@@ -1660,12 +1661,12 @@ async function handleLinkGoogleAccount() {
         const userRef = doc(db, "users", loggedInUser.docId);
         await updateDoc(userRef, {
             email: googleEmail,
-            password: "google_login" // Tandai sebagai akun yang terhubung Google
+            isGoogleLinked: true // Tandai sebagai akun yang terhubung Google
         });
 
         // Perbarui data lokal
         loggedInUser.email = googleEmail;
-        loggedInUser.password = "google_login";
+        loggedInUser.isGoogleLinked = true;
 
         showToast("Akun Google berhasil ditautkan!", "success");
         displayMyAccountInfo(); // Muat ulang info akun untuk menyembunyikan tombol
@@ -2478,7 +2479,7 @@ dom.profileModal.currentImage.src = loggedInUser.profilePictureBase64 || 'https:
 
             // Logika Tautkan Akun Google
             const linkGoogleBtn = document.getElementById('link-google-btn');
-            if (loggedInUser.password === 'google_login') {
+            if (loggedInUser.isGoogleLinked === true || loggedInUser.password === 'google_login') {
                 linkGoogleBtn.style.display = 'none'; // Sembunyikan jika sudah tertaut
             } else {
                 linkGoogleBtn.style.display = 'flex'; // Tampilkan jika login manual
