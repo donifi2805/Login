@@ -126,6 +126,26 @@
 .login-header h1{font-size:1.8em;font-weight:900;color:transparent;background:linear-gradient(45deg,#3b82f6,#06b6d4,#22c55e);-webkit-background-clip:text;background-clip:text;text-shadow:0 2px 8px rgba(0,0,0,0.3)}
 #login-container h2 {font-size: 1.5em; text-align: center;}
 #login-container .subtitle {text-align: center;}
+
+/* --- Redesign Login Split Style --- */
+
+/* FIX: Mengatasi konflik tombol Pendaftaran/Lupa Sandi agar halaman bisa berganti */
+#login-container.login-split-layout[style*="none"] { display: none !important; }
+
+#login-container.login-split-layout { display: flex !important; flex-direction: row; width: 100%; max-width: 800px !important; padding: 0 !important; overflow: hidden; background-color: rgba(31, 41, 55, 0.95); border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+.login-left-panel { width: 55%; padding: 40px 30px; display: flex; flex-direction: column; justify-content: center; }
+.login-right-panel { width: 45%; background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(6, 182, 212, 0.9)), url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhI8j1iJeFgIagFemTu0q3_yxUph06s4T6K03apxFf11HmQagnDM-PkaUNlV-VK0k2O-Mj93P4cnVZSWjf6jbmt1imTeAP_woH6aUMEsp9YgyMzCdHNoixyuWtvUf9pmhXlYIvwVt1Tb9CuSFi-Jk6D3pB6-ggMzhKMGkpoJD9ZT-d5T3LcJkW4d_mfGLA/s1600/1750238969835.jpg'); background-size: cover; background-position: center; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 30px; position: relative; }
+.login-right-panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.2); }
+.login-right-panel > * { position: relative; z-index: 2; }
+.login-right-panel h2 { color: white; margin-bottom: 10px; font-size: 1.6em; font-weight: 800; }
+.login-right-panel p { color: rgba(255,255,255,0.9); font-size: 0.9em; line-height: 1.5; }
+.google-login-separator { display: flex; align-items: center; margin: 20px 0 15px; color: var(--text-secondary); font-size: 0.8em; }
+.google-login-separator::before, .google-login-separator::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
+.google-login-separator span { padding: 0 10px; font-weight: 500; }
+.btn-google-custom { background-color: #fff !important; color: #444 !important; border: 1px solid #ccc !important; font-weight: 600 !important; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s; }
+.btn-google-custom:hover { background-color: #f1f1f1 !important; transform: translateY(-1px); }
+@media (max-width: 768px) { #login-container.login-split-layout { flex-direction: column-reverse; max-width: 400px !important; } .login-left-panel, .login-right-panel { width: 100%; } .login-right-panel { padding: 25px; min-height: 160px; } }
+
 /* --- End: Login Page Redesign --- */
 
 #register-container,#forgot-password-container{display:none}
@@ -242,7 +262,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 .stok-akun-card .info-item{background-color:rgba(0,0,0,0.2);padding:4px 5px;border-radius:4px}.stok-akun-card .info-label{display:flex;align-items:center;gap:4px;font-size:.7em;color:var(--text-secondary);margin-bottom:2px}.stok-akun-card .info-label i{font-size:1.2em}
 .stok-akun-card .info-value{font-size:.8em;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.stok-akun-card .price .info-value{color:var(--accent-green);font-size:1.1em}
 .stok-akun-card .rating-stars { color: var(--premium-gold); font-size: 1.1em; }
-.stok-akun-card .rating-stars .ph-star { color: var(--border-color); } .stok-akun-card .rating-stars .ph-fill { color: var(--premium-gold); }
+.stok-akun-card .rating-stars .ph-star { color: var(--border-color); }
 .stok-akun-card .unlocked-grid{display:flex;flex-direction:column;gap:5px}.stok-akun-card .unlocked-item{display:flex;align-items:center;background-color:var(--bg-tertiary);padding:5px 6px;border-radius:4px}.stok-akun-card .unlocked-label{font-size:.8em;color:var(--text-secondary);flex-basis:50px}.stok-akun-card .unlocked-value{font-family:monospace;font-size:.9em;font-weight:600;flex-grow:1}.stok-akun-card .copy-icon{color:var(--accent-blue);cursor:pointer;margin-left:auto;font-size:1.1em}
 .stok-akun-card .action-button {font-size: 0.8em; padding: 5px; margin-top: auto;}
 .stok-akun-card .action-button:disabled { background-color: var(--bg-tertiary); cursor: not-allowed; opacity: 0.6; }
@@ -668,38 +688,53 @@ img.chat-message-image.admin { align-self: flex-start; }
     <h2>Dalam Perbaikan</h2>
     <p class=subtitle id="maintenance-message">Maaf, situs sedang dalam perbaikan rutin. Silakan coba lagi nanti.</p>
 </div>
-<div id=login-container>
-<div class=login-header>
-<h1>Bussid&Trucksid SHOP<span class=subtitle-brand>by@donitata1717®</span></h1>
-</div>
-<h2>Selamat Datang Kembali</h2>
-<p class=subtitle>Masuk untuk melanjutkan ke toko.</p>
-<form id=login-form>
-<div class=input-group>
-<i class="ph-bold ph-user input-icon"></i>
-<input type=text id=username class=input-field placeholder="Nama Pengguna" required>
-</div>
-<div class=input-group>
-<i class="ph-bold ph-lock-key input-icon"></i>
-<input type=password id=password class="input-field password-input" placeholder="Kata Sandi" required>
-<span class=password-toggle id=login-password-toggle></span>
-</div>
-<button type=submit id=login-btn class="action-button btn-primary">Masuk</button>
-</form>
-<p class=switch-link style="text-align:center; margin-top:15px; margin-bottom:15px;">— atau —</p>
-<button type="button" id="google-login-btn" class="action-button btn-secondary" style="background-color: #fff; color: #4285F4; display: flex; align-items: center; justify-content: center; gap: 10px; line-height: 1; border: 1px solid #ccc;">
-    <i class="ph-fill ph-google-logo" style="font-size: 1.2em;"></i>
-    <span>Masuk dengan Google</span>
-</button>
-<ul class=promo-list>
-<li><i class="ph-bold ph-star"></i><span><b>Website No.1</b> Topup & Jual Beli Akun Bussid & Trucksid terpercaya sejak 2019.</span></li>
-<li><i class="ph-bold ph-shield-check"></i><span><b>100% Bergaransi</b> uang kembali jika ada masalah.</span></li>
-<li><i class="ph-bold ph-users-three"></i><span><b>Pelayanan Penuh</b> oleh admin langsung, tanpa perantara, 24 jam.</span></li>
-<li><i class="ph-bold ph-rocket-launch"></i><span><b>Langganan terjangkau</b> untuk kebebasan topup instan tanpa delay.</span></li>
-</ul>
-<p class=switch-link> Belum punya akun? <a href=# id=show-register-link>Buat akun baru</a></p>
-<p class=switch-link><a href=# id=show-forgot-password-link>Lupa kata sandi</a></p>
-<p class="switch-link admin-link">bukan user? <a href=paneladmin.html>Login sebagai admin</a></p>
+<div id="login-container" class="login-split-layout">
+    
+    <div class="login-left-panel">
+        <div class="login-header" style="text-align: left; margin-bottom: 20px; border:none;">
+            <h1 style="font-size: 1.8em; margin-bottom: 5px; background: none; -webkit-text-fill-color: initial; color: var(--text-primary); text-shadow: none;">Masuk</h1>
+            <p class="subtitle" style="text-align: left; margin: 0;">Selamat datang kembali! Silakan login.</p>
+        </div>
+        
+        <form id="login-form">
+            <div class="input-group">
+                <i class="ph-bold ph-user input-icon"></i>
+                <input type="text" id="username" class="input-field" placeholder="Username" required>
+            </div>
+            <div class="input-group">
+                <i class="ph-bold ph-lock-key input-icon"></i>
+                <input type="password" id="password" class="input-field password-input" placeholder="Kata Sandi" required>
+                <span class="password-toggle" id="login-password-toggle"></span>
+            </div>
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                <a href="#" id="show-forgot-password-link" style="font-size: 0.8em; color: var(--accent-blue); text-decoration: none; font-weight: 600;">Lupa Sandi?</a>
+            </div>
+            <button type="submit" id="login-btn" class="action-button btn-primary">Masuk Sekarang</button>
+        </form>
+
+        <div class="google-login-separator"><span>Masuk dengan Google</span></div>
+        
+        <button type="button" id="google-login-btn" class="action-button btn-google-custom">
+            <i class="ph-fill ph-google-logo" style="color: #DB4437; font-size: 1.3em;"></i>
+            <span>Akun Google</span>
+        </button>
+
+        <p class="switch-link" style="margin-top: 20px; text-align: center;">
+            Belum punya akun? <a href="#" id="show-register-link">Daftar</a>
+        </p>
+        <p class="switch-link admin-link" style="text-align: center;"><a href="paneladmin.html">Login Admin</a></p>
+    </div>
+    
+    
+    <div class="login-right-panel">
+        <img src="https://bussimulator.id/wp-content/uploads/2017/03/logo-wide-super-small.png" alt="Logo" style="width: 60px; height: auto; margin-bottom: 15px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+        <h2>Bussid & Trucksid<br>SHOP</h2>
+        <p>Solusi Top Up & Jual Beli Akun Game Terpercaya, Aman, dan Bergaransi.</p>
+        <div style="margin-top: 25px; opacity: 0.8; font-size: 0.8em;">
+             <i class="ph-fill ph-shield-check" style="font-size: 2em; margin-bottom: 5px; display: block;"></i>
+             <span>100% Amanah</span>
+        </div>
+    </div>
 </div>
 <div id=register-container>
 <h2>Buat Akun Baru</h2>
