@@ -317,8 +317,8 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 /* Grid baru yang digabung */
 #stok-akun-grid-merged {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 2 kolom di HP */
-    gap: 8px;
+    grid-template-columns: repeat(3, 1fr); /* 3 kolom di HP */
+    gap: 4px;
 }
 /* 3 kolom di layar lebih besar */
 @media screen and (min-width: 500px) {
@@ -344,7 +344,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 .stok-akun-card .info-grid{display:grid;grid-template-columns:repeat(2, 1fr);gap:4px}
 .stok-akun-card .info-item{background-color:rgba(0,0,0,0.2);padding:4px 5px;border-radius:4px}.stok-akun-card .info-label{display:flex;align-items:center;gap:4px;font-size:.7em;color:var(--text-secondary);margin-bottom:2px}.stok-akun-card .info-label i{font-size:1.2em}
 .stok-akun-card .info-value{font-size:.8em;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.stok-akun-card .price .info-value{color:var(--accent-green);font-size:1.1em}
-.stok-akun-card .rating-stars { color: var(--premium-gold); font-size: 1.1em; }
+.stok-akun-card .rating-stars { color: #FFD700; font-size: 1.1em; }
 .stok-akun-card .rating-stars .ph-star { color: var(--border-color); }
 .stok-akun-card .unlocked-grid{display:flex;flex-direction:column;gap:5px}.stok-akun-card .unlocked-item{display:flex;align-items:center;background-color:var(--bg-tertiary);padding:5px 6px;border-radius:4px}.stok-akun-card .unlocked-label{font-size:.8em;color:var(--text-secondary);flex-basis:50px}.stok-akun-card .unlocked-value{font-family:monospace;font-size:.9em;font-weight:600;flex-grow:1}.stok-akun-card .copy-icon{color:var(--accent-blue);cursor:pointer;margin-left:auto;font-size:1.1em}
 .stok-akun-card .action-button {font-size: 0.8em; padding: 5px; margin-top: auto;}
@@ -3780,9 +3780,13 @@ function setupStokAkunListeners() {
                         <div class="stok-habis-badge">HABIS</div>
                         <div class="stok-card-header">
                             <img src="${gameLogo}" alt="${gameType} Logo" class="stok-card-logo">
-                            <h3 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${usernameTampilan || gameType}">${usernameTampilan || gameType}</h3>
+                            <h3 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${gameType}">${gameType}</h3>
                         </div>
                         <div class="info-grid">
+                            <div class="info-item" style="grid-column: 1 / -1;">
+                                <span class="info-label"><i class="ph ph-user"></i> Username</span>
+                                <span class="info-value">${usernameTampilan || '-'}</span>
+                            </div>
                             <div class="info-item" style="grid-column: 1 / -1;">
                                 <span class="info-label"><i class="ph ph-coins"></i> Uang Game (UB)</span>
                                 <span class="info-value">${(jumlahUB || 0).toLocaleString('id-ID')}</span>
@@ -3800,7 +3804,14 @@ function setupStokAkunListeners() {
                                 <div class="info-value rating-stars">${ratingStarsHTML}</div>
                             </div>
                         </div>
-                        <div class="package-info">Paket Akun ${gameType} + Login via ${loginType}. Harga:</div>
+                        <div class="package-info">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+        <strong style="color:var(--accent-cyan);">${gameType}</strong>
+        <span style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; font-size:0.9em;">${loginType}</span>
+    </div>
+    ${detailInfo ? `<div style="border-top:1px dashed var(--border-color); margin:4px 0; padding-top:4px; color:var(--text-primary);">${detailInfo}</div>` : `<div style="border-top:1px dashed var(--border-color); margin:4px 0; padding-top:4px; color:var(--text-secondary); font-style:italic;">Akun siap pakai, garansi amanah.</div>`}
+</div>
+<div style="text-align:right; font-size:0.75em; color:var(--text-secondary); margin-top:2px;">Harga:</div>
                         ${priceHTML}
                         ${buttonHTML}
                     </div>`;
