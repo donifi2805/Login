@@ -146,6 +146,89 @@
 .btn-google-custom:hover { background-color: #f1f1f1 !important; transform: translateY(-1px); }
 @media (max-width: 768px) { #login-container.login-split-layout { flex-direction: column-reverse; max-width: 400px !important; } .login-left-panel, .login-right-panel { width: 100%; } .login-right-panel { padding: 25px; min-height: 160px; } }
 
+
+/* --- NEW: Modern Login Animations & Styles --- */
+@keyframes floatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes gradientText { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+@keyframes inputFocus { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2); } }
+
+#login-container.login-split-layout {
+    background-color: rgba(31, 41, 55, 0.7) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Input Styling Update */
+.login-left-panel .input-field {
+    background: rgba(17, 24, 39, 0.6);
+    border: 1px solid rgba(75, 85, 99, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.login-left-panel .input-field:focus {
+    background: rgba(17, 24, 39, 0.9);
+    border-color: var(--accent-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
+}
+.login-left-panel .input-group:focus-within .input-icon {
+    color: var(--accent-cyan);
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Button Login Animated */
+#login-btn {
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan), var(--accent-blue));
+    background-size: 200% auto;
+    animation: gradientText 3s linear infinite;
+    border: none;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+#login-btn:hover {
+    box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Right Panel Enhanced */
+.login-right-panel {
+    position: relative;
+    overflow: hidden;
+    background: none !important; /* Reset default bg */
+}
+.login-right-panel::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhI8j1iJeFgIagFemTu0q3_yxUph06s4T6K03apxFf11HmQagnDM-PkaUNlV-VK0k2O-Mj93P4cnVZSWjf6jbmt1imTeAP_woH6aUMEsp9YgyMzCdHNoixyuWtvUf9pmhXlYIvwVt1Tb9CuSFi-Jk6D3pB6-ggMzhKMGkpoJD9ZT-d5T3LcJkW4d_mfGLA/s1600/1750238969835.jpg') center/cover;
+    filter: blur(2px) brightness(0.6);
+    z-index: 0;
+}
+.login-right-panel::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(6, 182, 212, 0.4));
+    mix-blend-mode: overlay;
+    z-index: 1;
+}
+.login-right-panel > * {
+    position: relative;
+    z-index: 2;
+}
+.floating-logo {
+    width: 70px !important; 
+    animation: floatY 4s ease-in-out infinite;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3)) !important;
+}
+.trust-badge {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    padding: 8px 16px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 25px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
 /* --- End: Login Page Redesign --- */
 
 #register-container,#forgot-password-container{display:none}
@@ -726,14 +809,15 @@ img.chat-message-image.admin { align-self: flex-start; }
     </div>
     
     
-    <div class="login-right-panel">
-        <img src="https://bussimulator.id/wp-content/uploads/2017/03/logo-wide-super-small.png" alt="Logo" style="width: 60px; height: auto; margin-bottom: 15px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
-        <h2>Bussid & Trucksid<br>SHOP</h2>
-        <p>Solusi Top Up & Jual Beli Akun Game Terpercaya, Aman, dan Bergaransi.</p>
-        <div style="margin-top: 25px; opacity: 0.8; font-size: 0.8em;">
-             <i class="ph-fill ph-shield-check" style="font-size: 2em; margin-bottom: 5px; display: block;"></i>
-             <span>100% Amanah</span>
+        <div class="login-right-panel">
+        <img src="https://bussimulator.id/wp-content/uploads/2017/03/logo-wide-super-small.png" alt="Logo" class="floating-logo" style="margin-bottom: 15px;">
+        <h2 style="font-size: 1.8em; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">Bussid & Trucksid<br>SHOP</h2>
+        <p style="font-weight: 500; opacity: 0.95;">Portal Top Up & Jual Beli Akun Game Terpercaya #1 di Indonesia.</p>
+        <div class="trust-badge">
+             <i class="ph-fill ph-shield-check" style="font-size: 1.4em; color: #4ade80;"></i>
+             <span style="font-weight: 600; font-size: 0.9em; letter-spacing: 0.5px;">Garansi 100% Amanah</span>
         </div>
+    </div>
     </div>
 </div>
 <div id=register-container>
