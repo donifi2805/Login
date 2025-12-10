@@ -1134,10 +1134,17 @@
     border-radius: 4px;
     transition: all 0.2s ease;
 }
-.chat-control-btn:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.2);
-}
+        .chat-control-btn:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Lightbox Styles */
+        .lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 10005; }
+        .lightbox-content { position: relative; max-width: 90%; max-height: 90%; display: flex; justify-content: center; align-items: center; }
+        .lightbox-content img { max-width: 100%; max-height: 80vh; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.5); object-fit: contain; }
+        .lightbox-close { position: absolute; top: 20px; right: 30px; font-size: 3em; color: white; cursor: pointer; font-weight: bold; transition: color 0.3s; z-index: 10006; line-height: 1;}
+        .lightbox-close:hover { color: var(--accent-primary); }
 
 /* Styling untuk pesan admin/user di jendela mengambang */
 .chat-messages-admin-panel {
@@ -1477,7 +1484,8 @@
                 <button class="filter-btn active" data-filter="USER"><i class="fas fa-user"></i> User</button>
                 <button class="filter-btn" data-filter="Langganan"><i class="fas fa-star"></i> Langganan</button>
                 <button class="filter-btn" data-filter="PREMIUM"><i class="fas fa-gem"></i> Premium</button>
-                <button class="filter-btn" data-filter="Admin"><i class="fas fa-shield-halved"></i> Admin</button>
+                                <button class="filter-btn" data-filter="Admin"><i class="fas fa-shield-halved"></i> Admin</button>
+                <button class="filter-btn" data-filter="BANNED" style="color: var(--danger-primary);"><i class="fas fa-ban"></i> Blokir</button>
             </div>
 <div class="search-bar"> <i class="fas fa-search"></i> <input type="text" id="search-input" class="input-field" placeholder="Search by username, whatsapp, device ID..."> </div>
                         <button id="refresh-users-btn" class="action-button btn-primary"> <i class="fas fa-sync-alt"></i> Refresh</button>
@@ -2035,7 +2043,29 @@
         </div>
     </div>
 
+        <div id="ban-reason-modal" class="modal" style="z-index: 2000;">
+        <div class="modal-content" style="max-width: 400px;">
+            <h2><i class="fas fa-ban" style="color: var(--danger-primary);"></i> Blokir User</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 15px;">Masukkan alasan pemblokiran untuk user ini:</p>
+            <div class="input-group">
+                <textarea id="ban-reason-input" class="input-field" rows="4" placeholder="Contoh: Melanggar aturan spam..." required></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="action-button btn-secondary cancel-modal-btn">Batal</button>
+                <button type="button" id="confirm-ban-btn" class="action-button btn-danger">Konfirmasi Blokir</button>
+            </div>
+        </div>
+    </div>
+
+        <div id="admin-image-lightbox" class="lightbox-overlay">
+        <span class="lightbox-close" id="admin-close-lightbox-btn">&times;</span>
+        <div class="lightbox-content">
+            <img src="" alt="Full Size" id="admin-lightbox-image">
+        </div>
+    </div>
+
     <div id="toast-container"></div>
+<div id="toast-container"></div>
 <div id="toast-container"></div>
 <div id="floating-chat-window" class="floating-chat-container">
     <div id="floating-chat-header">
@@ -2078,7 +2108,7 @@
     
 <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, getDoc, deleteField, orderBy, query, onSnapshot, writeBatch, where, limit, runTransaction } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, addDoc, serverTimestamp, setDoc, getDoc, deleteField, orderBy, query, onSnapshot, writeBatch, where, limit, runTransaction, Timestamp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
         import { getDatabase, ref, onValue, onChildChanged, onChildRemoved, push, serverTimestamp as dbServerTimestamp, set, remove, get } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
 
@@ -2106,7 +2136,8 @@
         const rowsPerPage = 10;
         let appSettings = {};
         let unsubscribeListeners = []; // Untuk menyimpan semua listener realtime
-        let isFloatingModalShown = false;
+                let isFloatingModalShown = false;
+        let currentBanTargetId = null;
 
 
         // DOM element references
@@ -2145,6 +2176,11 @@
 , // <-- Pastikan ada koma di baris sebelumnya
             liveChat: document.getElementById('live-chat-view') // <-- TAMBAHKAN INI
             }
+        };
+
+                window.openAdminImageLightbox = (src) => {
+            document.getElementById('admin-lightbox-image').src = src;
+            document.getElementById('admin-image-lightbox').style.display = 'flex';
         };
 
         const showToast = (message, type = 'success') => {
@@ -2306,16 +2342,26 @@ else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
             // 2. Ambil filter tipe akun
             const accountTypeFilter = document.querySelector('#user-account-type-filters .filter-btn.active').dataset.filter;
 
-            displayedUsers = allUsers.filter(user => {
-                // Cek filter tipe akun
-                const typeMatch = (accountTypeFilter === 'all') || (user.accountType || 'USER') === accountTypeFilter;
+                        displayedUsers = allUsers.filter(user => {
+                const isBanned = user.isBanned === true;
+                let typeMatch = false;
+
+                // Logika Filter Khusus Banned
+                if (accountTypeFilter === 'BANNED') {
+                    typeMatch = isBanned;
+                } else {
+                    // Filter normal: Sembunyikan user banned, dan cek tipe akun
+                    if (!isBanned) {
+                        typeMatch = (accountTypeFilter === 'all') || (user.accountType || 'USER') === accountTypeFilter;
+                    }
+                }
                 
                 // Cek filter search
                 const searchMatch = (user.username?.toLowerCase() || '').includes(searchTerm) || 
                                     (user.whatsapp?.toString() || '').includes(searchTerm) || 
                                     (user.device_id?.toLowerCase() || '').includes(searchTerm);
                 
-                return typeMatch && searchMatch; // Keduanya harus benar
+                return typeMatch && searchMatch;
             });
             
             renderUserCards();
@@ -2357,7 +2403,14 @@ else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
                     pendingIndicatorHTML = '<i class="fas fa-bell pending-indicator" title="Pending Transaction"></i>';
                 }
                 
-                const isBanned = user.isBanned || false;
+                                const isBanned = user.isBanned || false;
+
+                // Format Tanggal Daftar
+                let joinedDate = 'Tidak diketahui';
+                if (user.createdAt) {
+                    const date = user.createdAt.seconds ? new Date(user.createdAt.seconds * 1000) : new Date(user.createdAt);
+                    joinedDate = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                }
 
                 const cardHTML = `
                     <div class="user-profile-card">
@@ -2366,8 +2419,15 @@ else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
                                 <h3>${user.username || ''} ${pendingIndicatorHTML}</h3>
                                 <span class="status-badge ${statusBadgeClass}">${accountType}</span>
                             </div>
+                            <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; border: 2px solid var(--accent-primary); flex-shrink: 0; background: var(--bg-tertiary); box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer;" onclick="openAdminImageLightbox('${user.profilePictureBase64 || 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjD-D-aJ8x_Wu0k_4yL-h2Jb0jQ1wG-m2a3G1zB3n2a3H1j2B1H1G2B1h1g-h2j_b0jQ1wG-m2a3G1zB3n2a3/s1600/avatar.png'}')">
+                                <img src="${user.profilePictureBase64 || 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjD-D-aJ8x_Wu0k_4yL-h2Jb0jQ1wG-m2a3G1zB3n2a3H1j2B1H1G2B1h1g-h2j_b0jQ1wG-m2a3G1zB3n2a3/s1600/avatar.png'}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
                         </div>
                         <div class="card-info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Terdaftar</span>
+                                <span class="info-value"><span>${joinedDate}</span></span>
+                            </div>
                             <div class="info-item">
                                 <span class="info-label">Saldo / Sisa Aktif</span>
                                 <span class="info-value"><span>${saldoOrMasaAktifHTML}</span></span>
@@ -2398,7 +2458,8 @@ else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
                         </div>
                         <div class="card-actions">
                             <button class="action-button btn-primary edit-user-btn" data-doc-id="${user.id}"><i class="fas fa-edit"></i> Edit</button>
-                            <button class="action-button btn-start-chat" data-action="start-chat" data-username="${user.username}"><i class="fas fa-comment-dots"></i> Chat</button>
+                                                        <button class="action-button btn-start-chat" data-action="start-chat" data-username="${user.username}"><i class="fas fa-comment-dots"></i> Chat</button>
+                            <button class="action-button" style="background-color: #10b981;" onclick="handleSendWhatsApp('${user.whatsapp}')"><i class="fab fa-whatsapp"></i> WA</button>
 <button class="action-button btn-danger delete-user-btn" data-doc-id="${user.id}" data-username="${user.username}"><i class="fas fa-trash"></i> Delete</button>
                         </div>
                     </div>
@@ -2411,104 +2472,203 @@ else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
         };
 
         // --- TRANSACTION MANAGEMENT FUNCTIONS ---
-        const fetchAndRenderTransactions = async () => {
-            dom.transactionSpinner.style.display = 'flex';
-            try {
-                const usersQuery = await getDocs(collection(db, "users"));
-                allUsers = usersQuery.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            // --- MODIFIKASI: Unified Transaction Logic ---
+    const fetchAndRenderTransactions = async () => {
+        dom.transactionSpinner.style.display = 'flex';
+        try {
+            // 1. Ambil Transaksi Aktif (Pending) dari Users
+            const usersQuery = await getDocs(collection(db, "users"));
+            // FIX: Update variabel global allUsers agar tombol aksi bisa menemukan data user
+            allUsers = usersQuery.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            const activeItems = [];
+                        usersQuery.forEach(doc => {
+                const u = { id: doc.id, ...doc.data() };
+                // PERBAIKAN KRUSIAL: Prioritaskan transactionTimestamp. Jika tidak ada (transaksi lama/error), gunakan waktu sekarang (agar transaksi baru tidak dianggap Expired).
+                const timestamp = u.transactionTimestamp || Timestamp.now();
                 
-                renderTransactionCards();
-            } catch (error) {
-                console.error("Error fetching data for transactions:", error);
-                showToast('Error fetching transaction data.', 'error');
-            } finally {
-                dom.transactionSpinner.style.display = 'none';
-            }
-        };
+                if (u.pendingTransaction > 0) activeItems.push({...u, type: 'Top Up Saldo', amount: u.pendingTransaction, status: 'Pending', timestamp: timestamp, docId: doc.id});
+                else if (u.pendingSubscription) activeItems.push({...u, type: u.pendingSubscription.type, amount: u.pendingSubscription.uniqueAmount, status: 'Pending', timestamp: timestamp, docId: doc.id});
+                else if (u.pendingAkunPurchase) activeItems.push({...u, type: 'Beli Akun', amount: u.pendingAkunPurchase.uniqueAmount, status: 'Pending', timestamp: timestamp, docId: doc.id});
+                else if (u.akunJualStatus && u.akunJualStatus.status === 'Di Proses') activeItems.push({...u, type: 'Jual Akun', amount: 0, status: 'Pending', timestamp: timestamp, docId: doc.id});
+            });
 
-        const renderTransactionCards = () => {
-            dom.pendingTransactionContainer.innerHTML = '';
+            // 2. Ambil Riwayat (Sukses/Gagal/Cancel) - Limit 10
+            const historyItems = [];
+            // Mengambil 10 riwayat transaksi terbaru dari semua koleksi riwayat
+            const topupHist = await getDocs(query(collection(db, "topup_history"), orderBy("timestamp", "desc"), limit(10)));
+            const purchHist = await getDocs(query(collection(db, "purchase_history"), orderBy("timestamp", "desc"), limit(10)));
             
-            // MODIFIED FILTER
-            const pendingUsers = allUsers.filter(user => 
-                (user.pendingTransaction && user.pendingTransaction > 0) || 
-                user.pendingSubscription || 
-                user.pendingAkunPurchase
-            );
-            const pendingAccountSales = allUsers.filter(user => user.akunJualStatus && user.akunJualStatus.status === 'Di Proses');
+            topupHist.forEach(d => historyItems.push({ ...d.data(), id: d.id, type: 'Top Up Saldo', status: d.data().status, isHistory: true, timestamp: d.data().timestamp, docId: d.id }));
+            purchHist.forEach(d => historyItems.push({ ...d.data(), id: d.id, type: d.data().game || 'Pembelian', amount: d.data().rpCost, status: d.data().status, isHistory: true, timestamp: d.data().timestamp, docId: d.id }));
 
-            let contentRendered = false;
-
-            if (pendingUsers.length > 0) {
-                contentRendered = true;
-                dom.pendingTransactionContainer.innerHTML += `<h2 class="section-heading">Pending Top-ups, Subscriptions & Purchases</h2>`;
-                pendingUsers.forEach(user => {
-                    const cardHTML = createTransactionCardHTML(user);
-                    dom.pendingTransactionContainer.innerHTML += cardHTML;
-                });
-            }
+                        // 3. Gabung dengan Prioritas: Pending DULUAN, baru History
+            // Urutkan activeItems berdasarkan timestamp terbaru
+            activeItems.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
             
-            if (pendingAccountSales.length > 0) {
-                contentRendered = true;
-                dom.pendingTransactionContainer.innerHTML += `<h2 class="section-heading">Pending Penjualan Akun</h2>`;
-                pendingAccountSales.forEach(user => {
-                    const cardHTML = createTransactionCardHTML(user);
-                    dom.pendingTransactionContainer.innerHTML += cardHTML;
-                });
-            }
+            // Urutkan historyItems berdasarkan timestamp terbaru
+            historyItems.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
 
-            if (!contentRendered) {
-                dom.pendingTransactionContainer.innerHTML = '<p style="text-align:center; grid-column: 1 / -1;">No pending transactions.</p>';
-            }
+            // Gabungkan: Semua Active Items + History (sampai total 20 item agar tidak terlalu panjang)
+            const allTransactions = [...activeItems, ...historyItems].slice(0, 20);
 
-            addTransactionCardButtonListeners();
-        };
+            renderTransactionCards(allTransactions);
+        } catch (error) {
+            console.error("Error fetching transactions:", error);
+            showToast('Gagal memuat data transaksi.', 'error');
+        } finally {
+            dom.transactionSpinner.style.display = 'none';
+        }
+    };
+
+    const renderTransactionCards = (transactions) => {
+        dom.pendingTransactionContainer.innerHTML = '';
+        if (!transactions || transactions.length === 0) {
+            dom.pendingTransactionContainer.innerHTML = '<p style="text-align:center; grid-column: 1 / -1;">Tidak ada riwayat transaksi terbaru.</p>';
+            return;
+        }
         
-        const createTransactionCardHTML = (user) => {
-            const accountType = user.accountType || 'USER';
-            let statusBadgeClass = 'status-user';
-            let statusOrSaldoHTML = `<span class="info-label">Current Saldo</span><span class="info-value">Rp ${(user.saldo || 0).toLocaleString('id-ID')}</span>`;
-            
-            if (accountType === 'PREMIUM') { statusBadgeClass = 'status-premium'; statusOrSaldoHTML = ''; }
-            if (accountType === 'Langganan') { statusBadgeClass = 'status-langganan'; statusOrSaldoHTML = ''; }
-            
-            let transactionDetailsHTML = '';
-            let actionButtonsHTML = '';
-            
-            if (user.pendingSubscription) {
-                const sub = user.pendingSubscription;
-                transactionDetailsHTML = `<h4>Pending Subscription</h4><p class="transaction-amount">${sub.type} - Rp ${(sub.uniqueAmount || sub.amount).toLocaleString('id-ID')}</p>`;
-                actionButtonsHTML = `<button class="action-button btn-success" data-action="accept-sub" data-doc-id="${user.id}"><i class="fas fa-check"></i> Accept</button><button class="action-button btn-danger" data-action="reject-sub" data-doc-id="${user.id}"><i class="fas fa-times"></i> Reject</button>`;
-            } else if (user.pendingTransaction > 0) {
-                transactionDetailsHTML = `<h4>Pending Top-up</h4><p class="transaction-amount">Rp ${user.pendingTransaction.toLocaleString('id-ID')}</p>`;
-                actionButtonsHTML = `<button class="action-button btn-success" data-action="accept-topup" data-doc-id="${user.id}"><i class="fas fa-check"></i> Accept</button><button class="action-button btn-danger" data-action="reject-topup" data-doc-id="${user.id}"><i class="fas fa-times"></i> Reject</button>`;
-            } else if (user.pendingAkunPurchase) { // MODIFIED: ADDED THIS BLOCK
-                const purchase = user.pendingAkunPurchase;
-                transactionDetailsHTML = `
-                    <h4>Pending Beli Akun (QRIS)</h4>
-                    <p style="font-size: 0.9em; margin-bottom: 5px;">Paket: <strong>${purchase.usernameTampilan || 'N/A'}</strong></p>
-                    <p class="transaction-amount">Rp ${(purchase.uniqueAmount).toLocaleString('id-ID')}</p>
-                `;
-                actionButtonsHTML = `
-                    <button class="action-button btn-success" data-action="accept-purchase" data-doc-id="${user.id}"><i class="fas fa-check"></i> Accept Purchase</button>
-                    <button class="action-button btn-danger" data-action="reject-purchase" data-doc-id="${user.id}"><i class="fas fa-times"></i> Reject</button>
-                `;
-            } else if (user.akunJualStatus && user.akunJualStatus.status === 'Di Proses') {
-                const saleData = user.akunJualStatus;
-                const accountListHTML = saleData.accounts.map(acc => `<li>${acc}</li>`).join('');
-                transactionDetailsHTML = `<h4>Pending Penjualan Akun</h4><div style="font-size:1.1em; text-align:left; max-height: 80px; overflow-y:auto;"><ul style="padding-left: 20px; margin: 0;">${accountListHTML}</ul></div>`;
-                actionButtonsHTML = `<button class="action-button btn-success" data-action="accept-sale" data-doc-id="${user.id}"><i class="fas fa-check"></i> Terima</button><button class="action-button btn-danger" data-action="reject-sale" data-doc-id="${user.id}"><i class="fas fa-times"></i> Tolak</button>`;
-                statusOrSaldoHTML = ''; // Hide saldo for account sale
-            }
+        dom.pendingTransactionContainer.innerHTML += `<h2 class="section-heading">Riwayat & Pending Transaction (10 Terbaru)</h2>`;
+        
+        transactions.forEach(item => {
+            const cardHTML = createTransactionCardHTML(item);
+            dom.pendingTransactionContainer.innerHTML += cardHTML;
+        });
 
-            return `
-                <div class="transaction-card">
-                    <div class="card-header"><div class="user-title"><h3>${user.username}</h3><span class="status-badge ${statusBadgeClass}">${accountType}</span></div></div>
-                    <div class="card-info-grid"><div class="info-item"><span class="info-label">Email</span><span class="info-value"><span>${user.email || 'N/A'}</span></span></div><div class="info-item">${statusOrSaldoHTML}</div></div>
-                    <div class="transaction-details-section">${transactionDetailsHTML}</div>
-                    <div class="card-actions">${actionButtonsHTML}</div>
-                </div>`;
-        };
+        addTransactionCardButtonListeners();
+    };
+
+        
+            // --- FITUR KIRIM INVOICE ---
+    window.handleSendInvoice = (username, phone, amount, type) => {
+        if (!phone || phone === 'undefined') { showToast('Nomor WhatsApp tidak tersedia.', 'error'); return; }
+        
+        // Format nomor HP (08xx -> 628xx)
+        let cleanPhone = phone.toString().replace(/[^0-9]/g, '');
+        if (cleanPhone.startsWith('0')) cleanPhone = '62' + cleanPhone.slice(1);
+        
+        // Format Rupiah
+        const formattedAmount = amount.toLocaleString('id-ID');
+        
+        // Pesan Invoice
+        const message = `Halo Kak *${username}*,\n\nBerikut adalah invoice untuk transaksi pending Anda:\n\nJenis: *${type}*\nTotal Tagihan: *Rp ${formattedAmount}*\n\nMohon segera diselesaikan pembayarannya ya kak agar bisa segera diproses. Terima kasih!`;
+        
+        const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+    };
+
+    const getInvoiceBtnHTML = (user) => {
+        let amount = 0;
+        let type = '';
+        
+        // Cek jenis transaksi pending
+        if (user.pendingTransaction > 0) {
+            amount = user.pendingTransaction;
+            type = 'Top Up Saldo';
+        } else if (user.pendingSubscription) {
+            amount = user.pendingSubscription.uniqueAmount || user.pendingSubscription.amount;
+            type = user.pendingSubscription.type;
+        } else if (user.pendingAkunPurchase) {
+            amount = user.pendingAkunPurchase.uniqueAmount;
+            type = `Beli Akun (${user.pendingAkunPurchase.usernameTampilan || 'Paket'})`;
+        } else {
+            return ''; // Tidak ada transaksi yang butuh invoice
+        }
+
+        return `<button class="action-button" style="background-color: #0ea5e9; flex-basis: 100%; margin-top: 8px; justify-content: center;" onclick="handleSendInvoice('${user.username}', '${user.whatsapp}', ${amount}, '${type}')"><i class="fab fa-whatsapp"></i> Kirim Invoice</button>`;
+    };
+
+            window.handleSendWhatsApp = (phone) => {
+        if (!phone || phone === 'undefined') { showToast('Nomor WhatsApp tidak tersedia.', 'error'); return; }
+        
+        let cleanPhone = phone.toString().replace(/[^0-9]/g, '');
+        if (cleanPhone.startsWith('0')) cleanPhone = '62' + cleanPhone.slice(1);
+        
+        const url = `https://wa.me/${cleanPhone}`;
+        window.open(url, '_blank');
+    };
+
+    const getManualWaBtnHTML = (user) => {
+        if (user.pendingTransaction > 0 || user.pendingSubscription || user.pendingAkunPurchase) {
+             return `<button class="action-button" style="background-color: #10b981; flex-basis: 100%; margin-top: 5px; justify-content: center;" onclick="handleSendWhatsApp('${user.whatsapp}')"><i class="fab fa-whatsapp"></i> Kirim pesan WhatsApp</button>`;
+        }
+        return '';
+    };
+
+
+
+    const createTransactionCardHTML = (user) => {
+        // Hitung status Expired (misal batas 24 jam)
+        const now = new Date();
+        // Jika isHistory true, gunakan timestamp yang sudah ada. Jika tidak, gunakan createdAt/lastLogin
+        const txTime = user.timestamp ? new Date(user.timestamp.seconds * 1000) : new Date(user.createdAt?.seconds * 1000 || user.lastLogin?.seconds * 1000 || Date.now());
+        const diffHours = (now - txTime) / 36e5;
+        
+        let statusLabel = user.status;
+        let ribbonColor = '#10b981'; // Default Green for Success
+        let borderColor = 'var(--success-primary)';
+
+        if (user.status === 'Pending') {
+            if (diffHours > 24) {
+                statusLabel = 'Expired';
+                ribbonColor = '#ef4444'; // Red
+                borderColor = 'var(--danger-primary)';
+            } else {
+                statusLabel = 'Aktif';
+                ribbonColor = '#f59e0b'; // Orange
+                borderColor = 'var(--warning-primary)';
+            }
+        } else if (user.status?.toLowerCase().includes('cancel')) {
+             statusLabel = user.status; 
+             ribbonColor = '#ef4444';
+             borderColor = 'var(--danger-primary)';
+        } else if (user.status?.toLowerCase().includes('success')) {
+             statusLabel = 'Transaksi Success';
+             ribbonColor = '#10b981';
+             borderColor = 'var(--success-primary)';
+        }
+        
+        // Ambil nilai amount yang benar
+        const displayAmount = user.amount || user.pendingTransaction || user.pendingSubscription?.uniqueAmount || user.pendingAkunPurchase?.uniqueAmount || 0;
+
+        const ribbonHTML = `<div style="position:absolute; top:0; right:0; background:${ribbonColor}; color:white; padding:4px 10px; font-size:0.7em; font-weight:bold; border-bottom-left-radius:10px; z-index:2;">${statusLabel}</div>`;
+
+        // Tombol aksi hanya muncul jika status masih Pending dan Aktif
+        let actionButtons = '';
+        if (user.status === 'Pending' && diffHours <= 24) {
+             // Gunakan logika tombol yang sudah ada
+             let mainActions = '';
+            if (user.type === 'Top Up Saldo') {
+                mainActions = `<button class="action-button btn-success" data-action="accept-topup" data-doc-id="${user.docId}">Accept</button><button class="action-button btn-danger" data-action="reject-topup" data-doc-id="${user.docId}">Reject</button>`;
+            } else if (user.type === 'Beli Akun') {
+                mainActions = `<button class="action-button btn-success" data-action="accept-purchase" data-doc-id="${user.docId}">Accept</button><button class="action-button btn-danger" data-action="reject-purchase" data-doc-id="${user.docId}">Reject</button>`;
+            } else if (user.type === 'Jual Akun') {
+                 mainActions = `<button class="action-button btn-success" data-action="accept-sale" data-doc-id="${user.docId}">Terima</button><button class="action-button btn-danger" data-action="reject-sale" data-doc-id="${user.docId}">Tolak</button>`;
+            } else {
+                 mainActions = `<button class="action-button btn-success" data-action="accept-sub" data-doc-id="${user.docId}">Accept</button><button class="action-button btn-danger" data-action="reject-sub" data-doc-id="${user.docId}">Reject</button>`;
+            }
+            
+            actionButtons = `
+                ${mainActions}
+                ${getInvoiceBtnHTML(user)}
+                ${getManualWaBtnHTML(user)}
+            `;
+        } else {
+             actionButtons = `<div style="width:100%; text-align:center; color:var(--text-secondary); font-size:0.8em; margin-top:10px;">Riwayat Transaksi (No Actions)</div>`;
+        }
+
+        return `
+            <div class="transaction-card" style="border-left: 4px solid ${borderColor}; position:relative; overflow:hidden;">
+                ${ribbonHTML}
+                <div class="card-header"><div class="user-title"><h3>${user.username || user.userId || 'N/A'}</h3><span class="status-badge status-user">${user.accountType || 'USER'}</span></div></div>
+                <div class="card-info-grid"><div class="info-item"><span class="info-label">Email/WA</span><span class="info-value"><span>${user.whatsapp || user.email || 'N/A'}</span></span></div><div class="info-item"><span class="info-label">Nominal</span><span class="info-value">Rp ${displayAmount.toLocaleString('id-ID')}</span></div></div>
+                <div class="transaction-details-section">
+                    <h4>${user.type}</h4>
+                    <p class="transaction-amount">${user.status}</p>
+                </div>
+                <div class="card-actions" style="flex-wrap: wrap;">${actionButtons}</div>
+            </div>`;
+    };
 
         const updatePaginationControls = () => {
             const totalPages = Math.ceil(displayedUsers.length / rowsPerPage);
@@ -2649,14 +2809,24 @@ else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
             );
         };
         
-        const handleRejectTransaction = (docId, isFromFloating = false) => {
+                const handleRejectTransaction = (docId, isFromFloating = false) => {
             const user = allUsers.find(u => u.id === docId);
-            if (!user || !user.pendingTransaction || user.pendingTransaction <= 0) return;
+            if (!user) return;
             
             const confirmAction = async () => {
                 try {
+                    // Simpan Riwayat Cancel ke Topup History sebelum dihapus
+                    const historyData = {
+                        userId: docId,
+                        username: user.username,
+                        amount: user.pendingTransaction || 0,
+                        status: "Cancel with Admin", // Status baru
+                        timestamp: serverTimestamp()
+                    };
+                    await addDoc(collection(db, "topup_history"), historyData);
+
                     await updateDoc(doc(db, "users", docId), { pendingTransaction: 0 });
-                    showToast('Pending top-up rejected.', 'success');
+                    showToast('Pending top-up rejected and logged.', 'success');
                     if (isFromFloating) {
                         dom.floatingTransactionModal.style.display = 'none';
                         isFloatingModalShown = false;
@@ -3946,6 +4116,16 @@ const handleClearChat = (sessionId) => {
 // --- END: LIVE CHAT MANAGEMENT FUNCTIONS ---
 // --- AUTH & EVENT LISTENERS SETUP ---
         function setupEventListeners() {
+                        // Lightbox Listeners
+            document.getElementById('admin-close-lightbox-btn').addEventListener('click', () => {
+                document.getElementById('admin-image-lightbox').style.display = 'none';
+            });
+            document.getElementById('admin-image-lightbox').addEventListener('click', (e) => {
+                if (e.target.id === 'admin-image-lightbox') {
+                    document.getElementById('admin-image-lightbox').style.display = 'none';
+                }
+            });
+
             document.getElementById('login-form').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const button = e.target.querySelector('button');
@@ -4025,8 +4205,29 @@ const handleClearChat = (sessionId) => {
             dom.searchInput.addEventListener('input', () => { currentPage = 1; filterAndDisplayUsers(); });
             document.getElementById('prev-page-btn').addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderUserCards(); } });
             document.getElementById('next-page-btn').addEventListener('click', () => { const totalPages = Math.ceil(displayedUsers.length / rowsPerPage); if (currentPage < totalPages) { currentPage++; renderUserCards(); } });
-            document.getElementById('edit-user-form').addEventListener('submit', handleSaveChanges);
-            document.getElementById('add-user-form').addEventListener('submit', handleSaveNewUser);
+                        // --- Listener untuk Modal Ban Reason ---
+            document.getElementById('confirm-ban-btn').addEventListener('click', () => {
+                const reason = document.getElementById('ban-reason-input').value.trim();
+                if (!reason) {
+                    showToast('Harap masukkan alasan pemblokiran!', 'error');
+                    return;
+                }
+                if (currentBanTargetId) {
+                    handleBanToggle(currentBanTargetId, true, reason);
+                    document.getElementById('ban-reason-modal').style.display = 'none';
+                    currentBanTargetId = null;
+                }
+            });
+            
+            // Cancel button logic khusus untuk ban modal (mengembalikan toggle ke posisi off)
+            document.querySelector('#ban-reason-modal .cancel-modal-btn').addEventListener('click', () => {
+                if (currentBanTargetId) {
+                    const toggle = document.getElementById(`ban-toggle-${currentBanTargetId}`);
+                    if (toggle) toggle.checked = false; // Kembalikan ke posisi off
+                    currentBanTargetId = null;
+                }
+                document.getElementById('ban-reason-modal').style.display = 'none';
+            });            document.getElementById('edit-user-form').addEventListener('submit', handleSaveChanges);document.getElementById('add-user-form').addEventListener('submit', handleSaveNewUser);
             
             document.getElementById('add-stok-akun-btn').addEventListener('click', () => dom.addStokAkunModal.style.display = 'flex');
             document.getElementById('add-stok-akun-form').addEventListener('submit', handleSaveNewStokAkun);
@@ -4076,9 +4277,11 @@ const handleClearChat = (sessionId) => {
                 });
             });
 
-            document.querySelectorAll('.cancel-modal-btn').forEach(btn => btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.cancel-modal-btn').forEach(btn => btn.addEventListener('click', (e) => {
                 const modal = e.target.closest('.modal');
-                modal.style.display = 'none';
+                if (modal.id !== 'ban-reason-modal') { // Skip ban modal karena logic khususnya di atas
+                    modal.style.display = 'none';
+                }
                 if (modal.id === 'floating-transaction-modal') {
                     isFloatingModalShown = true; // Mark as shown so it doesn't pop up again
                 }
@@ -4189,10 +4392,17 @@ const handleClearChat = (sessionId) => {
             // --- END: OTP Generator Listener ---
         }
         
-        async function handleBanToggle(docId, isBanned) {
+                async function handleBanToggle(docId, isBanned, reason = null) {
             const userRef = doc(db, "users", docId);
             try {
-                await updateDoc(userRef, { isBanned: isBanned });
+                const updateData = { isBanned: isBanned };
+                if (isBanned && reason) {
+                    updateData.banReason = reason;
+                } else if (!isBanned) {
+                    updateData.banReason = deleteField();
+                }
+
+                await updateDoc(userRef, updateData);
                 const statusText = document.getElementById(`ban-status-text-${docId}`);
                 if(statusText) statusText.textContent = isBanned ? 'Banned' : 'Normal';
                 showToast(`User status updated to ${isBanned ? 'Banned' : 'Normal'}.`, 'success');
@@ -4210,9 +4420,20 @@ const handleClearChat = (sessionId) => {
             dom.userCardContainer.querySelectorAll('.copy-btn').forEach(button => button.addEventListener('click', (e) => {
                 navigator.clipboard.writeText(e.currentTarget.dataset.text).then(() => showToast('Device ID copied!', 'success')).catch(() => showToast('Failed to copy.', 'error'));
             }));
-             dom.userCardContainer.querySelectorAll('.ban-toggle-input').forEach(toggle => {
+                         dom.userCardContainer.querySelectorAll('.ban-toggle-input').forEach(toggle => {
                 toggle.addEventListener('change', (e) => {
-                    handleBanToggle(e.target.dataset.docId, e.target.checked);
+                    const docId = e.target.dataset.docId;
+                    const isChecking = e.target.checked;
+                    
+                    if (isChecking) {
+                        // Jika mau memblokir, buka modal dulu
+                        currentBanTargetId = docId;
+                        document.getElementById('ban-reason-input').value = '';
+                        document.getElementById('ban-reason-modal').style.display = 'flex';
+                    } else {
+                        // Jika membuka blokir, langsung eksekusi
+                        handleBanToggle(docId, false);
+                    }
                 });
             });
         }
