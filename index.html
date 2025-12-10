@@ -1444,10 +1444,13 @@ img.chat-message-image.admin { align-self: flex-start; }
     <div class="modal-content">
         <i class="ph-fill ph-prohibit"></i>
         <h2>Akun Anda Diblokir</h2>
-        <p class="subtitle" style="line-height:1.6;margin-bottom:25px">
-            Akun ini telah ditangguhkan oleh admin. Silakan hubungi admin untuk informasi lebih lanjut atau untuk membuka blokir.
+        <p class="subtitle" style="line-height:1.6;margin-bottom:10px">
+            Akun ini telah ditangguhkan oleh admin.
         </p>
-        <a href="https://wa.me/6285156776974" target="_blank" class="action-button btn-green"><i class="ph-bold ph-whatsapp-logo"></i> Hubungi Admin</a>
+        <p id="ban-reason-message" style="background: rgba(239, 68, 68, 0.15); color: #fca5a5; padding: 10px; border-radius: 6px; font-size: 0.9em; margin-bottom: 20px; border: 1px solid var(--accent-red); font-weight: bold;"></p>
+                <button id="ban-chat-btn" class="action-button btn-primary">
+            <i class="ph-fill ph-headset" style="font-size: 1.4em; margin-right: 5px;"></i> Live Chat Admin
+        </button>
     </div>
 </div>
 <div id="welcome-message-modal" class="modal-overlay">
@@ -2268,6 +2271,8 @@ currentImage: document.getElementById('current-profile-picture')
 
                     // Ban System Check
                     if (loggedInUser.isBanned) {
+                        const reasonEl = document.getElementById('ban-reason-message');
+                        if(reasonEl) reasonEl.textContent = `Alasan: ${loggedInUser.banReason || 'Melanggar Syarat & Ketentuan'}`;
                         showModal(dom.banModal.overlay);
                         dom.appLayout.style.pointerEvents = 'none';
                         dom.appLayout.style.filter = 'blur(4px)';
@@ -3141,13 +3146,13 @@ dom.profileModal.currentImage.src = loggedInUser.profilePictureBase64 || 'https:
                 let notifMessage = "";
 
                 if (type === 'Top Up Saldo') {
-                    updateData = { pendingTransaction: totalAmount };
+                    updateData = { pendingTransaction: totalAmount, transactionTimestamp: serverTimestamp() };
                     notifMessage = `⏳ *Permintaan Pembayaran Dibuat (Top Up Saldo)*\n\n*Username:* \`${loggedInUser.username}\`\n*No. WA:* \`${loggedInUser.whatsapp}\`\n*Jumlah Transfer:* *Rp ${totalAmount.toLocaleString('id-ID')}*`;
                 } else if (type === 'Beli Akun') {
-                    updateData = { pendingAkunPurchase: { ...meta, uniqueAmount: totalAmount } };
+                    updateData = { pendingAkunPurchase: { ...meta, uniqueAmount: totalAmount }, transactionTimestamp: serverTimestamp() };
                      notifMessage = `⏳ *Permintaan Pembayaran Dibuat (Beli Akun)*\n\n*Username:* \`${loggedInUser.username}\`\n*No. WA:* \`${loggedInUser.whatsapp}\`\n*Nama Akun:* ${meta.usernameTampilan}\n*Jumlah Transfer:* *Rp ${totalAmount.toLocaleString('id-ID')}*`;
                 } else if (type.includes('Langganan') || type.includes('Premium')) {
-                     updateData = { pendingSubscription: { ...meta, uniqueAmount: totalAmount } };
+                     updateData = { pendingSubscription: { ...meta, uniqueAmount: totalAmount }, transactionTimestamp: serverTimestamp() };
                      notifMessage = `⏳ *Permintaan Pembayaran Dibuat (Subscription)*\n\n*Username:* \`${loggedInUser.username}\`\n*No. WA:* \`${loggedInUser.whatsapp}\`\n*Paket:* ${type}\n*Jumlah Transfer:* *Rp ${totalAmount.toLocaleString('id-ID')}*`;
                 }
                 
@@ -5061,7 +5066,23 @@ if(dom.profileModal.input) dom.profileModal.input.addEventListener('change', han
 
             document.getElementById('force-profile-pic-form').addEventListener('submit', handleForceProfilePictureSubmit);
 
-            document.body.style.visibility = 'visible';
+                        // Listener Khusus Tombol Chat di Modal Ban
+            const banChatBtn = document.getElementById('ban-chat-btn');
+            if (banChatBtn) {
+                banChatBtn.addEventListener('click', () => {
+                    const chatWindow = document.getElementById('chat-window');
+                    const chatBubble = document.getElementById('chat-bubble-container');
+                    if (chatWindow && chatBubble) {
+                        chatWindow.classList.remove('chat-hidden');
+                        chatBubble.classList.add('chat-hidden');
+                        // Paksa Z-Index lebih tinggi dari modal ban (20000)
+                        chatWindow.style.zIndex = '20005';
+                    }
+                });
+            }
+
+            
+document.body.style.visibility = 'visible';
             document.body.style.opacity = 1;
         }
     </script>
