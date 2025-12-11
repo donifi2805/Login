@@ -181,7 +181,7 @@
 #login-btn {
     background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan), var(--accent-blue));
     background-size: 200% auto;
-    animation: gradientText 3s linear infinite;
+    /* animation removed */
     border: none;
     box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
 }
@@ -199,7 +199,7 @@
 .login-right-panel::before {
     content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhI8j1iJeFgIagFemTu0q3_yxUph06s4T6K03apxFf11HmQagnDM-PkaUNlV-VK0k2O-Mj93P4cnVZSWjf6jbmt1imTeAP_woH6aUMEsp9YgyMzCdHNoixyuWtvUf9pmhXlYIvwVt1Tb9CuSFi-Jk6D3pB6-ggMzhKMGkpoJD9ZT-d5T3LcJkW4d_mfGLA/s1600/1750238969835.jpg') center/cover;
-    filter: blur(2px) brightness(0.6);
+    filter: brightness(0.7);
     z-index: 0;
 }
 .login-right-panel::after {
@@ -214,7 +214,7 @@
 }
 .floating-logo {
     width: 70px !important; 
-    animation: floatY 4s ease-in-out infinite;
+    /* animation removed */
     filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3)) !important;
 }
 .trust-badge {
@@ -230,6 +230,22 @@
 }
 
 /* --- End: Login Page Redesign --- */
+/* --- End: Login Page Redesign --- */
+/* --- Start: Mobile Keyboard Fix --- */
+@media screen and (max-height: 600px) {
+    #auth-wrapper {
+        justify-content: flex-start;
+        overflow-y: auto;
+        padding-top: 40px;
+        padding-bottom: 40px;
+        height: auto;
+        min-height: 100vh;
+    }
+    #login-container, #register-container, #forgot-password-container {
+        margin-bottom: 150px; /* Ruang ekstra di bawah agar bisa discroll melewati keyboard */
+    }
+}
+/* --- End: Mobile Keyboard Fix --- */
 
 #register-container,#forgot-password-container{display:none}
 #app-layout,#profile-container,#topup-container,#buy-ub-container,#qris-display-container,#my-account-container,#subscription-container,#stok-akun-container,#jual-akun-container{display:none}
@@ -765,155 +781,151 @@ img.chat-message-image.admin { align-self: flex-start; }
     </div>
 </div>
 <div id=toast-container></div>
-<div id=auth-wrapper>
-<div id="maintenance-notice">
-    <i class="ph-fill ph-warning-octagon"></i>
-    <h2>Dalam Perbaikan</h2>
-    <p class=subtitle id="maintenance-message">Maaf, situs sedang dalam perbaikan rutin. Silakan coba lagi nanti.</p>
-</div>
-<div id="login-container" class="login-split-layout">
-    
-    <div class="login-left-panel">
-        <div class="login-header" style="text-align: left; margin-bottom: 20px; border:none;">
-            <h1 style="font-size: 1.8em; margin-bottom: 5px; background: none; -webkit-text-fill-color: initial; color: var(--text-primary); text-shadow: none;">Masuk</h1>
-            <p class="subtitle" style="text-align: left; margin: 0;">Selamat datang kembali! Silakan login.</p>
-        </div>
-        
-        <form id="login-form">
-            <div class="input-group">
-                <i class="ph-bold ph-user input-icon"></i>
-                <input type="text" id="username" class="input-field" placeholder="Username" required>
-            </div>
-            <div class="input-group">
-                <i class="ph-bold ph-lock-key input-icon"></i>
-                <input type="password" id="password" class="input-field password-input" placeholder="Kata Sandi" required>
-                <span class="password-toggle" id="login-password-toggle"></span>
-            </div>
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-                <a href="#" id="show-forgot-password-link" style="font-size: 0.8em; color: var(--accent-blue); text-decoration: none; font-weight: 600;">Lupa Sandi?</a>
-            </div>
-            <button type="submit" id="login-btn" class="action-button btn-primary">Masuk Sekarang</button>
-        </form>
-
-        <div class="google-login-separator"><span>Masuk dengan Google</span></div>
-        
-        <button type="button" id="google-login-btn" class="action-button btn-google-custom">
-            <i class="ph-fill ph-google-logo" style="color: #DB4437; font-size: 1.3em;"></i>
-            <span>Akun Google</span>
-        </button>
-
-        <p class="switch-link" style="margin-top: 20px; text-align: center;">
-            Belum punya akun? <a href="#" id="show-register-link">Daftar</a>
-        </p>
-        <p class="switch-link admin-link" style="text-align: center;"><a href="paneladmin.html">Login Admin</a></p>
+<div id="auth-wrapper">
+    <div id="maintenance-notice">
+        <i class="ph-fill ph-warning-octagon"></i>
+        <h2>Dalam Perbaikan</h2>
+        <p class="subtitle" id="maintenance-message">Maaf, situs sedang dalam perbaikan rutin. Silakan coba lagi nanti.</p>
     </div>
-    
-    
+    <div id="login-container" class="login-split-layout">
+        <div class="login-left-panel">
+            
+            <div id="login-view">
+                <div class="login-header" style="text-align: left; margin-bottom: 20px; border:none;">
+                    <h1 style="font-size: 1.8em; margin-bottom: 5px; background: none; -webkit-text-fill-color: initial; color: var(--text-primary); text-shadow: none;">Masuk</h1>
+                    <p class="subtitle" style="text-align: left; margin: 0;">Selamat datang kembali! Silakan login.</p>
+                </div>
+                <form id="login-form">
+                    <div class="input-group">
+                        <i class="ph-bold ph-user input-icon"></i>
+                        <input type="text" id="username" class="input-field" placeholder="Username" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="ph-bold ph-lock-key input-icon"></i>
+                        <input type="password" id="password" class="input-field password-input" placeholder="Kata Sandi" required>
+                        <span class="password-toggle" id="login-password-toggle"></span>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                        <a href="#" id="show-forgot-password-link" style="font-size: 0.8em; color: var(--accent-blue); text-decoration: none; font-weight: 600;">Lupa Sandi?</a>
+                    </div>
+                    <button type="submit" id="login-btn" class="action-button btn-primary">Masuk Sekarang</button>
+                </form>
+                <div class="google-login-separator"><span>Masuk dengan Google</span></div>
+                <button type="button" id="google-login-btn" class="action-button btn-google-custom">
+                    <i class="ph-fill ph-google-logo" style="color: #DB4437; font-size: 1.3em;"></i>
+                    <span>Akun Google</span>
+                </button>
+                <p class="switch-link" style="margin-top: 20px; text-align: center;">
+                    Belum punya akun? <a href="#" id="show-register-link">Daftar</a>
+                </p>
+                <p class="switch-link admin-link" style="text-align: center;"><a href="paneladmin.html">Login Admin</a></p>
+            </div>
+
+            
+            <div id="register-view" style="display:none;">
+                <h2>Buat Akun Baru</h2>
+                <p class="subtitle">Daftar dan mulai petualanganmu.</p>
+                <form id="register-form">
+                    <div class="input-group">
+                        <i class="ph-bold ph-user-circle input-icon"></i>
+                        <input type="text" id="reg-username" class="input-field" placeholder="Username" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="ph-bold ph-at input-icon"></i>
+                        <input type="email" id="reg-email" class="input-field" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="ph-bold ph-whatsapp-logo input-icon"></i>
+                        <input type="text" id="reg-whatsapp" class="input-field" placeholder="Nomor WhatsApp (62...)" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="ph-bold ph-lock-key input-icon"></i>
+                        <input type="password" id="reg-password" class="input-field password-input" placeholder="Sandi Akun" required>
+                        <span class="password-toggle" id="reg-password-toggle"></span>
+                    </div>
+                    <div class="input-group">
+                        <i class="ph-bold ph-image input-icon"></i>
+                        <input type="file" id="reg-profile-pic" class="input-field" accept="image/*" required style="padding-top: 8px;">
+                    </div>
+                    <button type="submit" id="register-btn" class="action-button btn-primary">Daftar</button>
+                </form>
+                <p class="switch-link">Sudah punya akun? <a href="#" id="show-login-link-from-reg">Login</a></p>
+            </div>
+
+            
+            <div id="otp-view" style="display:none">
+                <h2>Verifikasi Nomor WhatsApp</h2>
+                <p class="subtitle">Silakan minta kode OTP 5 digit kepada Admin. Kode akan dikirimkan ke nomor WhatsApp Anda.</p>
+                <p class="subtitle" style="font-weight: bold; color: var(--text-primary);">Nomor WhatsApp: <span id="otp-wa-display"></span></p>
+                <form id="otp-verify-form">
+                    <div class="input-group">
+                        <i class="ph-bold ph-key input-icon"></i>
+                        <input type="text" id="otp-input" class="input-field" placeholder="Masukkan 5 Digit Kode OTP" required maxlength="5" inputmode="numeric" pattern="\d*">
+                    </div>
+                    <button type="submit" id="verify-otp-btn" class="action-button btn-primary">Verifikasi</button>
+                </form>
+                <div class="switch-link" style="margin-top: 20px;">
+                    <button id="resend-otp-btn" class="action-button btn-secondary" style="width: 100%;" disabled>
+                        Minta OTP Baru (<span id="otp-timer">50</span>s)
+                    </button>
+                </div>
+                <div class="switch-link" style="margin-top: 10px;">
+                    <button id="cancel-otp-btn" class="action-button btn-red" style="width: 100%;">Batalkan Pendaftaran</button>
+                </div>
+                <p class="switch-link">Salah nomor? <a href="#" id="show-register-link-from-otp">Kembali ke Pendaftaran</a></p>
+            </div>
+
+            
+            <div id="forgot-password-view" style="display:none;">
+                <div id="verify-user-view">
+                    <h2>Lupa Kata Sandi</h2>
+                    <p class="subtitle">Masukkan data akun Anda untuk verifikasi.</p>
+                    <form id="verify-user-form">
+                        <div class="input-group">
+                            <i class="ph-bold ph-user-circle input-icon"></i>
+                            <input type="text" id="verify-username" class="input-field" placeholder="Username" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="ph-bold ph-at input-icon"></i>
+                            <input type="email" id="verify-email" class="input-field" placeholder="Email" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="ph-bold ph-whatsapp-logo input-icon"></i>
+                            <input type="text" id="verify-whatsapp" class="input-field" placeholder="Nomor WhatsApp (62...)" required>
+                        </div>
+                        <button type="submit" id="verify-user-btn" class="action-button btn-primary">Verifikasi Akun</button>
+                    </form>
+                    <p class="switch-link">Ingat sandi Anda? <a href="#" id="show-login-link-from-forgot">Login</a></p>
+                </div>
+                <div id="reset-password-view" style="display:none">
+                    <h2>Buat Sandi Baru</h2>
+                    <p class="subtitle">Verifikasi berhasil. Silakan masukkan kata sandi baru Anda.</p>
+                    <form id="reset-password-form">
+                        <div class="input-group">
+                            <i class="ph-bold ph-lock-key input-icon"></i>
+                            <input type="password" id="reset-new-password" class="input-field password-input" placeholder="Sandi Baru" required>
+                            <span class="password-toggle" id="reset-password-toggle"></span>
+                        </div>
+                        <div class="input-group">
+                            <i class="ph-bold ph-password input-icon"></i>
+                            <input type="password" id="reset-confirm-password" class="input-field placeholder="Konfirmasi Sandi Baru" required>
+                        </div>
+                        <button type="submit" id="reset-password-btn" class="action-button btn-green">Simpan Sandi Baru</button>
+                    </form>
+                </div>
+            </div>
+        </div>
         <div class="login-right-panel">
-        <img src="https://bussimulator.id/wp-content/uploads/2017/03/logo-wide-super-small.png" alt="Logo" class="floating-logo" style="margin-bottom: 15px;">
-        <h2 style="font-size: 1.8em; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">Bussid & Trucksid<br>SHOP</h2>
-        <p style="font-weight: 500; opacity: 0.95;">Portal Top Up & Jual Beli Akun Game Terpercaya #1 di Indonesia.</p>
-        <div class="trust-badge">
-             <i class="ph-fill ph-shield-check" style="font-size: 1.4em; color: #4ade80;"></i>
-             <span style="font-weight: 600; font-size: 0.9em; letter-spacing: 0.5px;">Garansi 100% Amanah</span>
+            <img src="https://bussimulator.id/wp-content/uploads/2017/03/logo-wide-super-small.png" alt="Logo" class="floating-logo" style="margin-bottom: 15px;">
+            <h2 style="font-size: 1.8em; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">Bussid & Trucksid<br>SHOP</h2>
+            <p style="font-weight: 500; opacity: 0.95;">Portal Top Up & Jual Beli Akun Game Terpercaya #1 di Indonesia.</p>
+            <div class="trust-badge">
+                 <i class="ph-fill ph-shield-check" style="font-size: 1.4em; color: #4ade80;"></i>
+                 <span style="font-weight: 600; font-size: 0.9em; letter-spacing: 0.5px;">Garansi 100% Amanah</span>
+            </div>
         </div>
     </div>
-    </div>
-</div>
-<div id=register-container>
-<h2>Buat Akun Baru</h2>
-<p class=subtitle>Daftar dan mulai petualanganmu.</p>
-<form id=register-form>
-<div class=input-group>
-<i class="ph-bold ph-user-circle input-icon"></i>
-<input type=text id=reg-username class=input-field placeholder=Username required>
-</div>
-<div class=input-group>
-<i class="ph-bold ph-at input-icon"></i>
-<input type=email id=reg-email class=input-field placeholder=Email required>
-</div>
-<div class=input-group>
-<i class="ph-bold ph-whatsapp-logo input-icon"></i>
-<input type=text id=reg-whatsapp class=input-field placeholder="Nomor WhatsApp (62...)" required>
-</div>
-<div class=input-group>
-<i class="ph-bold ph-lock-key input-icon"></i>
-<input type=password id=reg-password class="input-field password-input" placeholder="Sandi Akun" required>
-<span class=password-toggle id=reg-password-toggle></span>
-</div>
-<div class="input-group">
-<i class="ph-bold ph-image input-icon"></i>
-<input type="file" id="reg-profile-pic" class="input-field" accept="image/*" required style="padding-top: 8px;">
-</div>
-<button type=submit id=register-btn class="action-button btn-primary">Daftar</button>
-</form>
-<p class=switch-link>Sudah punya akun? <a href=# id=show-login-link-from-reg>Login</a></p>
-</div>
-<div id=otp-verification-container style=display:none>
-    <h2>Verifikasi Nomor WhatsApp</h2>
-    <p class=subtitle>Silakan minta kode OTP 5 digit kepada Admin. Kode akan dikirimkan ke nomor WhatsApp Anda.</p>
-    <p class=subtitle style="font-weight: bold; color: var(--text-primary);">Nomor WhatsApp: <span id="otp-wa-display"></span></p>
-    
-    <form id="otp-verify-form">
-        <div class=input-group>
-            <i class="ph-bold ph-key input-icon"></i>
-            <input type=text id="otp-input" class=input-field placeholder="Masukkan 5 Digit Kode OTP" required maxlength=5 inputmode=numeric pattern="\d*">
-        </div>
-        <button type=submit id="verify-otp-btn" class="action-button btn-primary">Verifikasi</button>
-    </form>
-    
-    <div class="switch-link" style="margin-top: 20px;">
-        <button id="resend-otp-btn" class="action-button btn-secondary" style="width: 100%;" disabled>
-            Minta OTP Baru (<span id="otp-timer">50</span>s)
-        </button>
-    </div>
-    
-    <div class="switch-link" style="margin-top: 10px;">
-        <button id="cancel-otp-btn" class="action-button btn-red" style="width: 100%;">Batalkan Pendaftaran</button>
-    </div>
-    
-    <p class=switch-link>Salah nomor? <a href=# id=show-register-link-from-otp>Kembali ke Pendaftaran</a></p>
-</div>
-<div id=forgot-password-container>
-<div id=verify-user-view>
-<h2>Lupa Kata Sandi</h2>
-<p class=subtitle>Masukkan data akun Anda untuk verifikasi.</p>
-<form id=verify-user-form>
-<div class=input-group>
-<i class="ph-bold ph-user-circle input-icon"></i>
-<input type=text id=verify-username class=input-field placeholder=Username required>
-</div>
-<div class=input-group>
-<i class="ph-bold ph-at input-icon"></i>
-<input type=email id=verify-email class=input-field placeholder=Email required>
-</div>
-<div class=input-group>
-<i class="ph-bold ph-whatsapp-logo input-icon"></i>
-<input type=text id=verify-whatsapp class=input-field placeholder="Nomor WhatsApp (62...)" required>
-</div>
-<button type=submit id=verify-user-btn class="action-button btn-primary">Verifikasi Akun</button>
-</form>
-<p class=switch-link>Ingat sandi Anda? <a href=# id=show-login-link-from-forgot>Login</a></p>
-</div>
-<div id=reset-password-view style=display:none>
-<h2>Buat Sandi Baru</h2>
-<p class=subtitle>Verifikasi berhasil. Silakan masukkan kata sandi baru Anda.</p>
-<form id=reset-password-form>
-<div class=input-group>
-<i class="ph-bold ph-lock-key input-icon"></i>
-<input type=password id=reset-new-password class="input-field password-input" placeholder="Sandi Baru" required>
-<span class=password-toggle id=reset-password-toggle></span>
-</div>
-<div class=input-group>
-<i class="ph-bold ph-password input-icon"></i>
-<input type=password id=reset-confirm-password class=input-field placeholder="Konfirmasi Sandi Baru" required>
-</div>
-<button type=submit id=reset-password-btn class="action-button btn-green">Simpan Sandi Baru</button>
-</form>
-</div>
-</div>
-</div>
-<div id=app-layout>
+</div><div id=app-layout>
 <header id=top-navbar>
     <div class="header-brand">
         <div class="brand-container">
@@ -1905,9 +1917,8 @@ let otpTimerInterval = null;
                     localStorage.removeItem('pendingRegistration'); // Hapus sesi pendaftaran
                     if (otpTimerInterval) clearInterval(otpTimerInterval);
                     
-                    document.getElementById('otp-verify-form').reset();
-                    document.getElementById('otp-verification-container').style.display = 'none';
-                    document.getElementById('register-form').reset();
+                                        document.getElementById('otp-verify-form').reset();
+                    // Kembali ke login view
                     showLoginScreen();
 
                 } else {
@@ -2138,9 +2149,32 @@ currentImage: document.getElementById('current-profile-picture')
                 }
             }
         }
-        function showLoginScreen() { dom.appLayout.style.display = 'none'; dom.authWrapper.style.display = 'flex'; document.getElementById('login-container').style.display = 'block'; document.getElementById('register-container').style.display = 'none'; document.getElementById('forgot-password-container').style.display = 'none';}
-        function showRegisterScreen() { dom.appLayout.style.display = 'none'; dom.authWrapper.style.display = 'flex'; document.getElementById('login-container').style.display = 'none'; document.getElementById('register-container').style.display = 'block'; document.getElementById('forgot-password-container').style.display = 'none'; }
-        function showForgotPasswordScreen() { dom.appLayout.style.display = 'none'; dom.authWrapper.style.display = 'flex'; document.getElementById('login-container').style.display = 'none'; document.getElementById('register-container').style.display = 'none'; document.getElementById('forgot-password-container').style.display = 'block'; document.getElementById('verify-user-view').style.display = 'block'; document.getElementById('reset-password-view').style.display = 'none'; }
+                // --- Helper to switch views inside the split layout ---
+        function switchAuthView(viewId) {
+            // Pastikan layout utama login terlihat
+            dom.appLayout.style.display = 'none';
+            dom.authWrapper.style.display = 'flex';
+            // Sembunyikan semua sub-view
+            ['login-view', 'register-view', 'otp-view', 'forgot-password-view'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.style.display = 'none';
+            });
+            // Tampilkan view target
+            const target = document.getElementById(viewId);
+            if(target) target.style.display = 'block';
+        }
+
+        function showLoginScreen() {
+            switchAuthView('login-view');
+        }
+        function showRegisterScreen() {
+            switchAuthView('register-view');
+        }
+        function showForgotPasswordScreen() {
+            switchAuthView('forgot-password-view');
+            document.getElementById('verify-user-view').style.display = 'block';
+            document.getElementById('reset-password-view').style.display = 'none';
+        }
         
         function manageNavVisibility() {
             const isAdmin = loggedInUser.accountType === 'Admin';
@@ -2525,10 +2559,9 @@ activateLiveChat(loggedInUser.username); // <-- PANGGIL FUNGSI CHAT
             }
             // --- AKHIR MODIFIKASI ---
 
-            // 2. Tampilkan view OTP
-            document.getElementById('register-container').style.display = 'none';
+                        // 2. Tampilkan view OTP
+            switchAuthView('otp-view');
             document.getElementById('otp-wa-display').textContent = whatsapp;
-            document.getElementById('otp-verification-container').style.display = 'block';
 
             // 3. Mulai timer
             startOtpTimer();
@@ -4710,15 +4743,12 @@ initializeChatWidget();
             if (pendingReg) {
                 try {
                     pendingRegistrationData = JSON.parse(pendingReg);
-                    if (pendingRegistrationData && pendingRegistrationData.whatsapp) {
-                        // Tampilkan layar OTP, sembunyikan sisanya
+                                        if (pendingRegistrationData && pendingRegistrationData.whatsapp) {
+                        // Tampilkan layar OTP
                         dom.authWrapper.style.display = 'flex';
-                        document.getElementById('login-container').style.display = 'none';
-                        document.getElementById('register-container').style.display = 'none';
-                        document.getElementById('forgot-password-container').style.display = 'none';
+                        switchAuthView('otp-view');
 
                         document.getElementById('otp-wa-display').textContent = pendingRegistrationData.whatsapp;
-                        document.getElementById('otp-verification-container').style.display = 'block';
                         
                         startOtpTimer(); // Mulai timer
                     } else {
@@ -5027,20 +5057,20 @@ if(dom.profileModal.input) dom.profileModal.input.addEventListener('change', han
 // --- OTP VIEW LISTENERS (BARU) ---
             
             // Helper function to clear session
-            function clearPendingRegistration() {
+                            function clearPendingRegistration() {
                 pendingRegistrationData = null;
                 localStorage.removeItem('pendingRegistration');
                 if (otpTimerInterval) clearInterval(otpTimerInterval);
-                document.getElementById('otp-verification-container').style.display = 'none';
+                // View disembunyikan otomatis oleh switchAuthView saat pindah screen
             }
 
             document.getElementById('otp-verify-form').addEventListener('submit', handleOtpVerification);
             
-            document.getElementById('show-register-link-from-otp').addEventListener('click', (e) => {
+                        document.getElementById('show-register-link-from-otp').addEventListener('click', (e) => {
                 e.preventDefault();
                 // Kembali ke pendaftaran, hapus data pending
                 clearPendingRegistration();
-                document.getElementById('register-container').style.display = 'block';
+                showRegisterScreen(); // Gunakan helper
                 // Form pendaftaran tidak di-reset, jadi user bisa koreksi nomor WA
             });
 
@@ -5083,6 +5113,18 @@ if(dom.profileModal.input) dom.profileModal.input.addEventListener('change', han
 
             
 document.body.style.visibility = 'visible';
+                        // --- Start: Auto-scroll fix for mobile keyboard ---
+            const allInputs = document.querySelectorAll('.input-field');
+            allInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    // Jeda sebentar menunggu keyboard naik, lalu scroll elemen ke tengah
+                    setTimeout(() => {
+                        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                });
+            });
+            // --- End: Auto-scroll fix ---
+
             document.body.style.opacity = 1;
         }
     </script>
