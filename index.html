@@ -12,13 +12,26 @@
 <style>
 :root{--bg-primary:#111827;--bg-secondary:#1f2937;--bg-tertiary:#374151;--border-color:#4b5563;--text-primary:#f9fafb;--text-secondary:#d1d5db;--accent-blue:#3b82f6;--accent-green:#22c55e;--accent-red:#ef4444;--accent-cyan:#06b6d4;--premium-gold:#fbbf24}*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;font-family:'Inter',sans-serif;background-color:var(--bg-primary);color:var(--text-primary);-webkit-user-select:none;user-select:none;font-size:10px}#app-layout{display:none;flex-direction:column;min-height:100vh;width:100%; transition: filter 0.3s ease-in-out;}
 
-/* --- Start: Pre-loader --- */
-#preloader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-primary); z-index: 20000; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease-out; }
-#preloader-overlay.hidden { opacity: 0; pointer-events: none; }
-.loader-square { width: 120px; height: 120px; border: 4px solid var(--border-color); border-top-color: var(--accent-cyan); border-radius: 10px; display: flex; align-items: center; justify-content: center; animation: spin 1.5s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-#loading-percentage { font-size: 1.8em; font-weight: 600; color: var(--text-primary); animation: none; transform: rotate(0); }
-/* --- End: Pre-loader --- */
+/* --- Start: Pre-loader Modern Redesign --- */
+#preloader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 20000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease-out, visibility 0.5s; }
+#preloader-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.loader-container { position: relative; width: 100px; height: 100px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
+.loader-ring-glow { position: absolute; width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 0 20px rgba(6, 182, 212, 0.2); animation: pulseGlow 2s infinite; }
+.loader-ring-1 { position: absolute; width: 100%; height: 100%; border: 3px solid transparent; border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+.loader-ring-2 { position: absolute; width: 75%; height: 75%; border: 3px solid transparent; border-bottom-color: var(--accent-blue); border-radius: 50%; animation: spinReverse 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+
+.loader-icon-center { font-size: 2em; color: var(--text-primary); z-index: 2; animation: floatIcon 3s ease-in-out infinite; }
+
+.loader-text-wrapper { text-align: center; display: flex; flex-direction: column; gap: 8px; z-index: 2; }
+#loading-percentage { font-size: 2.5em; font-weight: 900; background: linear-gradient(to right, var(--accent-cyan), var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Inter', sans-serif; line-height: 1; }
+.loading-status-text { color: var(--text-secondary); font-size: 0.85em; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; opacity: 0.8; }
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes spinReverse { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+@keyframes pulseGlow { 0% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.1); } 50% { box-shadow: 0 0 30px rgba(6, 182, 212, 0.4); } 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.1); } }
+@keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+/* --- End: Pre-loader Modern Redesign --- */
 
 /* --- Start: Header Modifications --- */
 #top-navbar {
@@ -279,7 +292,8 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 /* --- End: My Account Page Redesign --- */
 
 .info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 6px;border-bottom:1px solid var(--border-color);flex-wrap:wrap;gap:5px}.info-row:last-child{border-bottom:0}
-#akun-showcase-grid{display:grid;grid-template-columns:1fr;gap:15px;margin-top:20px}.akun-card{background-color:var(--bg-secondary);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;padding:15px;font-size:.8em;transition:all .3s ease}.akun-card:hover{transform:translateY(-5px);box-shadow:0 8px 20px rgba(0,0,0,0.25);border-color:var(--accent-cyan)}.akun-card-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border-color)}.akun-card-logo{width:40px;height:40px;border-radius:8px}.akun-card h3{font-size:1.6em;margin-bottom:0;color:var(--text-primary)}.akun-card .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 10px;margin-bottom:12px}.akun-card .info-item{background-color:var(--bg-tertiary);padding:6px 8px;border-radius:6px}.akun-card .info-label{display:block;font-size:.9em;color:var(--text-secondary);margin-bottom:3px}.akun-card .info-value{font-size:1.2em;font-weight:700}.akun-card .info-value.price{color:var(--accent-green);font-size:1.5em}.akun-card .info-additional{margin-top:12px;padding-top:10px;border-top:1px solid var(--border-color)}.akun-card .info-additional .info-label{margin-bottom:4px}.akun-card .info-additional .info-value{font-size:1em;font-weight:400;white-space:pre-wrap;color:var(--text-primary)}.akun-card-footer{margin-top:15px}.lightbox-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.85);display:none;justify-content:center;align-items:center;z-index:10004}.lightbox-content{position:relative;max-width:90vw;max-height:90vh}.lightbox-content img{width:100%;height:100%;object-fit:contain;border-radius:8px}.lightbox-close{position:absolute;top:-35px;right:0;font-size:2.5em;color:#fff;cursor:pointer;line-height:1;font-weight:700}.skeleton-card{background-color:var(--bg-secondary);padding:12px;border-radius:10px;border:1px solid var(--border-color)}.skeleton{animation:skeleton-loading 1s linear infinite alternate;opacity:.7;background-color:var(--bg-tertiary)}@keyframes skeleton-loading{0%{background-color:var(--bg-tertiary)}100%{background-color:#4b5563}}.skeleton-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}.skeleton-avatar{width:40px;height:40px;border-radius:50%}.skeleton-text-group{flex-grow:1}.skeleton-text{height:14px;border-radius:4px;margin-bottom:6px}.skeleton-text.short{width:50%}.skeleton-line{height:8px;border-radius:4px;margin-bottom:8px}.skeleton-button{height:34px;border-radius:6px;margin-top:12px}
+#akun-showcase-grid{display:grid;grid-template-columns:1fr;gap:15px;margin-top:20px}.akun-card{background-color:var(--bg-secondary);border:1px solid var(--border-color);border-radius:12px;overflow:hidden;padding:15px;font-size:.8em;transition:all .3s ease}.akun-card:hover{transform:translateY(-5px);box-shadow:0 8px 20px rgba(0,0,0,0.25);border-color:var(--accent-cyan)}.akun-card-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border-color)}.akun-card-logo{width:40px;height:40px;border-radius:8px}.akun-card h3{font-size:1.6em;margin-bottom:0;color:var(--text-primary)}.akun-card .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 10px;margin-bottom:12px}.akun-card .info-item{background-color:var(--bg-tertiary);padding:6px 8px;border-radius:6px}.akun-card .info-label{display:block;font-size:.9em;color:var(--text-secondary);margin-bottom:3px}.akun-card .info-value{font-size:1.2em;font-weight:700}.akun-card .info-value.price{color:var(--accent-green);font-size:1.5em}.akun-card .info-additional{margin-top:12px;padding-top:10px;border-top:1px solid var(--border-color)}.akun-card .info-additional .info-label{margin-bottom:4px}.akun-card .info-additional .info-value{font-size:1em;font-weight:400;white-space:pre-wrap;color:var(--text-primary)}.akun-card-footer{margin-top:15px}.lightbox-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.85);display:none;justify-content:center;align-items:center;z-index:10004}.lightbox-content{position:relative;max-width:90vw;max-height:90vh}.lightbox-content img{width:100%;height:100%;object-fit:contain;border-radius:8px}.lightbox-close{position:absolute;top:20px;right:20px;width:40px;height:40px;background:rgba(0,0,0,0.6);border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:1.8em;color:#fff;cursor:pointer;z-index:10010;transition:all .3s ease;line-height:1}.lightbox-close:hover{background:var(--accent-red);transform:rotate(90deg)}
+.lightbox-nav-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.4);color:white;border:none;padding:12px 18px;font-size:2em;cursor:pointer;border-radius:50%;z-index:10006;transition:all .3s ease;user-select:none;outline:none}.lightbox-nav-btn:hover{background:rgba(0,0,0,0.8);transform:translateY(-50%) scale(1.1)}.lightbox-prev{left:10px}.lightbox-next{right:10px}.lightbox-counter{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:white;background:rgba(0,0,0,0.6);padding:6px 14px;border-radius:20px;font-size:0.9em;font-weight:600;pointer-events:none;z-index:10006}.lightbox-content{display:flex;justify-content:center;align-items:center;width:100%;height:100%}.skeleton-card{background-color:var(--bg-secondary);padding:12px;border-radius:10px;border:1px solid var(--border-color)}.skeleton{animation:skeleton-loading 1s linear infinite alternate;opacity:.7;background-color:var(--bg-tertiary)}@keyframes skeleton-loading{0%{background-color:var(--bg-tertiary)}100%{background-color:#4b5563}}.skeleton-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}.skeleton-avatar{width:40px;height:40px;border-radius:50%}.skeleton-text-group{flex-grow:1}.skeleton-text{height:14px;border-radius:4px;margin-bottom:6px}.skeleton-text.short{width:50%}.skeleton-line{height:8px;border-radius:4px;margin-bottom:8px}.skeleton-button{height:34px;border-radius:6px;margin-top:12px}
 #maintenance-modal .modal-content{text-align:center;max-width:400px;background-color:var(--bg-primary);border: 1px solid var(--premium-gold);}
 #maintenance-modal i {font-size: 3em;color: var(--premium-gold);margin-bottom: 15px;}
 #maintenance-modal-message{font-size:1em;line-height:1.6;color:var(--text-secondary);margin-bottom:0}
@@ -754,6 +768,29 @@ img.chat-message-image.admin { align-self: flex-start; }
     border-left: 3px solid var(--premium-gold);
 }
 /* --- End: Styling Card Akun Terbeli --- */
+/* --- Start: Beli MOD Styles --- */
+#stok-mod-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media screen and (min-width: 600px) { #stok-mod-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.mod-card { background-color: var(--bg-secondary); border: 1px solid rgba(75,85,99,0.6); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); position: relative; transition: transform 0.2s; }
+.mod-card:hover { transform: translateY(-3px); border-color: var(--accent-cyan); }
+.mod-card.owned { border: 1px solid var(--accent-green); }
+.mod-card.owned::after { content: 'TERBELI'; position: absolute; top: 0; right: 0; background: var(--accent-green); color: #fff; font-size: 0.6em; font-weight: 700; padding: 2px 6px; border-bottom-left-radius: 6px; }
+
+.mod-card-img-container { width: 100%; height: 120px; overflow: hidden; position: relative; cursor: pointer; }
+.mod-card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+.mod-card-img:hover { transform: scale(1.1); }
+
+.mod-card-body { padding: 8px; display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
+.mod-title { font-size: 0.95em; font-weight: 700; color: var(--text-primary); line-height: 1.3; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.mod-stats { display: flex; justify-content: space-between; align-items: center; font-size: 0.75em; color: var(--text-secondary); }
+.mod-price { font-size: 1em; font-weight: 700; color: var(--accent-green); margin-top: auto; padding-top: 4px; }
+
+/* Floating Download Menu (No Blur) */
+#mod-download-popup { position: fixed; bottom: -100%; left: 0; width: 100%; background-color: var(--bg-secondary); border-top: 2px solid var(--accent-cyan); z-index: 10010; padding: 20px; border-radius: 15px 15px 0 0; transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 -5px 20px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 15px; }
+#mod-download-popup.active { bottom: 0; }
+#mod-instruction-text { background: var(--bg-tertiary); padding: 12px; border-radius: 8px; font-size: 0.9em; line-height: 1.5; color: var(--text-primary); border-left: 3px solid var(--premium-gold); max-height: 200px; overflow-y: auto; white-space: pre-wrap; }
+/* --- End: Beli MOD Styles --- */
 </style>
 
     <meta name="theme-color" content="#000000">
@@ -776,8 +813,17 @@ img.chat-message-image.admin { align-self: flex-start; }
 </head>
 <body>
 <div id="preloader-overlay">
-    <div class="loader-square">
+    <div class="loader-container">
+        <div class="loader-ring-glow"></div>
+        <div class="loader-ring-1"></div>
+        <div class="loader-ring-2"></div>
+        <div class="loader-icon-center">
+            <i class="ph-fill ph-game-controller"></i>
+        </div>
+    </div>
+    <div class="loader-text-wrapper">
         <span id="loading-percentage">0%</span>
+        <span class="loading-status-text">Menghubungkan Server...</span>
     </div>
 </div>
 <div id=toast-container></div>
@@ -938,7 +984,8 @@ img.chat-message-image.admin { align-self: flex-start; }
     <nav>
         <ul class=sidebar-nav>
             <li class="nav-item"><a href=# id=nav-stok-akun><i class="ph-bold ph-shopping-bag-open nav-icon"></i><span class=nav-text>Beli Akun</span></a></li>
-            <li class="nav-item"><a href=# id=nav-jual-akun><i class="ph-bold ph-tag nav-icon"></i><span class=nav-text>Jual Akun</span></a></li>
+            <li class="nav-item"><a href="#" id="nav-beli-mod"><i class="ph-bold ph-cube nav-icon"></i><span class="nav-text">Beli MOD</span></a></li>
+<li class="nav-item"><a href=# id=nav-jual-akun><i class="ph-bold ph-tag nav-icon"></i><span class=nav-text>Jual Akun</span></a></li>
             <li class=nav-item><a href=# id=nav-topupBussid><img src=https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjyQYodaXJAK1A9Bi0YOIU2BhQubEYchhFx-2PZYB8hOIopqXIQ1FXK_goAxP0GPaXyXk6L5jnO3aOL6EuzkEgGxa2tohs7YJazYrVPZ8czUi8BSjWWkrTKVCTwk7wmhEZRWFPP1U2S-FjXUwDbi9duZ9ejBNm0xTLBFblyee8yY_Jk2MLtQj6v3E_bePI/s1600/Bussid.png class=nav-icon-img alt="BUSSID Icon"><span class=nav-text>Topup BUSSID</span></a></li>
             <li class=nav-item><a href=# id=nav-topupTrucksid><img src=https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj4Q0wYqZDSD7VH-0QlvsqTDi4xnKg5NfRDLJHt92A-4qMcVNMXHpZPkGOQARhJWeZXr0VCCbMCUXJn2iAL-xbCOGELYZQqEgnJXD-VneGmLKQgjO5C9XhyphenhypheneMWD0RBl_bv3VKAGfhYxDzKLPhFjujKFMy7ITYuvLyiW-aDEp3AkM_Tn-jEAPuZXmPqarJY/s1600/images__1_-removebg-preview.png class=nav-icon-img alt="TRUCKSID Icon"><span class=nav-text>Topup TRUCKSID</span></a></li>
             <li class="nav-item user-only" style="display:none;"><a href=# id=nav-topup><i class="ph-bold ph-wallet nav-icon"></i><span class=nav-text>Topup Saldo</span></a></li>
@@ -1090,7 +1137,18 @@ img.chat-message-image.admin { align-self: flex-start; }
             </button>
         </div>
     </div>
-</div><div id=stok-akun-container class=content-container>
+</div><div id="beli-mod-container" class="content-container">
+    <div class="stok-akun-header-controls">
+        <h2>Beli MOD</h2>
+        <p class="subtitle">Koleksi MOD Pilihan Terbaik & Berkualitas.</p>
+        <div class="stok-akun-filter-buttons">
+             <button class="filter-btn active" id="mod-filter-all">Semua</button>
+             <button class="filter-btn" id="mod-filter-owned">Milik Saya</button>
+        </div>
+    </div>
+    <div id="stok-mod-grid"></div>
+</div>
+<div id=stok-akun-container class=content-container>
 <div class="stok-akun-header-controls">
     <h2>Beli Akun</h2>
     <p class=subtitle>Daftar akun yang tersedia. Beli akun menggunakan saldo atau pembayaran langsung.</p>
@@ -1387,8 +1445,11 @@ img.chat-message-image.admin { align-self: flex-start; }
 </div>
 </div><div id=image-lightbox class=lightbox-overlay>
 <span class=lightbox-close id=close-lightbox-btn>×</span>
+<button class="lightbox-nav-btn lightbox-prev" id="lightbox-prev-btn" style="display:none;">❮</button>
+<button class="lightbox-nav-btn lightbox-next" id="lightbox-next-btn" style="display:none;">❯</button>
 <div class=lightbox-content>
-<img src alt="Tampilan Penuh" id=lightbox-image>
+<img src="" alt="Tampilan Penuh" id=lightbox-image>
+<div id="lightbox-counter" class="lightbox-counter" style="display:none;">1 / 1</div>
 </div>
 </div>
 <div id=confirmation-modal class=modal-overlay>
@@ -1836,6 +1897,7 @@ const CHAT_NOTIF_BOT_TOKEN = "8313365155:AAGrDtEwhjfu72rbiqD__BT5nUaJy9IfRq4"; /
         let isProfileLoading = false;
         let balanceListenerUnsubscribe = null;
         let stokAkunUnsubscribe = null;
+let stokModUnsubscribe = null;
         let appSettingsListenerUnsubscribe = null;
         let activeGameSessions = {};
         let currentTransactionTarget = null;
@@ -1962,10 +2024,12 @@ currentImage: document.getElementById('current-profile-picture')
                 qris: document.getElementById('qris-display-container'),
                 subscription: document.getElementById('subscription-container'),
                 stokAkun: document.getElementById('stok-akun-container'),
+                beliMod: document.getElementById('beli-mod-container'),
                 jualAkun: document.getElementById('jual-akun-container'),
             },
             nav: {
                 stokAkun: document.getElementById('nav-stok-akun'),
+                beliMod: document.getElementById('nav-beli-mod'),
                 jualAkun: document.getElementById('nav-jual-akun'),
                 topupBussid: document.getElementById('nav-topupBussid'),
                 topupTrucksid: document.getElementById('nav-topupTrucksid'),
@@ -2134,6 +2198,8 @@ currentImage: document.getElementById('current-profile-picture')
                     
                     setupStokAkunListeners();
                     // --- MODIFIKASI SELESAI ---
+                } else if (pageToShow === 'beliMod') {
+                    setupStokModListeners();
                 }
             }
         }function filterProfileCards(gameName) {
@@ -4734,6 +4800,174 @@ function setupAdminStatusListener() {
             }
         }
 
+
+/* --- Start: Logic Beli MOD --- */
+        function setupStokModListeners() {
+            const grid = document.getElementById('stok-mod-grid');
+            if (stokModUnsubscribe) stokModUnsubscribe();
+
+            const modsQuery = query(collection(db, "stokMod"), orderBy("createdAt", "desc"));
+            /* Kita asumsikan data pembelian MOD user disimpan di subcollection 'userMods' atau field array di user. 
+               Untuk efisiensi, kita fetch list pembelian user sekali saja saat load. */
+            
+            const userModsRef = collection(db, "users", loggedInUser.docId, "myMods");
+            
+            // Listener Realtime untuk Produk MOD
+            stokModUnsubscribe = onSnapshot(modsQuery, async (snapshot) => {
+                // Ambil data kepemilikan user
+                const userModsSnapshot = await getDocs(userModsRef);
+                const ownedModIds = new Set(userModsSnapshot.docs.map(d => d.id)); // ID dokumen di myMods = ID Mod
+
+                let html = '';
+                if (snapshot.empty) {
+                    html = '<p style="grid-column:1/-1; text-align:center; color:var(--text-secondary);">Belum ada MOD yang tersedia.</p>';
+                } else {
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        const isOwned = ownedModIds.has(doc.id);
+                        html += createModCardHTML(doc.id, data, isOwned);
+                    });
+                }
+                grid.innerHTML = html;
+                
+                // Re-apply event listeners for buttons
+                document.querySelectorAll('.btn-buy-mod').forEach(btn => {
+                    btn.addEventListener('click', () => handleModPurchase(btn.dataset.id, btn.dataset.price, btn.dataset.name));
+                });
+                document.querySelectorAll('.btn-download-mod').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        // Ambil pesan & link dari atribut data (disimpan di tombol saat render)
+                        const msg = decodeURIComponent(btn.dataset.msg);
+                        const link = btn.dataset.link;
+                        showModDownloadPopup(msg, link);
+                    });
+                });
+            });
+        }
+
+        function createModCardHTML(id, data, isOwned) {
+            // Data: images (array), name, price, rating, sold, instruction, downloadLink
+                        const imagesList = (data.images && data.images.length > 0) ? data.images : ['https://via.placeholder.com/300x200?text=No+Image'];
+            const thumbnail = imagesList[0];
+            const imagesJson = JSON.stringify(imagesList).replace(/"/g, '&quot;');
+            const rating = data.rating || 5.0;
+            const sold = data.sold || 0;
+            const price = data.price || 0;
+            const name = data.name || 'Nama MOD';
+            
+            // Tombol Action
+            let actionBtn;
+            if (isOwned) {
+                // Encode pesan instruksi agar aman di atribut HTML
+                const encodedMsg = encodeURIComponent(data.instruction || "Tidak ada instruksi khusus.");
+                actionBtn = `<button class="action-button btn-cyan btn-download-mod" data-msg="${encodedMsg}" data-link="${data.downloadLink}" style="font-size:0.8em; padding:6px;"><i class="ph-bold ph-download-simple"></i> Download MOD</button>`;
+            } else {
+                actionBtn = `<button class="action-button btn-green btn-buy-mod" data-id="${id}" data-price="${price}" data-name="${name}" style="font-size:0.8em; padding:6px;">Beli - Rp ${price.toLocaleString('id-ID')}</button>`;
+            }
+
+            // Render Bintang
+            let stars = '';
+            for(let i=0; i<5; i++) stars += (i < Math.floor(rating)) ? '<i class="ph-fill ph-star" style="color:#fbbf24;"></i>' : '<i class="ph ph-star" style="color:#4b5563;"></i>';
+
+            return `
+            <div class="mod-card ${isOwned ? 'owned' : ''}">
+                <div class="mod-card-img-container" onclick="openModGallery(this)" data-images="${imagesJson}">
+                    <img src="${thumbnail}" class="mod-card-img" alt="${name}">
+                </div>
+                <div class="mod-card-body">
+                    <h4 class="mod-title">${name}</h4>
+                    <div class="mod-stats">
+                        <span style="display:flex;align-items:center;gap:2px;">${stars} ${rating}</span>
+                        <span>${sold} Terjual</span>
+                    </div>
+                    ${isOwned ? '' : `<div class="mod-price">Rp ${price.toLocaleString('id-ID')}</div>`}
+                    ${actionBtn}
+                </div>
+            </div>`;
+        }
+
+        async function handleModPurchase(modId, priceRaw, modName) {
+            const price = parseInt(priceRaw);
+            if (loggedInUser.saldo < price) {
+                showToast("Saldo tidak cukup. Silakan Top Up.", "error");
+                return;
+            }
+
+            const confirmed = await showConfirmation(`Beli MOD <strong>${modName}</strong> seharga <strong>Rp ${price.toLocaleString('id-ID')}</strong>?`, "Konfirmasi Beli MOD");
+            if (!confirmed) return;
+
+            showPurchaseLoading("Memproses Pembelian MOD...");
+
+            try {
+                await runTransaction(db, async (transaction) => {
+                    // 1. Cek User Saldo Lagi (Server side check simulation)
+                    const userRef = doc(db, "users", loggedInUser.docId);
+                    const userDoc = await transaction.get(userRef);
+                    if (!userDoc.exists()) throw "User tidak ditemukan";
+                    
+                    const currentSaldo = userDoc.data().saldo || 0;
+                    if (currentSaldo < price) throw "Saldo tidak mencukupi.";
+
+                    // 2. Cek Mod Exists
+                    const modRef = doc(db, "stokMod", modId);
+                    const modDoc = await transaction.get(modRef);
+                    if (!modDoc.exists()) throw "MOD tidak lagi tersedia.";
+
+                    // 3. Eksekusi: Potong Saldo
+                    transaction.update(userRef, { saldo: currentSaldo - price });
+
+                    // 4. Tambah ke Koleksi User (Subcollection)
+                    const myModRef = doc(db, "users", loggedInUser.docId, "myMods", modId);
+                    transaction.set(myModRef, { 
+                        purchasedAt: serverTimestamp(),
+                        modName: modName,
+                        pricePaid: price
+                    });
+
+                    // 5. Update Counter Terjual di Mod
+                    const currentSold = modDoc.data().sold || 0;
+                    transaction.update(modRef, { sold: currentSold + 1 });
+
+                    // 6. Catat Riwayat
+                    const historyRef = doc(collection(db, "purchase_history"));
+                    transaction.set(historyRef, {
+                        userId: loggedInUser.docId,
+                        username: loggedInUser.username,
+                        game: 'MOD SHOP',
+                        rpCost: price,
+                        ubAmount: `Beli MOD: ${modName}`,
+                        status: "Success",
+                        timestamp: serverTimestamp()
+                    });
+                });
+
+                hidePurchaseLoading();
+                showToast("Pembelian Berhasil! Silakan download.", "success");
+                new Audio('sukses.wav').play();
+                // UI akan update otomatis karena onSnapshot listener
+
+            } catch (error) {
+                hidePurchaseLoading();
+                console.error(error);
+                showToast("Gagal: " + error, "error");
+            }
+        }
+
+        function showModDownloadPopup(instruction, link) {
+            const popup = document.getElementById('mod-download-popup');
+            const textEl = document.getElementById('mod-instruction-text');
+            const btn = document.getElementById('mod-download-link-btn');
+            const closeBtn = document.getElementById('close-mod-popup');
+
+            textEl.textContent = instruction || "Langsung download dan ekstrak file.";
+            btn.href = link;
+
+            popup.classList.add('active');
+
+            closeBtn.onclick = () => popup.classList.remove('active');
+        }
+/* --- End: Logic Beli MOD --- */
+
 function initializeAppLogic() {
             window.copyToClipboard = copyToClipboard;
 initializeChatWidget();
@@ -4763,6 +4997,24 @@ initializeChatWidget();
             // --- AKHIR MODIFIKASI ---
             
             setupRealtimeAppSettings();
+            // Filter Buttons Beli MOD
+            const modFilterAll = document.getElementById('mod-filter-all');
+            const modFilterOwned = document.getElementById('mod-filter-owned');
+            
+            if(modFilterAll && modFilterOwned) {
+                modFilterAll.addEventListener('click', () => {
+                    modFilterAll.classList.add('active');
+                    modFilterOwned.classList.remove('active');
+                    document.querySelectorAll('.mod-card').forEach(c => c.style.display = 'flex');
+                });
+                modFilterOwned.addEventListener('click', () => {
+                    modFilterOwned.classList.add('active');
+                    modFilterAll.classList.remove('active');
+                    document.querySelectorAll('.mod-card').forEach(c => {
+                        c.style.display = c.classList.contains('owned') ? 'flex' : 'none';
+                    });
+                });
+            }
 
             setupPasswordToggle('password', 'login-password-toggle');
             setupPasswordToggle('reg-password', 'reg-password-toggle');
@@ -4809,6 +5061,7 @@ document.getElementById('register-form').addEventListener('submit', register);
                              stokAkunUnsubscribe();
                              stokAkunUnsubscribe = null;
                         }
+            if (stokModUnsubscribe && key !== 'beliMod') { stokModUnsubscribe(); stokModUnsubscribe = null; }
 
                         if (key === 'topup') { await showTopupMenu(); }
                         else { await showPage(key); }
@@ -5035,9 +5288,84 @@ document.getElementById('register-form').addEventListener('submit', register);
             mainContent.addEventListener('click', (e) => {
                 if (e.target.id === 'qris-image') { dom.lightbox.image.src = e.target.src; showModal(dom.lightbox.overlay); }
             });
-            const closeLightbox = () => { hideModal(dom.lightbox.overlay); dom.lightbox.image.src = ''; };
+                        // --- Logic Gallery & Swipe ---
+            let currentGallery = [];
+            let currentGalleryIndex = 0;
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            const lightboxPrevBtn = document.getElementById('lightbox-prev-btn');
+            const lightboxNextBtn = document.getElementById('lightbox-next-btn');
+            const lightboxCounter = document.getElementById('lightbox-counter');
+
+            window.openModGallery = function(element) {
+                const rawImages = element.getAttribute('data-images');
+                if (!rawImages) return;
+                try {
+                    currentGallery = JSON.parse(rawImages);
+                    if (!Array.isArray(currentGallery) || currentGallery.length === 0) return;
+                    currentGalleryIndex = 0;
+                    updateGalleryUI();
+                    showModal(dom.lightbox.overlay);
+                } catch(e) { console.error("Error parsing images", e); }
+            };
+
+            function updateGalleryUI() {
+                dom.lightbox.image.src = currentGallery[currentGalleryIndex];
+                
+                if (currentGallery.length > 1) {
+                    lightboxPrevBtn.style.display = 'block';
+                    lightboxNextBtn.style.display = 'block';
+                    lightboxCounter.style.display = 'block';
+                    lightboxCounter.textContent = `${currentGalleryIndex + 1} / ${currentGallery.length}`;
+                } else {
+                    lightboxPrevBtn.style.display = 'none';
+                    lightboxNextBtn.style.display = 'none';
+                    lightboxCounter.style.display = 'none';
+                }
+            }
+
+            function nextGalleryImage() {
+                if (currentGallery.length <= 1) return;
+                currentGalleryIndex = (currentGalleryIndex + 1) % currentGallery.length;
+                updateGalleryUI();
+            }
+
+            function prevGalleryImage() {
+                if (currentGallery.length <= 1) return;
+                currentGalleryIndex = (currentGalleryIndex - 1 + currentGallery.length) % currentGallery.length;
+                updateGalleryUI();
+            }
+
+            lightboxNextBtn.addEventListener('click', (e) => { e.stopPropagation(); nextGalleryImage(); });
+            lightboxPrevBtn.addEventListener('click', (e) => { e.stopPropagation(); prevGalleryImage(); });
+            
+            // Swipe Logic
+            dom.lightbox.overlay.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, {passive: true});
+
+            dom.lightbox.overlay.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, {passive: true});
+
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                if (touchEndX < touchStartX - swipeThreshold) nextGalleryImage(); // Swipe Left -> Next
+                if (touchEndX > touchStartX + swipeThreshold) prevGalleryImage(); // Swipe Right -> Prev
+            }
+
+            const closeLightbox = () => { 
+                hideModal(dom.lightbox.overlay); 
+                dom.lightbox.image.src = ''; 
+                currentGallery = [];
+            };
+            
             dom.lightbox.closeBtn.addEventListener('click', closeLightbox);
-            dom.lightbox.overlay.addEventListener('click', (e) => { if (e.target === dom.lightbox.overlay) closeLightbox(); });
+            dom.lightbox.overlay.addEventListener('click', (e) => { 
+                if (e.target === dom.lightbox.overlay || e.target === dom.lightbox.image.parentElement) closeLightbox(); 
+            });
             const offlineModal = document.getElementById('offline-modal');
             window.addEventListener('offline', () => { showModal(offlineModal); });
             window.addEventListener('online', () => { hideModal(offlineModal); refreshCurrentPageContent(); });
@@ -5168,6 +5496,19 @@ document.body.style.visibility = 'visible';
 <div id="image-preview-modal" class="chat-hidden">
     <span id="modal-close">&times;</span>
     <img id="preview-image" src="" alt="Preview Gambar">
+</div>
+<div id="mod-download-popup">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin:0;"><i class="ph-bold ph-download-simple"></i> Download MOD</h3>
+        <span id="close-mod-popup" style="font-size:1.5em; cursor:pointer;">&times;</span>
+    </div>
+    <div>
+        <label style="font-size:0.8em; color:var(--text-secondary); margin-bottom:5px; display:block;">Cara Pemakaian (Pesan Admin):</label>
+        <div id="mod-instruction-text"></div>
+    </div>
+    <a id="mod-download-link-btn" href="#" target="_blank" class="action-button btn-green" style="text-align:center; text-decoration:none;">
+        <i class="ph-bold ph-file-arrow-down"></i> Download File Sekarang
+    </a>
 </div>
 </body>
 </html>
