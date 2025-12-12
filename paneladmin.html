@@ -1145,6 +1145,7 @@
         .lightbox-content img { max-width: 100%; max-height: 80vh; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.5); object-fit: contain; }
         .lightbox-close { position: absolute; top: 20px; right: 30px; font-size: 3em; color: white; cursor: pointer; font-weight: bold; transition: color 0.3s; z-index: 10006; line-height: 1;}
         .lightbox-close:hover { color: var(--accent-primary); }
+.lightbox-nav-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.4);color:white;border:none;padding:15px 20px;font-size:2em;cursor:pointer;border-radius:50%;z-index:10007;transition:all .3s ease;user-select:none;outline:none}.lightbox-nav-btn:hover{background:rgba(0,0,0,0.8);transform:translateY(-50%) scale(1.1)}.lightbox-prev{left:20px}.lightbox-next{right:20px}.lightbox-counter{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);color:white;background:rgba(0,0,0,0.6);padding:8px 16px;border-radius:20px;font-size:1em;font-weight:600;pointer-events:none;z-index:10007}
 
 /* Styling untuk pesan admin/user di jendela mengambang */
 .chat-messages-admin-panel {
@@ -1363,6 +1364,7 @@
     transform: translateX(18px);
 }
 
+.buyer-list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid var(--border-color); background: var(--bg-primary); transition: background 0.2s; } .buyer-list-item:hover { background: var(--bg-secondary); } .buyer-info { display: flex; flex-direction: column; } .buyer-name { font-weight: 600; color: var(--text-primary); font-size: 0.95em; } .buyer-date { font-size: 0.8em; color: var(--text-secondary); } .revoke-btn { background: rgba(239, 68, 68, 0.1); color: var(--danger-primary); border: 1px solid var(--danger-primary); padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8em; transition: all 0.2s; } .revoke-btn:hover { background: var(--danger-primary); color: white; }
 </style>
 </head>
 <body>
@@ -1531,6 +1533,7 @@
                     <div class="filter-buttons" id="etalase-filters">
                         <button class="filter-btn active" data-etalase-view="kredensial"><i class="fas fa-key"></i> Stok Kredensial</button>
                         <button class="filter-btn" data-etalase-view="penawaran"><i class="fas fa-archive"></i> Stok Penawaran</button>
+                        <button class="filter-btn" data-etalase-view="mod"><i class="fas fa-cube"></i> Stok MOD</button>
                     </div>
                 </div>
             
@@ -1581,7 +1584,25 @@
 
             </div> 
 
-            <div id="rekap-view" style="display: none;">
+            
+            <div id="stok-mod-management-view" style="display: none;">
+                 <header class="view-header">
+                    <button class="action-button btn-secondary back-to-menu-btn"><i class="fas fa-arrow-left"></i> Menu</button>
+                    <h1>Manajemen Stok MOD</h1>
+                    <div class="actions">
+                        <button id="add-stok-mod-btn" class="action-button btn-success"><i class="fas fa-plus"></i> Tambah MOD</button>
+                    </div>
+                </header>
+                <div class="controls-container">
+                    <div class="controls">
+                         <button id="refresh-stok-mod-btn" class="action-button btn-primary"> <i class="fas fa-sync-alt"></i> Refresh</button>
+                    </div>
+                </div>
+                <div id="stok-mod-card-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                </div>
+                <div class="spinner-overlay" id="stok-mod-spinner" style="display:none;"><div class="spinner"></div></div>
+            </div>
+<div id="rekap-view" style="display: none;">
                 <header class="view-header">
                     <button class="action-button btn-secondary back-to-menu-btn"><i class="fas fa-arrow-left"></i> Menu</button>
                     <h1>Rekap Transaksi</h1>
@@ -1998,7 +2019,93 @@
         </div>
     </div>
     
-    <div id="confirm-modal" class="modal" style="z-index: 1003;">
+    
+    <div id="add-stok-mod-modal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-plus-circle"></i> Tambah Produk MOD</h2>
+            <form id="add-stok-mod-form">
+                 <div class="input-group">
+                    <label>Foto Produk (Maks 5 Foto)</label>
+                    <input type="file" id="add-stok-mod-images" class="input-field" accept="image/*" multiple required>
+                    <small style="color:var(--text-secondary)">Foto pertama akan menjadi thumbnail.</small>
+                </div>
+                <div class="input-group">
+                    <label>Nama MOD</label>
+                    <input type="text" id="add-stok-mod-name" class="input-field" placeholder="Contoh: Mod Truck Canter Full Anim" required>
+                </div>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Harga (Rp)</label>
+                        <input type="number" id="add-stok-mod-price" class="input-field" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Terjual (Fake Count)</label>
+                        <input type="number" id="add-stok-mod-sold" class="input-field" value="0">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Rating (0-5)</label>
+                    <input type="number" id="add-stok-mod-rating" class="input-field" value="5" min="0" max="5" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label>Link Download File</label>
+                    <input type="url" id="add-stok-mod-link" class="input-field" placeholder="https://..." required>
+                </div>
+                <div class="input-group">
+                    <label>Pesan / Cara Pemakaian</label>
+                    <textarea id="add-stok-mod-instruction" class="input-field" rows="4" placeholder="Tulis langkah-langkah pemasangan atau password zip disini..." required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="action-button btn-secondary cancel-modal-btn">Batal</button>
+                    <button type="submit" class="action-button btn-success"><i class="fas fa-save"></i> Simpan Produk</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="edit-stok-mod-modal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-edit"></i> Edit Produk MOD</h2>
+            <form id="edit-stok-mod-form">
+                <input type="hidden" id="edit-stok-mod-id">
+                 <div class="input-group">
+                    <label>Ganti Foto (Biarkan kosong jika tidak ingin mengubah)</label>
+                    <input type="file" id="edit-stok-mod-images" class="input-field" accept="image/*" multiple>
+                </div>
+                <div class="input-group">
+                    <label>Nama MOD</label>
+                    <input type="text" id="edit-stok-mod-name" class="input-field" required>
+                </div>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Harga (Rp)</label>
+                        <input type="number" id="edit-stok-mod-price" class="input-field" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Terjual</label>
+                        <input type="number" id="edit-stok-mod-sold" class="input-field" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Rating (0-5)</label>
+                    <input type="number" id="edit-stok-mod-rating" class="input-field" min="0" max="5" step="0.1" required>
+                </div>
+                <div class="input-group">
+                    <label>Link Download File</label>
+                    <input type="url" id="edit-stok-mod-link" class="input-field" required>
+                </div>
+                <div class="input-group">
+                    <label>Pesan / Cara Pemakaian</label>
+                    <textarea id="edit-stok-mod-instruction" class="input-field" rows="4" required></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="action-button btn-secondary cancel-modal-btn">Batal</button>
+                    <button type="submit" class="action-button btn-primary"><i class="fas fa-save"></i> Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+<div id="confirm-modal" class="modal" style="z-index: 1003;">
         <div class="modal-content" style="max-width: 450px; text-align: center;">
             <h2 id="confirm-title" style="color: var(--danger-primary);"><i class="fas fa-exclamation-triangle"></i> Confirmation</h2>
             <p id="confirm-message" style="font-size: 1.1em; color: var(--text-primary); margin: 20px 0;">Are you sure?</p>
@@ -2057,10 +2164,13 @@
         </div>
     </div>
 
-        <div id="admin-image-lightbox" class="lightbox-overlay">
+            <div id="admin-image-lightbox" class="lightbox-overlay">
         <span class="lightbox-close" id="admin-close-lightbox-btn">&times;</span>
+        <button class="lightbox-nav-btn lightbox-prev" id="admin-lightbox-prev-btn" style="display:none">❮</button>
+        <button class="lightbox-nav-btn lightbox-next" id="admin-lightbox-next-btn" style="display:none">❯</button>
         <div class="lightbox-content">
             <img src="" alt="Full Size" id="admin-lightbox-image">
+            <div id="admin-lightbox-counter" class="lightbox-counter" style="display:none"></div>
         </div>
     </div>
 
@@ -2090,6 +2200,15 @@
     </div>
 </div>
 
+<div id="mod-buyers-window" class="floating-chat-container" style="right: 50%; transform: translateX(50%); bottom: 10%; height: 600px; width: 400px; z-index: 10002;">
+    <div id="floating-chat-header" style="background: var(--warning-primary);">
+        <span id="mod-buyers-title" style="flex-grow:1; font-weight:600;">Daftar Pembeli</span>
+        <button id="close-mod-buyers" class="chat-control-btn"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="chat-messages-admin-panel" id="mod-buyers-list" style="padding: 0;">
+        <p style="text-align:center; padding: 20px; color: var(--text-secondary);">Memuat data...</p>
+    </div>
+</div>
 <div id="new-chat-modal" class="modal">
     <div class="modal-content" style="max-width: 450px;">
         <h2><i class="fas fa-user-plus"></i> Mulai Chat Baru</h2>
@@ -2149,6 +2268,10 @@
             pendingTransactionContainer: document.getElementById('pending-transaction-container'),
             stokAkunCardContainer: document.getElementById('stok-akun-card-container'),
             stokKredensialCardContainer: document.getElementById('stok-kredensial-card-container'),
+            stokModCardContainer: document.getElementById('stok-mod-card-container'),
+            stokModSpinner: document.getElementById('stok-mod-spinner'),
+            addStokModModal: document.getElementById('add-stok-mod-modal'),
+            editStokModModal: document.getElementById('edit-stok-mod-modal'),
             searchInput: document.getElementById('search-input'),
             userSpinner: document.getElementById('user-spinner'),
             transactionSpinner: document.getElementById('transaction-spinner'),
@@ -2170,6 +2293,7 @@
                 transactions: document.getElementById('transaction-management-view'),
                 stokAkun: document.getElementById('stok-akun-management-view'),
                 stokKredensial: document.getElementById('stok-kredensial-management-view'),
+                stokMod: document.getElementById('stok-mod-management-view'),
                 settings: document.getElementById('settings-view'),
                 rekap: document.getElementById('rekap-view'),
                 etalase: document.getElementById('etalase-view') // <-- TAMBAHKAN ETALASE
@@ -2178,10 +2302,81 @@
             }
         };
 
-                window.openAdminImageLightbox = (src) => {
-            document.getElementById('admin-lightbox-image').src = src;
-            document.getElementById('admin-image-lightbox').style.display = 'flex';
+                                function resizeAndCompressImage(file, maxWidth, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    // LOGIK BARU: Cek ukuran file (950KB = 972800 bytes)
+                    if (file.size <= 972800) {
+                        console.log("File < 950KB, pakai original.");
+                        resolve(event.target.result);
+                        return;
+                    }
+
+                    console.log("File > 950KB, compressing...");
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        let width = img.width, height = img.height;
+                        if (width > height) { if (width > maxWidth) { height *= maxWidth / width; width = maxWidth; } }
+                        else { if (height > maxWidth) { width *= maxWidth / height; height = maxWidth; } }
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Kompresi bertahap agar muat di bawah ~950KB (sekitar 1.3jt karakter base64)
+                        let currentQuality = quality;
+                        let dataUrl = canvas.toDataURL('image/jpeg', currentQuality);
+                        while (dataUrl.length > 1300000 && currentQuality > 0.5) {
+                            currentQuality -= 0.1;
+                            dataUrl = canvas.toDataURL('image/jpeg', currentQuality);
+                        }
+                        resolve(dataUrl);
+                    };
+                    img.onerror = (error) => reject(error);
+                };
+                reader.onerror = (error) => reject(error);
+            });
+        }
+
+        // --- Admin Gallery Logic ---
+        let curAdminGal = [];
+        let curAdminIdx = 0;
+
+        window.openAdminGallery = (el) => {
+            try {
+                curAdminGal = JSON.parse(el.dataset.images);
+                if(!curAdminGal.length) return;
+                curAdminIdx = 0;
+                updateAdminGalUI();
+                document.getElementById('admin-image-lightbox').style.display = 'flex';
+            } catch(e) { console.error(e); }
         };
+
+        function updateAdminGalUI() {
+            const img = document.getElementById('admin-lightbox-image');
+            const prev = document.getElementById('admin-lightbox-prev-btn');
+            const next = document.getElementById('admin-lightbox-next-btn');
+            const cnt = document.getElementById('admin-lightbox-counter');
+            
+            img.src = curAdminGal[curAdminIdx];
+            if(curAdminGal.length > 1) {
+                prev.style.display = 'block'; next.style.display = 'block'; cnt.style.display = 'block';
+                cnt.textContent = `${curAdminIdx + 1} / ${curAdminGal.length}`;
+            } else {
+                prev.style.display = 'none'; next.style.display = 'none'; cnt.style.display = 'none';
+            }
+        }
+
+        // Bind Gallery Buttons
+        const _prevBtn = document.getElementById('admin-lightbox-prev-btn');
+        const _nextBtn = document.getElementById('admin-lightbox-next-btn');
+        if(_prevBtn) _prevBtn.onclick = (e) => { e.stopPropagation(); curAdminIdx = (curAdminIdx > 0) ? curAdminIdx - 1 : curAdminGal.length - 1; updateAdminGalUI(); };
+        if(_nextBtn) _nextBtn.onclick = (e) => { e.stopPropagation(); curAdminIdx = (curAdminIdx < curAdminGal.length - 1) ? curAdminIdx + 1 : 0; updateAdminGalUI(); };
+        
+        window.openAdminImageLightbox = window.openAdminGallery; // Fallback compatibility
 
         const showToast = (message, type = 'success') => {
             const toastContainer = document.getElementById('toast-container');
@@ -3346,7 +3541,187 @@ else if (viewName === 'liveChat') { // <-- TAMBAHKAN BLOK INI
             showConfirmation('Yakin ingin mengembalikan item ini ke stok?', 'Reset Status', 'btn-warning', confirmAction);
         };
         
-        // --- REKAP MANAGEMENT FUNCTIONS ---
+        
+        // --- STOK MOD MANAGEMENT ---
+        let allStokMod = [];
+
+        const fetchStokMod = async () => {
+            dom.stokModSpinner.style.display = 'flex';
+            try {
+                const q = query(collection(db, "stokMod"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                allStokMod = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderStokModCards();
+            } catch (error) {
+                console.error("Error fetching stok mod:", error);
+                showToast('Gagal mengambil data MOD.', 'error');
+            } finally {
+                dom.stokModSpinner.style.display = 'none';
+            }
+        };
+
+        const renderStokModCards = () => {
+            dom.stokModCardContainer.innerHTML = '';
+            if (allStokMod.length === 0) {
+                dom.stokModCardContainer.innerHTML = `<p style="text-align:center; grid-column: 1 / -1; color: var(--text-secondary);">Belum ada produk MOD.</p>`;
+                return;
+            }
+
+                        allStokMod.forEach(mod => {
+                const imgList = (mod.images && mod.images.length > 0) ? mod.images : ['https://via.placeholder.com/300x200?text=No+Image'];
+                const thumbnail = imgList[0];
+                const imgJson = JSON.stringify(imgList).replace(/"/g, '&quot;');
+                
+                const cardHTML = `
+                <div class="stok-akun-card" style="padding: 0; overflow: hidden;">
+                    <div style="width: 100%; height: 150px; background-color: #000; position: relative;">
+                        <img src="${thumbnail}" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" onclick="openAdminGallery(this)" data-images="${imgJson}">
+                        <span style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.8em;">
+                            <i class="fas fa-star" style="color: #fbbf24;"></i> ${mod.rating}
+                        </span>
+                    </div>
+                    <div style="padding: 15px;">
+                        <h3 style="margin: 0 0 10px 0; color: white; font-size: 1.1em;">${mod.name}</h3>
+                        <div class="card-info-grid" style="gap: 8px; margin-bottom: 15px;">
+                            <div class="info-item"><span class="info-label">Harga</span><span class="info-value" style="color: var(--success-primary);">Rp ${(mod.price||0).toLocaleString('id-ID')}</span></div>
+                            <div class="info-item"><span class="info-label">Terjual</span><span class="info-value">${mod.sold || 0}</span></div>
+                        </div>
+                                                <div class="card-actions" style="border-top: 1px solid var(--border-color); padding-top: 10px;">
+                            <button class="action-button btn-warning view-mod-buyers-btn" data-doc-id="${mod.id}" data-name="${mod.name}"><i class="fas fa-users"></i> Pembeli (${mod.sold || 0})</button>
+                            <button class="action-button btn-primary edit-stok-mod-btn" data-doc-id="${mod.id}"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="action-button btn-danger delete-stok-mod-btn" data-doc-id="${mod.id}" data-name="${mod.name}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>`;
+                dom.stokModCardContainer.innerHTML += cardHTML;
+            });
+            addStokModCardButtonListeners();
+        };
+
+        const addStokModCardButtonListeners = () => {
+            dom.stokModCardContainer.addEventListener('click', (e) => {
+                const editBtn = e.target.closest('.edit-stok-mod-btn');
+                const deleteBtn = e.target.closest('.delete-stok-mod-btn');
+                                if (editBtn) openEditStokModModal(editBtn.dataset.docId);
+                if (deleteBtn) handleDeleteStokMod(deleteBtn.dataset.docId, deleteBtn.dataset.name);
+                
+                // Listener untuk tombol Pembeli
+                const buyersBtn = e.target.closest('.view-mod-buyers-btn');
+                if (buyersBtn) {
+                    openModBuyersModal(buyersBtn.dataset.docId, buyersBtn.dataset.name);
+                }
+            });
+        };
+
+                const handleSaveNewStokMod = async (event) => {
+            event.preventDefault();
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true; submitBtn.innerHTML = 'Memproses...';
+
+            try {
+                const imageInput = document.getElementById('add-stok-mod-images');
+                const processedImages = [];
+                if (imageInput.files.length > 0) {
+                    for (let i = 0; i < Math.min(imageInput.files.length, 5); i++) {
+                        // Resize lebih agresif (500px, 0.6) agar muat di Firestore (max 1MB)
+                        const base64 = await resizeAndCompressImage(imageInput.files[i], 1280, 0.9);
+                        processedImages.push(base64);
+                    }
+                }
+
+                const newData = {
+                    name: document.getElementById('add-stok-mod-name').value,
+                    price: Number(document.getElementById('add-stok-mod-price').value),
+                    sold: Number(document.getElementById('add-stok-mod-sold').value),
+                    rating: Number(document.getElementById('add-stok-mod-rating').value),
+                    downloadLink: document.getElementById('add-stok-mod-link').value,
+                    instruction: document.getElementById('add-stok-mod-instruction').value,
+                    images: processedImages,
+                    createdAt: serverTimestamp()
+                };
+
+                await addDoc(collection(db, "stokMod"), newData);
+                showToast('Produk MOD berhasil ditambahkan!', 'success');
+                dom.addStokModModal.style.display = 'none';
+                document.getElementById('add-stok-mod-form').reset();
+                fetchStokMod();
+            } catch (e) {
+                console.error("ADD MOD ERROR:", e);
+                let msg = 'Gagal: ' + e.message;
+                if(e.code === 'failed-precondition') msg = 'Index Firebase Belum Dibuat (Cek Console Browser)';
+                else if(e.code === 'resource-exhausted') msg = 'Ukuran File Terlalu Besar (Kurangi Foto)';
+                showToast(msg, 'error');
+            } finally {
+                submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-save"></i> Simpan Produk';
+            }
+        };
+
+        const openEditStokModModal = (modId) => {
+            const mod = allStokMod.find(m => m.id === modId);
+            if (!mod) return;
+            document.getElementById('edit-stok-mod-id').value = modId;
+            document.getElementById('edit-stok-mod-name').value = mod.name;
+            document.getElementById('edit-stok-mod-price').value = mod.price;
+            document.getElementById('edit-stok-mod-sold').value = mod.sold;
+            document.getElementById('edit-stok-mod-rating').value = mod.rating;
+            document.getElementById('edit-stok-mod-link').value = mod.downloadLink;
+            document.getElementById('edit-stok-mod-instruction').value = mod.instruction;
+            document.getElementById('edit-stok-mod-images').value = ''; // Reset file input
+            dom.editStokModModal.style.display = 'flex';
+        };
+
+                const handleUpdateStokMod = async (event) => {
+            event.preventDefault();
+            const modId = document.getElementById('edit-stok-mod-id').value;
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true; submitBtn.innerHTML = 'Memproses...';
+
+            try {
+                const updateData = {
+                    name: document.getElementById('edit-stok-mod-name').value,
+                    price: Number(document.getElementById('edit-stok-mod-price').value),
+                    sold: Number(document.getElementById('edit-stok-mod-sold').value),
+                    rating: Number(document.getElementById('edit-stok-mod-rating').value),
+                    downloadLink: document.getElementById('edit-stok-mod-link').value,
+                    instruction: document.getElementById('edit-stok-mod-instruction').value,
+                };
+
+                const imageInput = document.getElementById('edit-stok-mod-images');
+                if (imageInput.files.length > 0) {
+                    const processedImages = [];
+                    for (let i = 0; i < Math.min(imageInput.files.length, 5); i++) {
+                        // Resize agresif untuk update juga
+                        const base64 = await resizeAndCompressImage(imageInput.files[i], 1280, 0.9);
+                        processedImages.push(base64);
+                    }
+                    updateData.images = processedImages;
+                }
+
+                await updateDoc(doc(db, "stokMod", modId), updateData);
+                showToast('Produk MOD berhasil diperbarui!', 'success');
+                dom.editStokModModal.style.display = 'none';
+                fetchStokMod();
+            } catch (e) {
+                console.error(e);
+                showToast('Gagal update: ' + e.message, 'error');
+            } finally {
+                submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-save"></i> Simpan Perubahan';
+            }
+        };
+
+        const handleDeleteStokMod = (modId, name) => {
+            showConfirmation(`Yakin ingin menghapus MOD: ${name}?`, 'Hapus MOD', 'btn-danger', async () => {
+                try {
+                    await deleteDoc(doc(db, "stokMod", modId));
+                    showToast('MOD berhasil dihapus.', 'success');
+                    fetchStokMod();
+                } catch (e) {
+                    showToast('Gagal menghapus MOD.', 'error');
+                }
+            });
+        };
+
+// --- REKAP MANAGEMENT FUNCTIONS ---
         const fetchAndRenderRekap = async (filter = 'all') => {
             dom.rekapSpinner.style.display = 'flex';
             const tableBody = document.getElementById('rekap-table-body');
@@ -4169,7 +4544,7 @@ const handleClearChat = (sessionId) => {
             document.getElementById('refresh-stok-kredensial-btn').addEventListener('click', fetchStokKredensial);
 
             // --- ETALASE VIEW LISTENERS ---
-            document.getElementById('etalase-filters').addEventListener('click', (e) => {
+                        document.getElementById('etalase-filters').addEventListener('click', (e) => {
                 if (e.target.classList.contains('filter-btn')) {
                     document.querySelectorAll('#etalase-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
                     e.target.classList.add('active');
@@ -4178,25 +4553,37 @@ const handleClearChat = (sessionId) => {
                     if (viewToShow === 'kredensial') {
                         document.getElementById('stok-kredensial-management-view').style.display = 'block';
                         document.getElementById('stok-akun-management-view').style.display = 'none';
+                        document.getElementById('stok-mod-management-view').style.display = 'none';
                         fetchStokKredensial();
-                    } else {
+                    } else if (viewToShow === 'mod') {
+                        document.getElementById('stok-kredensial-management-view').style.display = 'none';
+                        document.getElementById('stok-akun-management-view').style.display = 'none';
+                        document.getElementById('stok-mod-management-view').style.display = 'block';
+                        fetchStokMod();
+                    } else { // 'penawaran'
                         document.getElementById('stok-kredensial-management-view').style.display = 'none';
                         document.getElementById('stok-akun-management-view').style.display = 'block';
+                        document.getElementById('stok-mod-management-view').style.display = 'none';
                         fetchStokAkun();
                     }
                 }
             });
-    
+
             document.getElementById('refresh-etalase-btn').addEventListener('click', () => {
                 const activeFilter = document.querySelector('#etalase-filters .filter-btn.active').dataset.etalaseView;
-                if (activeFilter === 'kredensial') {
-                    fetchStokKredensial();
-                } else {
-                    fetchStokAkun();
-                }
+                if (activeFilter === 'kredensial') fetchStokKredensial();
+                else if (activeFilter === 'mod') fetchStokMod();
+                else fetchStokAkun();
             });
 
-            document.getElementById('reset-rekap-btn').addEventListener('click', handleResetRekap);
+
+            
+            document.getElementById('add-stok-mod-btn').addEventListener('click', () => dom.addStokModModal.style.display = 'flex');
+            document.getElementById('add-stok-mod-form').addEventListener('submit', handleSaveNewStokMod);
+            document.getElementById('edit-stok-mod-form').addEventListener('submit', handleUpdateStokMod);
+            document.getElementById('refresh-stok-mod-btn').addEventListener('click', fetchStokMod);
+
+document.getElementById('reset-rekap-btn').addEventListener('click', handleResetRekap);
             
             document.getElementById('add-user-btn').addEventListener('click', () => dom.addUserModal.style.display = 'flex');
             document.getElementById('quick-add-user-btn').addEventListener('click', () => dom.addUserModal.style.display = 'flex');
@@ -4583,6 +4970,93 @@ dom.views.users.addEventListener('click', (e) => {
         handleStartChatButtonClick(username);
     }
 });
+        // --- Mod Buyers Management ---
+        const openModBuyersModal = async (modId, modName) => {
+            const modal = document.getElementById('mod-buyers-window');
+            const listContainer = document.getElementById('mod-buyers-list');
+            const title = document.getElementById('mod-buyers-title');
+            
+            modal.style.display = 'flex';
+            title.textContent = `Pembeli: ${modName}`;
+            listContainer.innerHTML = '<p style="text-align:center; padding: 20px; color: var(--text-secondary);"><i class="fas fa-spinner fa-spin"></i> Memuat data...</p>';
+
+            try {
+                // Mengambil data dari purchase_history
+                const q = query(collection(db, "purchase_history"), 
+                    where("game", "==", "MOD SHOP"), 
+                    where("ubAmount", "==", `Beli MOD: ${modName}`),
+                    where("status", "==", "Success")
+                );
+                const snapshot = await getDocs(q);
+                
+                // Filter duplikat user
+                const buyersMap = new Map();
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (!buyersMap.has(data.userId)) {
+                        buyersMap.set(data.userId, { 
+                            ...data, 
+                            historyId: doc.id,
+                            date: data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString('id-ID') : 'N/A'
+                        });
+                    }
+                });
+
+                if (buyersMap.size === 0) {
+                    listContainer.innerHTML = '<p style="text-align:center; padding: 20px; color: var(--text-secondary);">Belum ada pembeli untuk MOD ini.</p>';
+                    return;
+                }
+
+                listContainer.innerHTML = '';
+                buyersMap.forEach((buyer) => {
+                    const item = document.createElement('div');
+                    item.className = 'buyer-list-item';
+                    item.innerHTML = `
+                        <div class="buyer-info">
+                            <span class="buyer-name"><i class="fas fa-user"></i> ${buyer.username}</span>
+                            <span class="buyer-date">Dibeli: ${buyer.date}</span>
+                        </div>
+                        <button class="revoke-btn" onclick="handleRevokeMod('${buyer.userId}', '${modId}', '${buyer.username}', '${buyer.historyId}')">
+                            <i class="fas fa-ban"></i> Hapus Akses
+                        </button>
+                    `;
+                    listContainer.appendChild(item);
+                });
+
+            } catch (e) {
+                console.error(e);
+                listContainer.innerHTML = '<p style="text-align:center; color:var(--danger-primary);">Gagal memuat data.</p>';
+            }
+        };
+
+        window.handleRevokeMod = (userId, modId, username, historyId) => {
+            showConfirmation(`Hapus akses MOD untuk user <b>${username}</b>? User tidak akan bisa mendownload lagi.`, 'Hapus Akses', 'btn-danger', async () => {
+                try {
+                    // 1. Hapus dari subkoleksi user
+                    await deleteDoc(doc(db, "users", userId, "myMods", modId));
+                    
+                    // 2. Update status di history (opsional, agar tidak muncul lagi di list)
+                    if (historyId) {
+                       await updateDoc(doc(db, "purchase_history", historyId), { status: "Revoked by Admin" });
+                    }
+                    
+                    // 3. Update stok count (opsional)
+                    // const modRef = doc(db, "stokMod", modId);
+                    // await updateDoc(modRef, { sold: increment(-1) }); 
+
+                    showToast(`Akses untuk ${username} berhasil dicabut.`, 'success');
+                    // Refresh list pembeli dengan menutup dan membuka ulang (atau refresh manual)
+                    document.getElementById('mod-buyers-window').style.display = 'none';
+                } catch (e) {
+                    console.error(e);
+                    showToast('Gagal menghapus akses.', 'error');
+                }
+            });
+        };
+
+        document.getElementById('close-mod-buyers').addEventListener('click', () => {
+            document.getElementById('mod-buyers-window').style.display = 'none';
+        });
 // --- END: Live Chat Event Listeners ---
 onAuthStateChanged(auth, (user) => {
             if (user) {
