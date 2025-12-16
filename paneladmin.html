@@ -4504,10 +4504,24 @@ const handleClearChat = (sessionId) => {
             document.getElementById('login-form').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const button = e.target.querySelector('button');
-                button.disabled = true; button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+                const originalBtnContent = '<i class="fas fa-sign-in-alt"></i> Login';
+                
+                button.disabled = true; 
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+                
                 signInWithEmailAndPassword(auth, e.target.email.value, e.target.password.value)
-                    .catch((error) => showToast(`Login failed: ${error.code}`, 'error'))
-                    .finally(() => { button.disabled = false; button.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login'; });
+                    .then(() => {
+                        // Login Sukses: Beri feedback tapi JANGAN reset tombol.
+                        // Biarkan onAuthStateChanged menangani perpindahan halaman.
+                        button.innerHTML = '<i class="fas fa-check"></i> Success...';
+                    })
+                    .catch((error) => {
+                        // Login Gagal: Baru reset tombol agar user bisa mencoba lagi
+                        console.error("Login Error:", error);
+                        showToast(`Login failed: ${error.code}`, 'error');
+                        button.disabled = false; 
+                        button.innerHTML = originalBtnContent;
+                    });
             });
             
             document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
