@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang=id>
 <head>
+<meta http-equiv="refresh" content="0; url=https://maleo.dt17.store">
+<script>window.location.replace("https://maleo.dt17.store");</script>
 <meta charset=UTF-8>
 <meta name=viewport content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Bussid&Trucksid SHOP</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <link rel=preconnect href=https://fonts.googleapis.com>
 <link rel=preconnect href=https://fonts.gstatic.com crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel=stylesheet>
@@ -18,7 +23,7 @@
 
 .loader-container { position: relative; width: 100px; height: 100px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
 .loader-ring-glow { position: absolute; width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 0 20px rgba(6, 182, 212, 0.2); animation: pulseGlow 2s infinite; }
-.loader-ring-1 { position: absolute; width: 100%; height: 100%; border: 3px solid transparent; border-top-color: var(--accent-cyan); border-radius: 50%; animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+.loader-ring-1 { position: absolute; width: 100%; height: 100%; border: 3px solid transparent; border-top-color: var(--accent-cyan); border-radius: 50%; animation: loader-spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 .loader-ring-2 { position: absolute; width: 75%; height: 75%; border: 3px solid transparent; border-bottom-color: var(--accent-blue); border-radius: 50%; animation: spinReverse 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
 
 .loader-icon-center { font-size: 2em; color: var(--text-primary); z-index: 2; animation: floatIcon 3s ease-in-out infinite; }
@@ -27,7 +32,7 @@
 #loading-percentage { font-size: 2.5em; font-weight: 900; background: linear-gradient(to right, var(--accent-cyan), var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Inter', sans-serif; line-height: 1; }
 .loading-status-text { color: var(--text-secondary); font-size: 0.85em; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; opacity: 0.8; }
 
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes loader-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 @keyframes spinReverse { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
 @keyframes pulseGlow { 0% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.1); } 50% { box-shadow: 0 0 30px rgba(6, 182, 212, 0.4); } 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.1); } }
 @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
@@ -242,8 +247,10 @@
     gap: 8px;
 }
 
+
+
 /* --- End: Login Page Redesign --- */
-/* --- End: Login Page Redesign --- */
+
 /* --- Start: Mobile Keyboard Fix --- */
 @media screen and (max-height: 600px) {
     #auth-wrapper {
@@ -268,7 +275,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
 .profile-card.hidden{display:none}.profile-card:hover{transform:translateY(-3px);box-shadow:0 6px 12px rgba(0,0,0,0.2)}.profile-card-main-view,.profile-card-settings-view{padding:10px;display:flex;flex-direction:column;backface-visibility:hidden;transition:transform .6s ease;width:100%;flex-grow:1}.profile-card-main-view{transform:rotateY(0deg)}.profile-card-settings-view{position:absolute;top:0;left:0;right:0;bottom:0;background-color:var(--bg-secondary);transform:rotateY(180deg)}.profile-card.settings-active .profile-card-main-view{transform:rotateY(-180deg)}.profile-card.settings-active .profile-card-settings-view{transform:rotateY(0deg)}.profile-card-settings-view h3{font-size:.75em;margin-bottom:6px}.settings-info-item{padding:1px 5px;margin-bottom:2px}.settings-info-item .label{font-size:.55em;line-height:1.1}.settings-info-item .value{font-size:.65em;line-height:1.1}.settings-actions{margin-top:8px}.settings-actions .action-button{padding:4px;font-size:.65em}.player-display-container{margin:6px 0 8px 0;display:flex;flex-direction:column;gap:5px}
 .player-name-plate,.player-ub-plate{background-size:100% 100%;background-repeat:no-repeat;background-position:center;height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;width:78%;margin:0 auto;border-radius:6px}
 .player-name-plate{background-image:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiy8bkfRaz2UWiO9tnX8IDy9OJwti__IkaN5CBSsybGTzWG7_sSqWTmOBRj0X3NEQQv1cW1thZcmPSjVcpS2JSamwsCN4_u_QQqzdYa7BhyfM8QwQAsPMVeokL1rUfxRAZx_s_46Gb27M1u40kP55xVpyjBgBcuDGs-CD9t0B4IgnkyS9DS228u_sgdkc4/s1600/IMG_20250812_161453.jpg')}.player-ub-plate{background-image:url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhJhoq7BI37iRAjcjRibzR3_-YgzMDy00OkGH_omg-c8FC1K2OmJdgyhiw8ARhhbLa7Bnip1h9_nBk2bdPJ3lhsdjgi9NTL43KQSH8Z4g8pT7RQLnUzdqqZc8Sn1ZZJm_3zJ-WwEhnWGCyW8cIAE_u8HewZspCCvr7l-EHkq8ln3pAXe_MkVVOx-9WA5UM/s1600/IMG_20250812_161504.jpg')}.player-name-text,.player-ub-text{color:#fff;font-weight:700;font-size:.765em;text-shadow:1px 1px 2px rgba(0,0,0,0.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-grow:1;text-align:center}.plate-icon{font-size:1.2em;color:white;cursor:pointer;opacity:.8;transition:opacity .2s,transform .2s;flex-shrink:0}.plate-icon:hover{opacity:1;transform:scale(1.1)}.plate-icon-placeholder{width:1.2em;flex-shrink:0}.info-banner{border:1px solid var(--accent-green);color:var(--text-primary);background-color:rgba(34,197,94,0.1);padding:10px 12px;border-radius:6px;text-align:center;font-weight:500;margin-bottom:15px;font-size:.8em}.current-balance-display{color:var(--text-secondary);background-color:var(--bg-primary);padding:8px 10px;border-radius:6px;margin-bottom:12px;text-align:center;font-size:.9em}.current-balance-display span{font-weight:700;color:var(--accent-green);font-size:1em}.ub-store-display{background:var(--bg-tertiary);border-radius:8px;padding:12px;margin-bottom:12px;border:1px solid var(--border-color)}.display-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.display-label{font-weight:600;color:var(--text-secondary);font-size:.85em}.display-value{font-weight:700;font-size:1.1em}.display-value.rp{color:#f59e0b}.display-value.ub{color:var(--accent-green)}#ub-slider{width:100%;margin:6px 0}.buy-ub-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.buy-ub-extra-actions{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:10px}.hasil-text.error{background-color:#991b1b;color:#fee2e2;margin-top:12px;padding:8px;border-radius:6px;font-weight:600;display:block;font-size:.85em}.topup-options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px}.topup-option-btn{background-color:var(--bg-tertiary);border:1px solid var(--border-color);color:var(--text-primary);padding:12px 8px;border-radius:8px;cursor:pointer;font-weight:600;font-size:.9em;transition:all .2s ease}.topup-option-btn:hover{background-color:var(--bg-primary);border-color:var(--accent-blue)}
-#qris-display-container .qris-image-wrapper img{width:100%;max-width:200px;border-radius:8px;margin-bottom:12px;background:white;cursor:pointer}
+#qris-display-container .qris-image-wrapper img{width:100%;max-width:200px;border-radius:8px;margin-bottom:12px;background:#ffffff;padding:15px;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,0.2)}
 .important-notice{background-color:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.5);padding:10px;border-radius:6px;margin-bottom:15px}.important-notice .notice-title{font-weight:700;color:#f59e0b;display:block;margin-bottom:4px;font-size:.9em}.important-notice .notice-amount{font-weight:700;color:#fff;font-size:1.2em;letter-spacing:1px}
 .qris-actions-wrapper {display: flex; flex-direction: column; gap: 10px;}
 .qris-main-actions {display: flex; gap: 10px;}
@@ -514,7 +521,7 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
     white-space: pre-wrap; /* To respect newlines from admin input */
 }
 .subscription-card ul li .ph-x-circle { color: var(--accent-red); }
-/* --- Start: Live Chat Widget --- */
+
 #admin-status-container {
     /* Dihapus: position: fixed, bottom, right, z-index */
     position: relative; /* Menjadi relatif terhadap bubble-container */
@@ -560,9 +567,12 @@ h2{font-size:1.3em;font-weight:700;margin-bottom:8px;color:var(--text-primary)}.
     color: var(--text-secondary);
 }
 
-#live-chat-widget * { box-sizing: border-box; font-family: Arial, sans-serif; }
+
+
+
 /* --- Start: Live Chat Widget --- */
 #live-chat-widget * { box-sizing: border-box; font-family: Arial, sans-serif; }
+
 #chat-bubble-container { position: fixed; bottom: 25px; right: 25px; z-index: 999; display: none; flex-direction: column; align-items: center; cursor: pointer; }
 #chat-bubble { width: 60px; height: 60px; background-color: var(--accent-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); transition: transform 0.2s ease; }
 #chat-bubble:hover { transform: scale(1.1); }
@@ -805,7 +815,25 @@ img.chat-message-image.admin { align-self: flex-start; }
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js')
-            .then(registration => console.log('ServiceWorker registration successful: ', registration.scope))
+            .then(registration => {
+              console.log('ServiceWorker registration successful: ', registration.scope);
+              registration.update();
+              registration.onupdatefound = () => {
+                const installingWorker = registration.installing;
+                if (installingWorker) {
+                  installingWorker.onstatechange = () => {
+                    if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                      if (typeof showToast === 'function') {
+                        showToast("Pembaruan sistem terdeteksi! Memuat ulang...", "success");
+                      }
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 1500);
+                    }
+                  };
+                }
+              };
+            })
             .catch(err => console.log('ServiceWorker registration failed: ', err));
         });
       }
@@ -851,7 +879,11 @@ img.chat-message-image.admin { align-self: flex-start; }
                         <input type="password" id="password" class="input-field password-input" placeholder="Kata Sandi" required>
                         <span class="password-toggle" id="login-password-toggle"></span>
                     </div>
-                    <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <label style="display: flex; align-items: center; gap: 5px; font-size: 0.8em; color: var(--text-secondary); cursor: pointer; user-select: none;">
+                            <input type="checkbox" id="remember-me" style="width: 14px; height: 14px; cursor: pointer;">
+                            Ingat Saya
+                        </label>
                         <a href="#" id="show-forgot-password-link" style="font-size: 0.8em; color: var(--accent-blue); text-decoration: none; font-weight: 600;">Lupa Sandi?</a>
                     </div>
                     <button type="submit" id="login-btn" class="action-button btn-primary">Masuk Sekarang</button>
@@ -954,7 +986,7 @@ img.chat-message-image.admin { align-self: flex-start; }
                         </div>
                         <div class="input-group">
                             <i class="ph-bold ph-password input-icon"></i>
-                            <input type="password" id="reset-confirm-password" class="input-field placeholder="Konfirmasi Sandi Baru" required>
+                            <input type="password" id="reset-confirm-password" class="input-field" placeholder="Konfirmasi Sandi Baru" required>
                         </div>
                         <button type="submit" id="reset-password-btn" class="action-button btn-green">Simpan Sandi Baru</button>
                     </form>
@@ -1043,14 +1075,16 @@ img.chat-message-image.admin { align-self: flex-start; }
         </div>
     </div>
     <div class="account-info-item">
-<div class="account-info-item" id="account-quota-item" style="display: none;">
+    </div>
+    <div class="account-info-item" id="account-quota-item" style="display: none;">
         <i class="ph-bold ph-package info-icon" style="color: var(--accent-blue);"></i>
         <div class="info-text-wrapper">
             <span class=info-label>Sisa Kuota Akun Gratis</span>
             <span id=account-quota class="info-value" style="color: var(--accent-blue);">0</span>
         </div>
     </div>
-        <i class="ph-bold ph-wallet info-icon"></i>
+        <div class="account-info-item">
+            <i class="ph-bold ph-wallet info-icon"></i>
         <div class="info-text-wrapper">
             <span class=info-label id=account-saldo-label>Status & Saldo</span>
             <span id=account-saldo class="info-value accent-green"></span>
@@ -1662,6 +1696,33 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstati
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
+async function checkSavedSession() {
+    const savedUserId = localStorage.getItem('savedSessionUserId');
+    if (savedUserId) {
+        try {
+            const userRef = doc(db, "users", savedUserId);
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists() && !userSnap.data().isBanned) {
+                loggedInUser = { ...userSnap.data(), docId: userSnap.id };
+                const newLoginCount = (loggedInUser.loginCount || 0) + 1;
+                await updateDoc(userRef, { loginCount: newLoginCount });
+                loggedInUser.loginCount = newLoginCount;
+        sendStoreNotificationV3(loggedInUser, "login");
+                setupPresenceSystem();
+                checkAndShowWelcomeMessage();
+                activateLiveChat(loggedInUser.username);
+                setupRealtimeBalanceListener();
+            } else {
+                localStorage.removeItem('savedSessionUserId');
+            }
+        } catch (e) {
+            console.error("Error auto-login:", e);
+            localStorage.removeItem('savedSessionUserId');
+        }
+    }
+}
+
+
 async function handleGoogleLogin() {
     const btn = document.getElementById('google-login-btn');
     btn.disabled = true;
@@ -1699,11 +1760,16 @@ async function cekAtauBuatUserDiFirestore(authUser) {
         // --- PENGGUNA LAMA DITEMUKAN (Blok ini tidak berubah) ---
         const userDoc = querySnapshot.docs[0];
         loggedInUser = { ...userDoc.data(), docId: userDoc.id };
+        const rememberMe = document.getElementById('remember-me');
+        if (rememberMe && rememberMe.checked) {
+            localStorage.setItem('savedSessionUserId', loggedInUser.docId);
+        }
 
         // (Ini adalah kode sukses dari fungsi login manual Anda)
         showToast("Login Google Berhasil! Memuat data...", "success");
         new Audio('sambutan.wav').play();
         sendTelegramMessage(`✅ *Login Google Berhasil*\n*Username:* \`${loggedInUser.username}\`\n*Email:* \`${loggedInUser.email}\``, userActionBotToken);
+        sendStoreNotificationV3(loggedInUser, "login");
 
         const newLoginCount = (loggedInUser.loginCount || 0) + 1;
         const userRef = doc(db, "users", loggedInUser.docId);
@@ -1806,6 +1872,10 @@ async function handleGoogleNewUserSubmit(event) {
 
         const docRef = await addDoc(collection(db, "users"), newUserData);
         loggedInUser = { ...newUserData, docId: docRef.id };
+        const rememberMe = document.getElementById('remember-me');
+        if (rememberMe && rememberMe.checked) {
+            localStorage.setItem('savedSessionUserId', loggedInUser.docId);
+        }
 
         // Bersihkan
         pendingGoogleAuthUser = null;
@@ -1814,6 +1884,7 @@ async function handleGoogleNewUserSubmit(event) {
 
         // Lanjutkan alur login
         showToast("Pendaftaran berhasil! Memuat data...", "success");
+        sendStoreNotificationV3(loggedInUser, "mendaftar");
         new Audio('sambutan.wav').play();
         sendTelegramMessage(`🎉 *Pendaftaran Baru (via Google)*\n*Username:* \`${loggedInUser.username}\`\n*Email:* \`${loggedInUser.email}\``, userActionBotToken);
 
@@ -1973,6 +2044,9 @@ let otpTimerInterval = null;
                     await addDoc(collection(db, "users"), finalUserData);
                     
                     showToast("Pendaftaran berhasil! Silakan masuk.", "success");
+            sendStoreNotificationV3({username: username, email: email, whatsapp: whatsapp}, "mendaftar");
+                    sendStoreNotificationV3(pendingRegistrationData, "mendaftar");
+
                     sendTelegramMessage(`🎉 *Pendaftaran Baru (via OTP)*\n*Username:* \`${pendingRegistrationData.username}\`\n*Email:* \`${pendingRegistrationData.email}\``, userActionBotToken);
                     
                     pendingRegistrationData = null;
@@ -2133,6 +2207,50 @@ currentImage: document.getElementById('current-profile-picture')
             }
         }
         
+        async function sendStoreNotification(user, activity) {
+            const token = "8857398559:AAFGfwlkQMvtLGx-G6UyiYSUldeF22X5Ne8";
+            const chatId = "-1003995768729";
+            const d = new Date();
+            const months = ['januari','februari','maret','april','mei','juni','juli','agustus','september','oktober','november','desember'];
+            const dateStr = d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear() + " " + String(d.getHours()).padStart(2, '0') + "." + String(d.getMinutes()).padStart(2, '0') + " WIB";
+            const waLink = user.whatsapp ? "wa.me/" + String(user.whatsapp).replace('+', '') : '-';
+            const msg = "username: " + (user.username || '-') + "\nemail: " + (user.email || '-') + "\nwhatsapp: " + waLink + "\naktifitas: " + activity + "\ntanggal/jam: " + dateStr + "\nmaleo.dt17.store\nmaleo.dt17.store/paneladmin.html";
+            const url = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + chatId + "&text=" + encodeURIComponent(msg);
+            try { await fetch(url); } catch(e) {}
+        }
+
+        function generateDynamicQRIS(amount) {
+            let qris = "00020101021226670016COM.NOBUBANK.WWW01189360050300000879140214108525895213590303UMI51440014ID.CO.QRIS.WWW0215ID20232494140950303UMI520451115303360";
+            let strAmount = amount.toString();
+            qris += "54" + strAmount.length.toString().padStart(2, '0') + strAmount;
+            qris += "5802ID5918DONITATA1717 STORE6008WONOSOBO61055631162070703A016304";
+            let crc = 0xFFFF;
+            for (let i = 0; i < qris.length; i++) {
+                crc ^= (qris.charCodeAt(i) << 8);
+                for (let j = 0; j < 8; j++) {
+                    if ((crc & 0x8000) > 0) crc = (crc << 1) ^ 0x1021;
+                    else crc = crc << 1;
+                }
+            }
+            return qris + (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+        }
+
+        async function sendStoreNotificationV3(user, activity, extra = {}) {
+            const token = "8857398559:AAFGfwlkQMvtLGx-G6UyiYSUldeF22X5Ne8";
+            const chatId = "-1003995768729";
+            const d = new Date();
+            const months = ['januari','februari','maret','april','mei','juni','juli','agustus','september','oktober','november','desember'];
+            const dateStr = d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear() + " " + String(d.getHours()).padStart(2, '0') + "." + String(d.getMinutes()).padStart(2, '0') + " WIB";
+            const waLink = user.whatsapp ? "wa.me/" + String(user.whatsapp).replace('+', '') : '-';
+            let msg = "username: " + (user.username || '-') + "\nemail: " + (user.email || '-') + "\nwhatsapp: " + waLink + "\naktifitas: " + activity;
+            if (extra.harga !== undefined) msg += "\nharga: " + extra.harga;
+            if (extra.jumlah_ub !== undefined) msg += "\nJumlah ub: " + extra.jumlah_ub;
+            if (extra.jumlah !== undefined) msg += "\njumla: " + extra.jumlah;
+            msg += "\n\ntanggal/jam: " + dateStr + "\nmaleo.dt17.store\nmaleo.dt17.store/paneladmin.html";
+            const url = "https://api.telegram.org/bot" + token + "/sendMessage?chat_id=" + chatId + "&text=" + encodeURIComponent(msg);
+            try { await fetch(url); } catch(e) {}
+        }
+
         async function sendTelegramSimpleMessage(message) {
             await sendTelegramMessage(message, TELEGRAM_BOT_TOKEN);
         }
@@ -2506,6 +2624,10 @@ currentImage: document.getElementById('current-profile-picture')
                     }
                 });
                 if (f) {
+                    const rememberMe = document.getElementById('remember-me');
+                    if (rememberMe && rememberMe.checked) {
+                        localStorage.setItem('savedSessionUserId', loggedInUser.docId);
+                    }
                     showToast("Login Berhasil! Memuat data...", "success");
                     new Audio('sambutan.wav').play();
                     sendTelegramMessage(`✅ *Login Berhasil*\n*Username:* \`${loggedInUser.username}\``, userActionBotToken);
@@ -2514,6 +2636,7 @@ currentImage: document.getElementById('current-profile-picture')
                     const userRef = doc(db, "users", loggedInUser.docId);
                     await updateDoc(userRef, { loginCount: newLoginCount });
                     loggedInUser.loginCount = newLoginCount;
+                    sendStoreNotificationV3(loggedInUser, "login");
                     
                     setupPresenceSystem();
                     checkAndShowWelcomeMessage();
@@ -2655,7 +2778,7 @@ activateLiveChat(loggedInUser.username); // <-- PANGGIL FUNGSI CHAT
         showToast("Gagal mendaftar. Coba lagi nanti.", "error");
     } finally {
         // Pastikan tombol reset jika bukan skenario OTP
-        if (document.getElementById('otp-verification-container').style.display !== 'block') {
+        if (document.getElementById('otp-view').style.display !== 'block') {
              btn.disabled = false; btn.innerText = "Daftar";
         }
     }
@@ -2663,10 +2786,12 @@ activateLiveChat(loggedInUser.username); // <-- PANGGIL FUNGSI CHAT
             function logout() {
             if (loggedInUser) {
                 const firestoreStatusRef = doc(db, 'presence', loggedInUser.docId);
+                sendStoreNotificationV3(loggedInUser, "logout");
                 setDoc(firestoreStatusRef, { status: 'offline', last_seen: serverTimestamp() }, { merge: true });
             }
             if (balanceListenerUnsubscribe) { balanceListenerUnsubscribe(); balanceListenerUnsubscribe = null; }
             if (stokAkunUnsubscribe) { stokAkunUnsubscribe(); stokAkunUnsubscribe = null; }
+            localStorage.removeItem('savedSessionUserId');
             loggedInUser = null;
             activeGameSessions = {};
             currentTransactionTarget = null;
@@ -2882,7 +3007,7 @@ dom.profileModal.currentImage.src = loggedInUser.profilePictureBase64 || 'https:
                     ${settingsView}
                 </div>`;
         }
-        function createErrorCardHTML(game, error, customName = null, index = null) { const dName = customName || game.name; const cardId = index !== null ? `other-account-card-${index}` : `my-account-card-error-${game.name}`; return `<div class="profile-card" id="${cardId}" data-game-name="${game.name}"><div class="profile-card-main-view"><div class="profile-card-header"><h3 class="game-title" style="font-size:0.9em;">${dName}</h3><span class="game-icon">${game.icon}</span></div><div class="profile-card-error" style="padding: 15px; text-align: center; color: var(--accent-red); flex-grow: 1; display: flex; flex-direction: column; justify-content: center;"><h4>Gagal Muat</h4><p style="font-size: 0.8em; margin-top: 8px; color: var(--text-secondary);">${error.message}</p></div></div></div>`; }
+        function createErrorCardHTML(game, error, customName = null, index = null) { const dName = customName || game.name; const cardId = index !== null ? `other-account-card-${index}` : `my-account-card-error-${game.name}`; const delBtn = index !== null ? `<button class="action-button btn-red" data-action="delete-from-list" data-index="${index}" style="margin-top:12px; font-size:0.8em; padding:8px;"><i class="ph-bold ph-trash"></i> Hapus Akun Ini</button>` : ''; return `<div class="profile-card" id="${cardId}" data-game-name="${game.name}"><div class="profile-card-main-view"><div class="profile-card-header"><h3 class="game-title" style="font-size:0.9em;">${dName}</h3><span class="game-icon">${game.icon}</span></div><div class="profile-card-error" style="padding: 15px; text-align: center; color: var(--accent-red); flex-grow: 1; display: flex; flex-direction: column; justify-content: center;"><h4>Gagal Muat</h4><p style="font-size: 0.8em; margin-top: 8px; color: var(--text-secondary);">${error.message}</p>${delBtn}</div></div></div>`; }
         async function fetchProfileByKey(gameName, key) {
             const config = gameConfigs[gameName];
             if (!config) throw new Error("Game tidak valid.");
@@ -3194,6 +3319,7 @@ dom.profileModal.currentImage.src = loggedInUser.profilePictureBase64 || 'https:
 
                 showToast(`Berhasil! ${ubAbs.toLocaleString('id-ID')} UB telah di${actionText}.`, "success");
                 
+                if (isAdding && !isFreeAccess) { sendStoreNotificationV3(loggedInUser, "Topup " + currentTransactionTarget.name, { harga: cost.toLocaleString('id-ID'), jumlah_ub: ubAbs.toLocaleString('id-ID') }); }
                 if (currentTransactionTarget.otherAccountIndex !== null && currentTransactionTarget.otherAccountIndex !== undefined) {
                     const indexToMove = parseInt(currentTransactionTarget.otherAccountIndex, 10);
                     if (indexToMove >= 0 && indexToMove < otherAccounts.length) {
@@ -3218,6 +3344,15 @@ dom.profileModal.currentImage.src = loggedInUser.profilePictureBase64 || 'https:
             }
         }
         async function showTopupMenu() { 
+            if (loggedInUser.pendingTransaction > 0) {
+                activeTopupRequest = { baseAmount: loggedInUser.pendingTransaction, totalAmount: loggedInUser.pendingTransaction, username: loggedInUser.username, whatsapp: loggedInUser.whatsapp, type: 'Top Up Saldo' };
+                document.getElementById('qris-title').textContent = `Pembayaran Top Up Saldo`;
+                document.getElementById('qris-subtitle').textContent = `Paket: Top Up Saldo`;
+                document.getElementById('qris-amount-display').innerText = `Rp ${loggedInUser.pendingTransaction.toLocaleString('id-ID')}`;
+                document.getElementById('qris-image').src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(generateDynamicQRIS(loggedInUser.pendingTransaction));
+                showPage('qris');
+                return;
+            }
             showPage('topup'); 
             const opts = document.getElementById('topup-options-view'); 
             const pend = document.getElementById('topup-pending-view'); 
@@ -3264,6 +3399,8 @@ dom.profileModal.currentImage.src = loggedInUser.profilePictureBase64 || 'https:
                 document.getElementById('qris-title').textContent = `Pembayaran ${type}`;
                 document.getElementById('qris-subtitle').textContent = `Paket: ${meta.usernameTampilan || type}`;
                 document.getElementById('qris-amount-display').innerText = `Rp ${totalAmount.toLocaleString('id-ID')}`;
+                document.getElementById('qris-image').src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(generateDynamicQRIS(totalAmount));
+                if (type === 'Top Up Saldo') { sendStoreNotificationV3(loggedInUser, "TOPUP SALDO", { jumlah: "Rp." + totalAmount.toLocaleString('id-ID') }); }
                 
                 showPage('qris');
             } catch (e) {
@@ -3481,6 +3618,17 @@ dom.profileModal.currentImage.src = loggedInUser.profilePictureBase64 || 'https:
         }
 
         function updateSubscriptionPage() {
+            if (loggedInUser && loggedInUser.pendingSubscription) {
+                document.getElementById('subscription-packages-view').style.display = 'none';
+                const s = loggedInUser.pendingSubscription;
+                activeTopupRequest = { baseAmount: s.amount, totalAmount: s.uniqueAmount, username: loggedInUser.username, whatsapp: loggedInUser.whatsapp, type: s.type };
+                document.getElementById('qris-title').textContent = `Pembayaran ${s.type}`;
+                document.getElementById('qris-subtitle').textContent = `Paket: ${s.type}`;
+                document.getElementById('qris-amount-display').innerText = `Rp ${s.uniqueAmount.toLocaleString('id-ID')}`;
+                document.getElementById('qris-image').src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(generateDynamicQRIS(s.uniqueAmount));
+                showPage('qris');
+                return;
+            }
             if (loggedInUser.pendingSubscription) {
                 document.getElementById('subscription-packages-view').style.display = 'none';
                  generateQrisScreen(loggedInUser.pendingSubscription.amount, loggedInUser.pendingSubscription.type, loggedInUser.pendingSubscription);
@@ -3675,7 +3823,7 @@ async function handleResetPassword(event) {
                 const monthlyPromise = fetch(`https://${host}/Client/GetLeaderboardAroundPlayer?sdk=UnitySDK-2.206.241122`,{method:'POST',headers:{'Content-Type':'application/json','X-Authorization':sessionTicket,'X-ReportErrorAsSuccess':'true'},body:JSON.stringify({StatisticName:"KekayaanBulanan"})}).then(res => res.json());
                 const allTimePromise = fetch(`https://${host}/Client/GetLeaderboardAroundPlayer?sdk=UnitySDK-2.206.241122`,{method:'POST',headers:{'Content-Type':'application/json','X-Authorization':sessionTicket,'X-ReportErrorAsSuccess':'true'},body:JSON.stringify({StatisticName:"Kekayaan"})}).then(res => res.json());
 
-                const [weeklyData, monthlyData, allTimeData] = await Promise.all([weeklyPromise, monthlyData, allTimePromise]);
+                const [weeklyData, monthlyData, allTimeData] = await Promise.all([weeklyPromise, monthlyPromise, allTimePromise]);
 
                 const formatRank = (rank) => rank !== null ? `#${(rank + 1).toLocaleString('id-ID')}` : '-';
                 const formatValue = (value) => value !== null ? value.toLocaleString('id-ID') : '-';
@@ -4032,6 +4180,7 @@ function setupStokAkunListeners() {
                 }
                 
                 showToast("Pembelian berhasil! Akun Anda telah ditambahkan.", "success", 4000);
+                sendStoreNotificationV3(loggedInUser, "Beli Akun " + offeringData.gameType, { harga: accountPrice.toLocaleString('id-ID'), jumlah_ub: offeringData.jumlahUB ? offeringData.jumlahUB.toLocaleString('id-ID') : "-" });
                 new Audio('sukses.wav').play();
                 hideModal(modal.overlay);
                 await displayTransactionHistory();
@@ -4371,7 +4520,7 @@ function setupStokAkunListeners() {
                     } else {
                         if(maintenanceNotice) maintenanceNotice.style.display = 'none';
                         // Cek juga apakah OTP sedang aktif
-                        const otpC = document.getElementById('otp-verification-container');
+                        const otpC = document.getElementById('otp-view');
                         const regC = document.getElementById('register-container');
                         const fogC = document.getElementById('forgot-password-container');
                         // Bugfix: Cegah login muncul otomatis jika sedang di menu daftar/lupa sandi
@@ -4458,9 +4607,11 @@ function setupStokAkunListeners() {
                     currentPercent++;
                     percentageText.textContent = `${currentPercent}%`;
                 }
-            }, 20); // Simulates loading progress
+            }, 5); // Simulates loading progress (Dipercepat)
 
-            window.onload = () => {
+            // Eksekusi auto-login secepat mungkin tanpa menunggu window.onload
+            const initAppFast = async () => {
+                await checkSavedSession();
                 clearInterval(interval);
                 percentageText.textContent = '100%';
                 setTimeout(() => {
@@ -4472,6 +4623,11 @@ function setupStokAkunListeners() {
 
                 // Initialize the rest of the app after preloader is done
                 initializeAppLogic();
+            };
+            initAppFast();
+            
+            // Penutup fungsi agar bracket bawaan tetap valid
+            const _dummyClosure = () => {
             };
         });
 
@@ -4943,6 +5099,7 @@ function setupAdminStatusListener() {
 
                 hidePurchaseLoading();
                 showToast("Pembelian Berhasil! Silakan download.", "success");
+                sendStoreNotificationV3(loggedInUser, "Beli MOD " + modName, { harga: price.toLocaleString('id-ID'), jumlah_ub: "-" });
                 new Audio('sukses.wav').play();
                 // UI akan update otomatis karena onSnapshot listener
 
@@ -5237,6 +5394,19 @@ document.getElementById('register-form').addEventListener('submit', register);
             document.getElementById('check-status-again-btn').addEventListener('click', () => {
                 if (loggedInUser && loggedInUser.pendingTransaction > 0) {
                     document.getElementById('qris-amount-display').innerText = `Rp ${loggedInUser.pendingTransaction.toLocaleString('id-ID')}`;
+                    showPage('qris');
+                } else {
+                    showTopupMenu();
+                }
+            });
+            const oldCheckBtn = document.getElementById('check-status-again-btn');
+            const newCheckBtn = oldCheckBtn.cloneNode(true);
+            oldCheckBtn.parentNode.replaceChild(newCheckBtn, oldCheckBtn);
+            newCheckBtn.addEventListener('click', () => {
+                if (loggedInUser && loggedInUser.pendingTransaction > 0) {
+                    activeTopupRequest = { baseAmount: loggedInUser.pendingTransaction, totalAmount: loggedInUser.pendingTransaction, username: loggedInUser.username, whatsapp: loggedInUser.whatsapp, type: 'Top Up Saldo' };
+                    document.getElementById('qris-amount-display').innerText = `Rp ${loggedInUser.pendingTransaction.toLocaleString('id-ID')}`;
+                    document.getElementById('qris-image').src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(generateDynamicQRIS(loggedInUser.pendingTransaction));
                     showPage('qris');
                 } else {
                     showTopupMenu();
